@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>en</string>
+	<key>CFBundleDisplayName</key>
+	<string>${PRODUCT_NAME}</string>
+	<key>CFBundleExecutable</key>
+	<string>${EXECUTABLE_NAME}</string>
+	<key>CFBundleIcons</key>
+	<dict/>
+	<key>CFBundleIcons~ipad</key>
+	<dict/>
+	<key>CFBundleIdentifier</key>
+	<string>com.payotransfer.payo</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>${PRODUCT_NAME}</string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>CFBundleShortVersionString</key>
+	<string>0.0.1</string>
+	<key>CFBundleSignature</key>
+	<string>????</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>nooch</string>
+				<string>fb198279616971457</string>
+			</array>
+		</dict>
+	</array>
+	<key>CFBundleVersion</key>
+	<string>0.0.1</string>
+	<key>FacebookAppID</key>
+	<string>198279616971457</string>
+	<key>FacebookDisplayName</key>
+	<string>Nooch</string>
+	<key>GameThrive_APPID</key>
+	<string>d748b06e-95ea-11e4-b2b2-fbd23597044a</string>
+	<key>LSApplicationCategoryType</key>
+	<string>public.app-category.finance</string>
+	<key>LSRequiresIPhoneOS</key>
+	<true/>
+	<key>NSCameraUsageDescription</key>
+	<string>So you can add a profile picture and for attaching images to your transfers.</string>
+	<key>NSContactsUsageDescription</key>
+	<string>Send or request money to a friend using an email address or phone number form your contacts.</string>
+	<key>NSLocationUsageDescription</key>
+	<string>Find nearby friends who use Nooch and see the location of your payment.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Find nearby friends who use Nooch and see the location of your payment.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>So you can add a profile picture and also attach images to your transfers.</string>
+	<key>UIAppFonts</key>
+	<array>
+		<string>Roboto-Italic.ttf</string>
+		<string>Roboto-Regular.ttf</string>
+		<string>Roboto-Bold.ttf</string>
+		<string>Roboto-Medium.ttf</string>
+		<string>Roboto-Light.ttf</string>
+		<string>FontAwesome.ttf</string>
+		<string>VarelaRound-Regular.ttf</string>
+	</array>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>remote-notification</string>
+	</array>
+	<key>UIMainStoryboardFile</key>
+	<string>flat_storyboard</string>
+	<key>UIMainStoryboardFile~ipad</key>
+	<string>flat_storyboard</string>
+	<key>UIPrerenderedIcon</key>
+	<true/>
+	<key>UIRequiredDeviceCapabilities</key>
+	<array>
+		<string>armv7</string>
+	</array>
+	<key>UIStatusBarHidden</key>
+	<true/>
+	<key>UIStatusBarStyle</key>
+	<string>UIStatusBarStyleBlackTranslucent</string>
+	<key>UIStatusBarTintParameters</key>
+	<dict>
+		<key>UINavigationBar</key>
+		<dict>
+			<key>Style</key>
+			<string>UIBarStyleDefault</string>
+			<key>TintColor</key>
+			<dict>
+				<key>Blue</key>
+				<real>0.30182510614395142</real>
+				<key>Green</key>
+				<real>0.2811298668384552</real>
+				<key>Red</key>
+				<real>0.24812017381191251</real>
+			</dict>
+			<key>Translucent</key>
+			<false/>
+		</dict>
+	</dict>
+	<key>UISupportedInterfaceOrientations</key>
+	<array>
+		<string>UIInterfaceOrientationPortrait</string>
+	</array>
+	<key>UISupportedInterfaceOrientations~ipad</key>
+	<array>
+		<string>UIInterfaceOrientationPortrait</string>
+	</array>
+</dict>
+</plist>
