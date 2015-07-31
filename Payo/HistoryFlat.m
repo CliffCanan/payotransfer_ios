@@ -57,39 +57,15 @@
     [super viewDidLoad];
     [self.navigationItem setHidesBackButton:YES];
 
-    if (!isFromApts)
-    {
-        UIButton *hamburger = [UIButton buttonWithType:UIButtonTypeRoundedRect];
-        [hamburger setStyleId:@"navbar_hamburger"];
-        [hamburger addTarget:self action:@selector(showMenu) forControlEvents:UIControlEventTouchUpInside];
-        [hamburger setTitleShadowColor:Rgb2UIColor(19, 32, 38, 0.22) forState:UIControlStateNormal];
-        hamburger.titleLabel.shadowOffset = CGSizeMake(0.0, -1.0);
-        [hamburger setTitle:[NSString fontAwesomeIconStringForIconIdentifier:@"fa-bars"] forState:UIControlStateNormal];
+    UIButton *hamburger = [UIButton buttonWithType:UIButtonTypeRoundedRect];
+    [hamburger setStyleId:@"navbar_hamburger"];
+    [hamburger addTarget:self action:@selector(showMenu) forControlEvents:UIControlEventTouchUpInside];
+    [hamburger setTitleShadowColor:Rgb2UIColor(19, 32, 38, 0.22) forState:UIControlStateNormal];
+    hamburger.titleLabel.shadowOffset = CGSizeMake(0.0, -1.0);
+    [hamburger setTitle:[NSString fontAwesomeIconStringForIconIdentifier:@"fa-bars"] forState:UIControlStateNormal];
 
-        UIBarButtonItem *menu = [[UIBarButtonItem alloc] initWithCustomView:hamburger];
-        [self.navigationItem setLeftBarButtonItem:menu];
-    }
-    else
-    {
-        [[UINavigationBar appearance] setTintColor:[UIColor whiteColor]];
-
-        NSShadow * shadowNavText = [[NSShadow alloc] init];
-        shadowNavText.shadowColor = Rgb2UIColor(19, 32, 38, .2);
-        shadowNavText.shadowOffset = CGSizeMake(0, -1.0);
-        NSDictionary * titleAttributes = @{NSShadowAttributeName: shadowNavText};
-
-        UITapGestureRecognizer * backTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(backToApts)];
-
-        UILabel * back_button = [UILabel new];
-        [back_button setStyleId:@"navbar_back"];
-        [back_button setUserInteractionEnabled:YES];
-        [back_button addGestureRecognizer: backTap];
-        back_button.attributedText = [[NSAttributedString alloc] initWithString:[NSString fontAwesomeIconStringForIconIdentifier:@"fa-angle-left"] attributes:titleAttributes];
-
-        UIBarButtonItem * menu = [[UIBarButtonItem alloc] initWithCustomView:back_button];
-
-        [self.navigationItem setLeftBarButtonItem:menu];
-    }
+    UIBarButtonItem *menu = [[UIBarButtonItem alloc] initWithCustomView:hamburger];
+    [self.navigationItem setLeftBarButtonItem:menu];
 
     //@"History"
     [self.navigationItem setTitle:NSLocalizedString(@"History_ScrnTitle", @"History screen title")];
@@ -358,11 +334,6 @@
 {
     [self.search resignFirstResponder];
     [self.slidingViewController anchorTopViewTo:ECRight];
-}
-
--(void)backToApts
-{
-    [self.navigationController popViewControllerAnimated:YES];
 }
 
 -(void)sideright:(id)sender
@@ -2194,7 +2165,6 @@
                     NSMutableDictionary * input = [dictRecord mutableCopy];
                     [input setValue:@"accept" forKey:@"response"];
                    
-                    [[assist shared]setRequestMultiple:NO];
                     TransferPIN *trans = [[TransferPIN alloc] initWithReceiver:input type:@"requestRespond" amount:[[dictRecord objectForKey:@"Amount"] floatValue]];
                     [nav_ctrl pushViewController:trans animated:YES];
                 }

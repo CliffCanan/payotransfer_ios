@@ -161,19 +161,6 @@ static assist * _sharedInstance = nil;
 -(void)setneedsReload:(BOOL)istrue {
     isNeed=istrue;
 }
--(NSMutableArray*)getArray {
-    return arrRequestMultiple;
-}
--(void)setArray:(NSMutableArray*)arr{
-    
-    arrRequestMultiple=[arr copy];
-}
--(BOOL)isRequestMultiple {
-    return isMutipleRequest;
-}
--(void)setRequestMultiple:(BOOL)istrue {
-    isMutipleRequest=istrue;
-}
 -(NSString*)getPass {
     return passValue;
 }

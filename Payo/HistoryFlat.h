@@ -16,7 +16,6 @@
 #import "SpinKit/RTSpinKitView.h"
 
 BOOL isHistFilter;
-BOOL isFromApts;
 NSString *listType;
 
 @interface HistoryFlat : GAITrackedViewController<UITableViewDataSource,UITableViewDelegate,

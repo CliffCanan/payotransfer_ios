@@ -238,26 +238,9 @@
     }
     else
     {
-        if ([[assist shared] isRequestMultiple])
+        if ([self.receiver objectForKey:@"FirstName"])
         {
-            NSString * strMultiple = @"";
-            for (NSDictionary *dictRecord in [[assist shared]getArray])
-            {
-                strMultiple = [strMultiple stringByAppendingString:[NSString stringWithFormat:@", %@",[dictRecord[@"FirstName"] capitalizedString]]];
-            }
-            strMultiple = [strMultiple substringFromIndex:1];
-            [to_label setText:strMultiple];
-        }
-        else
-        {
-            if (isFromMyApt && [self.receiver objectForKey:@"AptName"])
-            {
-                to_label.attributedText = [[NSAttributedString alloc] initWithString:[NSString stringWithFormat:@"%@", [self.receiver objectForKey:@"AptName"]] attributes:textAttributes];
-            }
-            else if ([self.receiver objectForKey:@"FirstName"])
-            {
-                to_label.attributedText = [[NSAttributedString alloc] initWithString:[NSString stringWithFormat:@"%@ %@", [[self.receiver objectForKey:@"FirstName"] capitalizedString], [[self.receiver objectForKey:@"LastName"] capitalizedString]] attributes:textAttributes];
-            }
+            to_label.attributedText = [[NSAttributedString alloc] initWithString:[NSString stringWithFormat:@"%@ %@", [[self.receiver objectForKey:@"FirstName"] capitalizedString], [[self.receiver objectForKey:@"LastName"] capitalizedString]] attributes:textAttributes];
         }
     }
 
@@ -1175,17 +1158,7 @@ NSString * calculateArrivalDate()
             if ([self.type isEqualToString:@"request"])
             {
                 [transactionInputTransfer setValue:@"Request" forKey:@"TransactionType"];
-                if ([[assist shared]isRequestMultiple])
-                {
-                    receiverId = @"";
-                    for (NSDictionary *dictRecord in [[assist shared]getArray]) {
-                        receiverId=[receiverId stringByAppendingString:[NSString stringWithFormat:@",%@",dictRecord[@"MemberId"]]];
-                    }
- 
-                    receiverId=[receiverId substringFromIndex:1];
-                    [transactionInputTransfer setValue:receiverId forKey:@"SenderId"];
-                }
-                else
+
                     [transactionInputTransfer setValue:[self.receiver valueForKey:@"MemberId"] forKey:@"SenderId"];
                     [transactionInputTransfer setValue:@"Pending" forKey:@"TransactionStatus"];
             }
@@ -1670,18 +1643,6 @@ NSString * calculateArrivalDate()
         return;
     }
 
-    // Weekly Transaction Limit Exceeded
-    else if ([payRequestResult rangeOfString:@"Weekly transfer limit exceeded"].length != 0)
-    {
-        UIAlertView *av = [[UIAlertView alloc] initWithTitle:@"Weekly Transfer Limit Exceeded"
-                                                     message:@"\xF0\x9F\x98\xA5\nUnfortunately this transfer would put you over the weekly transfer limit. Please try sending a smaller amount, or wait until Monday to try again.\n\nVery sorry for the inconvenience - our limits are in place to protect all users and keep Nooch safe."
-                                                    delegate:self
-                                           cancelButtonTitle:nil
-                                           otherButtonTitles:@"OK",nil];
-        [av setTag:32];
-        [av show];
-        return;
-    }
 
     // Per Transaction Limit Exceeded
     else if ([sendMoneyToExistingUserSynapseResult rangeOfString:@"send money to the same user"].length != 0)
@@ -1708,56 +1669,6 @@ NSString * calculateArrivalDate()
                                            cancelButtonTitle:@"OK"
                                            otherButtonTitles:@"Learn More", nil];
         [av setTag:54];
-        [av show];
-        return;
-    }
-
-    // Making a Request to an Existing User
-    else if ([makeRequestToExistingUserResult rangeOfString:@"successfully"].length != 0)
-    {
-        [[assist shared] setTranferImage:nil];
-        UIImage * imgempty = [UIImage imageNamed:@""];
-        [[assist shared] setTranferImage:imgempty];
-        
-        if ([[assist shared] isRequestMultiple])
-        {
-            [[assist shared] setRequestMultiple:NO];
-            NSString * strMultiple = @"";
-            for (NSDictionary * dictRecord in [[assist shared]getArray])
-            {
-                strMultiple = [strMultiple stringByAppendingString:[NSString stringWithFormat:@", %@",[dictRecord[@"FirstName"] capitalizedString]]];
-            }
-            
-            strMultiple = [strMultiple substringFromIndex:1];
-            UIAlertView *av = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"EnterPIN_RequestSuccessAlrtTitle", @"Enter PIN Screen request made successfully Alert Title")
-                                                         message:[NSString stringWithFormat:@"\xF0\x9F\x98\x80\nYou requested $%.02f from %@ successfully.",self.amnt,strMultiple]
-                                                        delegate:self
-                                               cancelButtonTitle:nil
-                                               otherButtonTitles:@"OK",nil];
-            [av setTag:1];
-            [av show];
-        }
-        else
-        {
-            NSLog(@"Request to 1 existing user ALERT");
-            UIAlertView *av = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"EnterPIN_RequestSuccessAlrtTitle", @"Enter PIN Screen request made successfully Alert Title")
-                                                         message:[NSString stringWithFormat:@"\xF0\x9F\x98\x80\nYou requested $%.02f from %@ successfully.",self.amnt,[receiverFirst capitalizedString]]
-                                                        delegate:self
-                                               cancelButtonTitle:nil
-                                               otherButtonTitles:@"OK",@"View Details",nil];
-            [av setTag:1];
-            [av show];
-        }
-    }
-
-    else if ([makeRequestToExistingUserResult rangeOfString:@"Not allowed to request money from yourself"].length != 0)
-    {
-        UIAlertView *av = [[UIAlertView alloc] initWithTitle:@"Very Sneaky"
-                                                     message:@"\xF0\x9F\x98\xB1\nYou are attempting a transfer paradox, the results of which could cause a chain reaction that would unravel the very fabric of the space-time continuum and destroy the entire universe!\n\nPlease try requesting money from someone ELSE!"
-                                                    delegate:self
-                                           cancelButtonTitle:@"OK"
-                                           otherButtonTitles:nil];
-        [av setTag:71];
         [av show];
         return;
     }

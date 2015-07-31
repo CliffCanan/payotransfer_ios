@@ -30,7 +30,7 @@ bool modal;
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     inBack = NO;
-    [Appirater setAppId:@"917955306"];
+    [Appirater setAppId:@"1024906313"]; // Updated to Payo App ID already
     [Appirater setDaysUntilPrompt:7];
     [Appirater setUsesUntilPrompt:8];
     [Appirater setSignificantEventsUntilPrompt:-1];
@@ -152,12 +152,11 @@ bool modal;
     [ARPowerHookManager registerHookWithId:@"HUDcolor" friendlyName:@"HUD Color" defaultValue:@"black"];
     [ARPowerHookManager registerHookWithId:@"reqCodeSetting" friendlyName:@"Require Invite Code" defaultValue:@"no"];
     [ARPowerHookManager registerHookWithId:@"refCode" friendlyName:@"Referral Code" defaultValue:@"NOCODE"];
-    [ARPowerHookManager registerHookWithId:@"homeBtnClr" friendlyName:@"Home Button Color" defaultValue:@"green"];
+    [ARPowerHookManager registerHookWithId:@"homeBtnClr" friendlyName:@"Home Button Color" defaultValue:@"blue"];
     [ARPowerHookManager registerHookWithId:@"settingsCogIconPos" friendlyName:@"Settings Cog Icon Position" defaultValue:@"bottomBar"];
-    [ARPowerHookManager registerHookWithId:@"DispApts" friendlyName:@"Display Apts Section" defaultValue:@"no"];
     [ARPowerHookManager registerHookWithId:@"UseTouchID" friendlyName:@"Enable TouchID as an option" defaultValue:@"no"];
 
-    [ARPowerHookManager registerHookWithId:@"versionNum" friendlyName:@"Most Recent Version Number" defaultValue:@"8.5"];
+    [ARPowerHookManager registerHookWithId:@"versionNum" friendlyName:@"Most Recent Version Number" defaultValue:@"0.1"];
     [ARPowerHookManager registerHookWithId:@"NV_YorN" friendlyName:@"New Version Alert - Should Display Y or N" defaultValue:@"no"];
     [ARPowerHookManager registerHookWithId:@"NV_HDR" friendlyName:@"New Version Alert Header Txt" defaultValue:@"New Stuff Galore"];
     [ARPowerHookManager registerHookWithId:@"NV_BODY" friendlyName:@"New Version Alert Body Txt" defaultValue:@"Check out the latest updates and enhancements in the newest version of Nooch."];
@@ -166,21 +165,16 @@ bool modal;
     [ARPowerHookManager registerHookWithId:@"NV_IMG_H" friendlyName:@"New Version Alert Img Height" defaultValue:@"170"];
 
     [ARPowerHookManager registerHookWithId:@"transLimit" friendlyName:@"Transfer Limit" defaultValue:@"300"];
-    [ARPowerHookManager registerHookWithId:@"srchRds" friendlyName:@"Search By Loc Radius (Miles)" defaultValue:@"12"];
 
     [ARPowerHookManager registerHookWithId:@"transSuccessAlertTitle" friendlyName:@"Alert Title After Transfer Success" defaultValue:@"Nice Work"];
     [ARPowerHookManager registerHookWithId:@"transSuccessAlertMsg" friendlyName:@"Alert Message After Transfer Success" defaultValue:@"\xF0\x9F\x92\xB8\nYour cash was sent successfully."];
 
-    [ARPowerHookManager registerHookWithId:@"knox_OnOff" friendlyName:@"Knox On or Off" defaultValue:@"on"];
     [ARPowerHookManager registerHookWithId:@"synps_OnOff" friendlyName:@"Synapse On or Off" defaultValue:@"off"];
-    [ARPowerHookManager registerHookWithId:@"synps_baseUrl" friendlyName:@"Synapse Base URL" defaultValue:@"http://54.201.43.89/noochweb/MyAccounts/Add-Bank.aspx"];
+    [ARPowerHookManager registerHookWithId:@"synps_baseUrl" friendlyName:@"Synapse Base URL" defaultValue:@"https://www.noochme.com/noochweb/trans/Add-Bank.aspx"];
 
-    [ARPowerHookManager registerHookWithId:@"knox_baseUrl" friendlyName:@"Knox Base URL" defaultValue:@"https://knoxpayments.com/pay/index.php"];
-    [ARPowerHookManager registerHookWithId:@"knox_Key" friendlyName:@"Knox API Key" defaultValue:@"7068_59cd5c1f5a75c31"];
-    [ARPowerHookManager registerHookWithId:@"knox_Pw" friendlyName:@"Knox API Pw" defaultValue:@"7068_da64134cc66a5f0"];
     [ARPowerHookManager registerHookWithId:@"knox_xtraTime" friendlyName:@"Extra No. of days for Knox processing" defaultValue:@"1"];
 
-    [ARPowerHookManager registerHookWithId:@"requireSSN_DOB" friendlyName:@"Should SSN & DoB be required - Y or N" defaultValue:@"no"];
+    [ARPowerHookManager registerHookWithId:@"requireSSN_DOB" friendlyName:@"Should SSN & DoB be required - Y or N" defaultValue:@"yes"];
 
     [ARPowerHookManager registerHookWithId:@"RefCmpgn_YorN" friendlyName:@"Referral Campaign Alert - Should Display Y or N" defaultValue:@"no"];
 
@@ -243,7 +237,6 @@ bool modal;
 
                                                NSLog(@"AppDelegate --> MakeADonation Powerhook Block --> Recipient object is: %@", recipient);
                                                isFromHome = YES;
-                                               isFromMyApt = NO;
                                                isFromArtisanDonationAlert = YES;
 
                                                HowMuch * howMuchScrn = [[HowMuch alloc] initWithReceiver:recipient];
@@ -309,7 +302,7 @@ bool modal;
     IdVerifyImageUpload * idVer = [IdVerifyImageUpload new];
     [nav_ctrl pushViewController:idVer animated:YES];
 
-    [ARManager startWithAppId:@"5487d09c2b22204361000011"];
+    [ARManager startWithAppId:@"55bbad8c369f840f5c000001"];
 
     [[NSUserDefaults standardUserDefaults] setBool:false forKey:@"VersionUpdateNoticeDisplayed"];
     return YES;

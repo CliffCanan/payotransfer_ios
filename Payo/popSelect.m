@@ -8,7 +8,6 @@
 
 #import "popSelect.h"
 #import "HistoryFlat.h"
-#import "SetAptDetails.h"
 @interface popSelect ()
 
 @end
@@ -83,21 +82,7 @@
         }
         return cell;
     }
-    else if (isAutoPayPopoverShowing)
-    {
-        [cell.textLabel setTextAlignment:NSTextAlignmentCenter];
 
-        if (indexPath.row == 0) {
-            cell.textLabel.text = @"First Day of Month";
-        } else if(indexPath.row == 1) {
-            cell.textLabel.text = @"Last Day of Month";
-        } else if(indexPath.row == 2) {
-            cell.textLabel.text = @"Custom Day";
-        } else if(indexPath.row == 3) {
-            cell.textLabel.textColor = kNoochRed;
-            cell.textLabel.text = @"Cancel";
-        }
-    }
     return cell;
 }
 
@@ -128,22 +113,7 @@
 
         return;
     }
-    else if (isAutoPayPopoverShowing)
-    {
-        if (indexPath.row == 0) {
-            autoPaySetting = @"1st Day of Month";
-        }
-        else if (indexPath.row == 1){
-            autoPaySetting = @"Last Day of Month";
-        }
-        else if (indexPath.row == 2){
-            autoPaySetting = @"Custom";
-        }
-        else if (indexPath.row == 3){
-            autoPaySetting = @"CANCEL";
-        }
-        [[NSNotificationCenter defaultCenter] postNotificationName:@"dismissPopOver" object:nil];
-    }
+
     if (!memoList) {
         return;
     }

@@ -1,6 +1,6 @@
 //
 //  Home.m
-//  Nooch
+//  Payo
 //
 //  Created by crks on 9/25/13.
 //  Copyright (c) 2015 Nooch Inc. All rights reserved.
@@ -191,7 +191,7 @@ NSMutableURLRequest *request;
 -(void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
-    [self.navigationItem setTitle:@"Nooch"];
+    [self.navigationItem setTitle:@"Payo"];
 
     if (![[assist shared] isPOP])
     {
@@ -219,7 +219,7 @@ NSMutableURLRequest *request;
             self.hud.mode = MBProgressHUDModeCustomView;
             self.hud.customView = spinner1;
             self.hud.delegate = self;
-            self.hud.labelText = NSLocalizedString(@"Home_HUDlbl1", @"Home Screen 'Loading Your Nooch Account' HUD");
+            self.hud.labelText = NSLocalizedString(@"Home_HUDlbl1", @"Home Screen 'Loading Your Payo Account' HUD");
             self.hud.labelColor = kNoochGrayDark;
             [self.hud show:YES];
 
@@ -302,8 +302,7 @@ NSMutableURLRequest *request;
 
     [self checkAllBannerStatuses];
 
-    [[assist shared] setRequestMultiple:NO];
-    [[assist shared] setArray:nil];
+    //[[assist shared] setArray:nil];
 
     BOOL shouldDisplayVersionUpdateAlert = [[ARPowerHookManager getValueForHookById:@"NV_YorN"] boolValue];
 
@@ -1879,7 +1878,6 @@ void addressBookChanged(ABAddressBookRef addressBook, CFDictionaryRef info, void
                                                   [favorite setObject:[NSString stringWithFormat:@"https://www.noochme.com/noochservice/UploadedPhotos/Photos/%@.png",favorite[@"MemberId"]] forKey:@"Photo"];
                                                   
                                                   isFromHome = YES;
-                                                  isFromMyApt = NO;
                                                   isFromArtisanDonationAlert = NO;
 
                                                   HowMuch * trans = [[HowMuch alloc] initWithReceiver:favorite];
@@ -1924,7 +1922,7 @@ void addressBookChanged(ABAddressBookRef addressBook, CFDictionaryRef info, void
              ABAddressBookGetAuthorizationStatus() == kABAuthorizationStatusRestricted)
     {
         UIAlertView * alert = [[UIAlertView alloc]initWithTitle:@"Access To Contacts"
-                                                        message:@"You can send money to ANY contact in your address book, even if they don't have Nooch.\n\nTO ENABLE, turn on access to Contacts in your iPhone's Settings:\n\nSettings  -->  Privacy  -->  Contacts"
+                                                        message:@"You can send money to ANY contact in your address book, even if they don't have Payo.\n\nTO ENABLE, turn on access to Contacts in your iPhone's Settings:\n\nSettings  -->  Privacy  -->  Contacts"
                                                        delegate:Nil
                                               cancelButtonTitle:@"OK"
                                               otherButtonTitles:Nil, nil];
@@ -2042,11 +2040,11 @@ void addressBookChanged(ABAddressBookRef addressBook, CFDictionaryRef info, void
     if ([[assist shared] getSuspended])
     {
         SIAlertView * alertView = [[SIAlertView alloc] initWithTitle:@"Account Suspended"
-                                                          andMessage:@"\xF0\x9F\x98\xA7\nFor security your account has been suspended pending a review.\n\nWe really apologize for the inconvenience and ask for your patience. Our top priority is keeping Nooch safe and secure.\n\nPlease contact us at support@nooch.com if this is a mistake or for more information."];
+                                                          andMessage:@"\xF0\x9F\x98\xA7\nFor security your account has been suspended pending a review.\n\nWe really apologize for the inconvenience and ask for your patience. Our top priority is keeping Payo safe and secure.\n\nPlease contact us at support@nooch.com if this is a mistake or for more information."];
         [alertView addButtonWithTitle:@"OK"
                                  type:SIAlertViewButtonTypeCancel
                               handler:nil];
-        [alertView addButtonWithTitle:@"Contact Nooch"
+        [alertView addButtonWithTitle:@"Contact Payo"
                                  type:SIAlertViewButtonTypeDefault
                               handler:^(SIAlertView *alert) {
                                   [self contact_support];
@@ -2078,7 +2076,7 @@ void addressBookChanged(ABAddressBookRef addressBook, CFDictionaryRef info, void
 
     else if (![[user valueForKey:@"IsVerifiedPhone"]isEqualToString:@"YES"] )
     {
-        SIAlertView * alertView = [[SIAlertView alloc] initWithTitle:@"Blame The Lawyers" andMessage:@"To keep Nooch safe, we ask all users to verify a phone number before sending money.\n\nIf you've already added your phone number, just respond 'Go' to the text message we sent."];
+        SIAlertView * alertView = [[SIAlertView alloc] initWithTitle:@"Blame The Lawyers" andMessage:@"To keep Payo safe, we ask all users to verify a phone number before sending money.\n\nIf you've already added your phone number, just respond 'Go' to the text message we sent."];
 
         [alertView addButtonWithTitle:@"Later"
                                  type:SIAlertViewButtonTypeCancel
@@ -2101,8 +2099,8 @@ void addressBookChanged(ABAddressBookRef addressBook, CFDictionaryRef info, void
     if (![[assist shared] isProfileCompleteAndValidated] ||  // this line covers: being suspended, IsVerifiedPhone, and status = active
         ![[user objectForKey:@"ProfileComplete"] isEqualToString:@"YES"]) // this line covers that the address is not empty or null
     {
-        SIAlertView * alertView = [[SIAlertView alloc] initWithTitle:@"Help Us Keep Nooch Safe"
-                                                          andMessage:@"Please take 1 minute to verify your identity by completing your Nooch profile."];
+        SIAlertView * alertView = [[SIAlertView alloc] initWithTitle:@"Help Us Keep Payo Safe"
+                                                          andMessage:@"Please take 1 minute to verify your identity by completing your Payo profile."];
         [alertView addButtonWithTitle:@"Later" type:SIAlertViewButtonTypeCancel handler:nil];
         [alertView addButtonWithTitle:@"Go Now" type:SIAlertViewButtonTypeDefault
                               handler:^(SIAlertView *alert) {
@@ -2142,7 +2140,7 @@ void addressBookChanged(ABAddressBookRef addressBook, CFDictionaryRef info, void
             shouldFocusOnDob = YES;
         }
 
-        UIAlertView * alert = [[UIAlertView alloc]initWithTitle:@"Help Us Keep Nooch Safe"
+        UIAlertView * alert = [[UIAlertView alloc]initWithTitle:@"Help Us Keep Payo Safe"
                                                         message:alertBody
                                                        delegate:self
                                               cancelButtonTitle:@"Later"
@@ -2155,7 +2153,7 @@ void addressBookChanged(ABAddressBookRef addressBook, CFDictionaryRef info, void
     // Finally check if the user has a bank account
     else if (![user boolForKey:@"IsSynapseBankAvailable"])
     {
-        SIAlertView *alertView = [[SIAlertView alloc] initWithTitle:@"Connect A Funding Source \xF0\x9F\x92\xB0" andMessage:@"\xE2\x9A\xA1\nAdding a bank account to fund Nooch payments is lightning quick.\n\n• No routing or account number needed\n• Bank-grade encryption keeps your info safe\n\nWould you like to take care of this now?"];
+        SIAlertView *alertView = [[SIAlertView alloc] initWithTitle:@"Connect A Funding Source \xF0\x9F\x92\xB0" andMessage:@"\xE2\x9A\xA1\nAdding a bank account to fund Payo payments is lightning quick.\n\n• No routing or account number needed\n• Bank-grade encryption keeps your info safe\n\nWould you like to take care of this now?"];
         [alertView addButtonWithTitle:@"Later" type:SIAlertViewButtonTypeCancel handler:nil];
         [alertView addButtonWithTitle:@"Go Now" type:SIAlertViewButtonTypeDefault
                               handler:^(SIAlertView *alert) {
@@ -2187,7 +2185,7 @@ void addressBookChanged(ABAddressBookRef addressBook, CFDictionaryRef info, void
     else if (![user boolForKey:@"IsSynapseBankVerified"])
     {
         UIAlertView *av = [[UIAlertView alloc] initWithTitle:@"Bank Account Un-Verified"
-                                                     message:@"\xE2\x9A\xA0\nLooks like your bank account remains un-verified.  This usually happens when the contact info listed on the bank account does not match your Nooch profile information. Please contact Nooch support for more information."
+                                                     message:@"\xE2\x9A\xA0\nLooks like your bank account remains un-verified.  This usually happens when the contact info listed on the bank account does not match your Payo profile information. Please contact Payo support for more information."
                                                     delegate:self
                                            cancelButtonTitle:@"OK"
                                            otherButtonTitles:@"Learn More", nil];
@@ -2484,7 +2482,6 @@ void addressBookChanged(ABAddressBookRef addressBook, CFDictionaryRef info, void
             }
 
             isFromHome = YES;
-            isFromMyApt = NO;
             isFromArtisanDonationAlert = NO;
 
             HowMuch * how_much = [[HowMuch alloc] initWithReceiver:dict];
@@ -2502,7 +2499,6 @@ void addressBookChanged(ABAddressBookRef addressBook, CFDictionaryRef info, void
         options:kNilOptions
         error:&error];
         isFromHome = YES;
-        isFromMyApt = NO;
         isFromArtisanDonationAlert = NO;
 
         HowMuch * how_much = [[HowMuch alloc] initWithReceiver:dict];
@@ -2683,7 +2679,7 @@ void addressBookChanged(ABAddressBookRef addressBook, CFDictionaryRef info, void
 
             NSUInteger randomIndex = arc4random() % [AbContactsWithAnEmail count];
 
-            // CHECKING IF THE ADDRESS BOOK CONTACT IS ALREADY A NOOCHER'S FAV FROM SERVER
+            // CHECKING IF THE ADDRESS BOOK CONTACT IS ALREADY A USER'S FAV FROM SERVER
             for (int j = 0; j < [favorites count]; j++)
             {
                 // In case of Server Record

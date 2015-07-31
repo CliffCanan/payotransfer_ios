@@ -814,7 +814,6 @@
     {
         NSMutableDictionary *input = [self.trans mutableCopy];
         [input setValue:@"accept" forKey:@"response"];
-        [[assist shared]setRequestMultiple:NO];
         TransferPIN *trans = [[TransferPIN alloc] initWithReceiver:input type:@"requestRespond" amount:[[self.trans objectForKey:@"Amount"] floatValue]];
     [nav_ctrl pushViewController:trans animated:YES];
     }
@@ -876,7 +875,6 @@
         }
 
         isPayBack = YES;
-        [[assist shared] setRequestMultiple:NO];
 
         // NSLog(@"%@",self.trans);
         HowMuch *payback = [[HowMuch alloc] initWithReceiver:input];

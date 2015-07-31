@@ -16,16 +16,9 @@
 @property(nonatomic,strong) UITableView *contacts;
 @property(nonatomic,strong) NSMutableArray *recents;
 @property(nonatomic, strong) ABPeoplePickerNavigationController *addressBookController;
-@property(nonatomic) BOOL location;
 @property(nonatomic,strong) MBProgressHUD *hud;
-@property(nonatomic,strong) UISegmentedControl * recent_location;
-@property(nonatomic,strong) UIImageView*noContact_img;
-@property(nonatomic, strong) UILabel * glyph_recent;
-@property(nonatomic, strong) UILabel * glyph_location;
-@property(nonatomic, strong) UILabel * glyph_emptyLoc;
+@property(nonatomic,strong) UIImageView * noContact_img;
 @property(nonatomic, strong) UILabel * glyphEmail;
-@property(nonatomic, strong) UILabel * emptyLocBody;
-@property(nonatomic, strong) UILabel * emptyLocHdr;
 @property(nonatomic, strong) UIImageView * backgroundImage;
 @end
 
@@ -43,7 +36,6 @@
 {
     [super viewDidLoad];
 
-    self.location = NO;
     self.navigationController.navigationBar.topItem.title = @"";
     [self.view setBackgroundColor:[UIColor whiteColor]];
     [self.slidingViewController.panGesture setEnabled:YES];
@@ -55,42 +47,9 @@
     [self.navigationItem setLeftBarButtonItem:menu];
 
     isPayBack = NO;
-    isAddRequest = NO;
-    if ([[assist shared] isRequestMultiple]) {
-        isAddRequest=YES;
-    }
-    else {
-        [arrRecipientsForRequest removeAllObjects];
-        [[assist shared]setArray:[arrRecipientsForRequest copy]];
-    }
+
     isUserByLocation = NO;
     isphoneBook = NO;
-
-    arrRequestPersons = [[NSMutableArray alloc]init];
-
-    NSArray *seg_items = @[NSLocalizedString(@"SelectRecip_RecentToggle", @"Select Recipient Recent Segmented Toggle"),NSLocalizedString(@"SelectRecip_LocationToggle", @"Select Recipient Find By Location Segemented Toggle")];
-    self.recent_location = [[UISegmentedControl alloc] initWithItems:seg_items];
-    [self.recent_location setStyleId:@"history_segcontrol"];
-    [self.recent_location addTarget:self action:@selector(recent_or_location:) forControlEvents:UIControlEventValueChanged];
-    [self.view addSubview:self.recent_location];
-    [self.recent_location setSelectedSegmentIndex:0];
-    [self.recent_location setTintColor:kNoochBlue];
-
-    self.glyph_recent = [UILabel new];
-    [self.glyph_recent setFont:[UIFont fontWithName:@"FontAwesome" size:16]];
-    [self.glyph_recent setFrame:CGRectMake(32, 12, 22, 19)];
-    [self.glyph_recent setText:[NSString fontAwesomeIconStringForIconIdentifier:@"fa-clock-o"]];
-    [self.glyph_recent setTextColor:[UIColor whiteColor]];
-    [self.glyph_recent setAlpha: 1];
-    [self.view addSubview:self.glyph_recent];
-
-    self.glyph_location = [UILabel new];
-    [self.glyph_location setFont:[UIFont fontWithName:@"FontAwesome" size:16]];
-    [self.glyph_location setFrame:CGRectMake(168, 12, 20, 18)];
-    [self.glyph_location setText:[NSString fontAwesomeIconStringForIconIdentifier:@"fa-map-marker"]];
-    [self.glyph_location setTextColor: kNoochBlue];
-    [self.glyph_location setAlpha: 1];
-    [self.view addSubview:self.glyph_location];
 
     search = [[UISearchBar alloc] initWithFrame:CGRectMake(0, 40, 320, 40)];
     search.searchBarStyle = UISearchBarStyleMinimal;
@@ -150,108 +109,51 @@
     self.screenName = @"SelectRecipient Screen";
     self.artisanNameTag = @"Select Recipient Screen";
 
-    if ([[assist shared] isRequestMultiple] && isAddRequest)
+
+    [self.navigationItem setTitle:NSLocalizedString(@"SelectRecipientScrnTitle", @"Select Recipient Screen Title")];
+    [self.navigationItem setHidesBackButton:YES];
+
+    NSShadow * shadowNavText = [[NSShadow alloc] init];
+    shadowNavText.shadowColor = Rgb2UIColor(19, 32, 38, .2);
+    shadowNavText.shadowOffset = CGSizeMake(0, -1.0);
+    NSDictionary * titleAttributes = @{NSShadowAttributeName: shadowNavText};
+
+    if (!isFromBankWebView)
     {
-        self.location = NO;
-        [self.navigationItem setHidesBackButton:YES];
-        [self.navigationItem setLeftBarButtonItem:nil];
-        [self.navigationItem setTitle:@"Group Request"];
-        [self.navigationItem setRightBarButtonItem:Nil];
+        UILabel * back_button = [UILabel new];
+        [back_button setUserInteractionEnabled:YES];
+        UITapGestureRecognizer * backTap;
+        [back_button setStyleId:@"navbar_back"];
+        back_button.attributedText = [[NSAttributedString alloc] initWithString:[NSString fontAwesomeIconStringForIconIdentifier:@"fa-angle-left"] attributes:titleAttributes];
+        backTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(backPressed_SelectRecip)];
+        [back_button addGestureRecognizer: backTap];
 
-        UIAlertView *av = [[UIAlertView alloc] initWithTitle:@"Add Recipients"
-                                                     message:@"To request money from more than one person, search for friends then tap each additional person (up to 10).\n\nTap 'Done' when finished."
-                                                    delegate:nil
-                                           cancelButtonTitle:@"OK"
-                                           otherButtonTitles:nil];
-        [av show];
-
+        UIBarButtonItem * menu = [[UIBarButtonItem alloc] initWithCustomView:back_button];
+        [self.navigationItem setLeftBarButtonItem:menu];
+    }
+    else
+    {
         UIButton * Done = [UIButton buttonWithType:UIButtonTypeRoundedRect];
         Done.frame = CGRectMake(307, 25, 16, 35);
         [Done setStyleId:@"icon_RequestMultiple"];
         [Done setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-        [Done setTitle:@"     Done" forState:UIControlStateNormal];
-        [Done setTitleShadowColor:Rgb2UIColor(19, 32, 38, 0.15) forState:UIControlStateNormal];
+        [Done setTitle:@"Home" forState:UIControlStateNormal];
+        [Done setTitleShadowColor:Rgb2UIColor(19, 32, 38, 0.16) forState:UIControlStateNormal];
         Done.titleLabel.shadowOffset = CGSizeMake(0.0, -1.0);
-        [Done addTarget:self action:@selector(DoneEditing_RequestMultiple:) forControlEvents:UIControlEventTouchUpInside];
+        [Done addTarget:self action:@selector(backPressed_FrmBnkWbView) forControlEvents:UIControlEventTouchUpInside];
 
-        UIBarButtonItem * DoneItem = [[UIBarButtonItem alloc] initWithCustomView:Done];
-        [self.navigationItem setRightBarButtonItem:DoneItem];
-
-        if ([arrRequestPersons count] == 0)
-        {
-            arrRequestPersons = [self.recents mutableCopy];
-        }
-        else
-        {
-            int loc =-1;
-            for (int i = 0; i < [self.recents count] ; i++)
-            {
-                NSDictionary * dict = [self.recents objectAtIndex:i];
-                for (int j = 0; j < [arrRequestPersons count]; j++)
-                {
-                   NSDictionary * dictSub = [arrRequestPersons objectAtIndex:j];
-                     if ([[dict valueForKey:@"MemberId"]caseInsensitiveCompare:[dictSub valueForKey:@"MemberId"] ] == NSOrderedSame)
-                        loc=1;
-                }
-                if (loc == -1)
-                    [arrRequestPersons addObject:dict];
-                else
-                    loc =-1;
-            }
-        }
-        //NSLog(@"%@",arrRequestPersons);
-        [self.contacts reloadData];
+        UIBarButtonItem * backItem = [[UIBarButtonItem alloc] initWithCustomView:Done];
+        [self.navigationItem setLeftBarButtonItem:backItem];
     }
-    else
+
+    [self.navigationItem setRightBarButtonItem:Nil];
+
+
+    if (emailEntry || phoneNumEntry)
     {
-        [self.navigationItem setTitle:NSLocalizedString(@"SelectRecipientScrnTitle", @"Select Recipient Screen Title")];
-        [self.navigationItem setHidesBackButton:YES];
-
-        NSShadow * shadowNavText = [[NSShadow alloc] init];
-        shadowNavText.shadowColor = Rgb2UIColor(19, 32, 38, .2);
-        shadowNavText.shadowOffset = CGSizeMake(0, -1.0);
-        NSDictionary * titleAttributes = @{NSShadowAttributeName: shadowNavText};
-
-        if (!isFromBankWebView)
-        {
-            UILabel * back_button = [UILabel new];
-            [back_button setUserInteractionEnabled:YES];
-            UITapGestureRecognizer * backTap;
-            [back_button setStyleId:@"navbar_back"];
-            back_button.attributedText = [[NSAttributedString alloc] initWithString:[NSString fontAwesomeIconStringForIconIdentifier:@"fa-angle-left"] attributes:titleAttributes];
-            backTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(backPressed_SelectRecip)];
-            [back_button addGestureRecognizer: backTap];
-
-            UIBarButtonItem * menu = [[UIBarButtonItem alloc] initWithCustomView:back_button];
-            [self.navigationItem setLeftBarButtonItem:menu];
-        }
-        else
-        {
-            UIButton * Done = [UIButton buttonWithType:UIButtonTypeRoundedRect];
-            Done.frame = CGRectMake(307, 25, 16, 35);
-            [Done setStyleId:@"icon_RequestMultiple"];
-            [Done setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-            [Done setTitle:@"Home" forState:UIControlStateNormal];
-            [Done setTitleShadowColor:Rgb2UIColor(19, 32, 38, 0.16) forState:UIControlStateNormal];
-            Done.titleLabel.shadowOffset = CGSizeMake(0.0, -1.0);
-            [Done addTarget:self action:@selector(backPressed_FrmBnkWbView) forControlEvents:UIControlEventTouchUpInside];
-
-            UIBarButtonItem * backItem = [[UIBarButtonItem alloc] initWithCustomView:Done];
-            [self.navigationItem setLeftBarButtonItem:backItem];
-        }
-
-        [self.navigationItem setRightBarButtonItem:Nil];
-
-        [[assist shared]setRequestMultiple:NO];
-        self.location = NO;
-
-        if (emailEntry || phoneNumEntry)
-        {
-            [self searchBarTextDidBeginEditing:search];
-        }
+        [self searchBarTextDidBeginEditing:search];
     }
 
-    [self.recent_location setSelectedSegmentIndex:0];
 
     if (!emailEntry && !phoneNumEntry)
     {
@@ -265,7 +167,6 @@
 
         [self.glyphEmail setAlpha: 0];
 
-        [self.recent_location setTintColor:kNoochBlue];
         [search setTintColor:kNoochBlue];
 
         isphoneBook = NO;
@@ -318,11 +219,9 @@
 {
     [super viewDidAppear:animated];
 
-    //[self facebook];
-
     if ((ABAddressBookGetAuthorizationStatus() == kABAuthorizationStatusDenied ||
-        ABAddressBookGetAuthorizationStatus() == kABAuthorizationStatusRestricted) &&
-        !isAddRequest && !emailEntry && !phoneNumEntry)
+         ABAddressBookGetAuthorizationStatus() == kABAuthorizationStatusRestricted) &&
+         !emailEntry && !phoneNumEntry)
     {
         NSLog(@"Contacts permission denied");
         NSLog(@"screenLoadedTimes is: %d  and  shouldNotDisplayContactsAlert is: %d",screenLoadedTimes,[user boolForKey:@"shouldNotDisplayContactsAlert"]);
@@ -376,7 +275,7 @@
 
 -(void)backPressed_SelectRecip
 {
-    [[assist shared]setneedsReload:NO]; //Going right back to Home, so don't really need to reload
+    [[assist shared] setneedsReload:NO]; //Going right back to Home, so don't really need to reload
 
     [self.navigationItem setLeftBarButtonItem:nil];
     [self.navigationController popViewControllerAnimated:YES];
@@ -392,34 +291,6 @@
     [self.navigationController pushViewController:goHome animated:YES];
 }
 
--(void)DoneEditing_RequestMultiple:(id)sender
-{
-    if ([[[assist shared]getArray] count] == 0)
-    {
-        UIAlertView *alert=[[UIAlertView alloc]initWithTitle:@"But Whooo?"
-                                                     message:@"\xF0\x9F\x98\x95\nPlease select at least one recipient. Otherwise it makes it way harder to know where to send your request!"
-                                                    delegate:Nil
-                                           cancelButtonTitle:@"OK"
-                                           otherButtonTitles:Nil, nil];
-        [alert show];
-        return;
-    }
-    [search resignFirstResponder];
-
-    if (navIsUp == YES) {
-        navIsUp = NO;
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [self lowerNavBar];
-        });
-    }
-    isAddRequest = NO;
-    isFromHome = NO;
-    isFromMyApt = NO;
-
-    HowMuch * how_much = [[HowMuch alloc] init];
-    [self.navigationController pushViewController:how_much animated:YES];
-}
-
 -(void)lowerNavBar
 {
     NSLog(@"LOWER NAV BAR FIRED!");
@@ -430,16 +301,12 @@
                                  options:0 << 16
                               animations:^{
                                   [UIView addKeyframeWithRelativeStartTime:0 relativeDuration:1 animations:^{
-                                      [self.recent_location setFrame:CGRectMake(7, 6, 306, 30)];
-                                      [self.recent_location setAlpha: 1];
                                       [self.view setBackgroundColor:[UIColor whiteColor]];
                                       [self.contacts setFrame:CGRectMake(0, 82, 320, [[UIScreen mainScreen] bounds].size.height - 147)];
-                                      [self.glyph_recent setAlpha: 1];
-                                      [self.glyph_location setAlpha: 1];
+
                                       search.placeholder = @"Search by Name or Enter an Email";
                                       [search setFrame:CGRectMake(0, 40, 320, 40)];
                                       [search setImage:[UIImage imageNamed:@"search_blue"] forSearchBarIcon:UISearchBarIconSearch state:UIControlStateNormal];
-
                                   }];
                               } completion: nil
     ];
@@ -621,8 +488,6 @@
     
     if (sender.selectedSegmentIndex == 0)
     {
-        self.location = NO;
-
         if (![self.view.subviews containsObject:self.hud])
         {
             RTSpinKitView * spinner1 = [[RTSpinKitView alloc] initWithStyle:RTSpinKitViewStyleArcAlt];
@@ -632,8 +497,6 @@
             self.hud.detailsLabelText = nil;
             [self.hud show:YES];
         }
-        [self.glyph_recent setTextColor: [UIColor whiteColor]];
-        [self.glyph_location setTextColor: kNoochBlue];
 
         serve *recents = [serve new];
         [recents setTagName:@"recents"];
@@ -642,12 +505,6 @@
     }
     else
     {
-        [self.glyph_recent setTextColor:kNoochBlue];
-        [self.glyph_location setTextColor: [UIColor whiteColor]];
-        
-        self.location = YES;
-        [search setHidden:YES];
-
         if ([self.view.subviews containsObject:self.noContact_img])
         {
             [UIView animateKeyframesWithDuration:.3
@@ -677,186 +534,7 @@
                                       
                                   }
          ];
-        
-
-        //location
-        locationManager = [[CLLocationManager alloc] init];
-
-        locationManager.delegate = self;
-        locationManager.distanceFilter = kCLDistanceFilterNone; // whenever we move
-        locationManager.desiredAccuracy = kCLLocationAccuracyHundredMeters; // 100 m
-
-        if ([CLLocationManager authorizationStatus] == kCLAuthorizationStatusNotDetermined)
-        {
-            locationUpdateDelay = 0.6; // Setting the time for a delay so the server can receive the location and update the DB before trying to caluculate nearby users (otherwise it will not have time and may just use "0,0")
-            if ([locationManager respondsToSelector:@selector(requestWhenInUseAuthorization)]) { // iOS8+
-                // Sending a message to avoid compile time error
-                
-                [[UIApplication sharedApplication] sendAction:@selector(requestWhenInUseAuthorization)
-                                                           to:locationManager
-                                                         from:self
-                                                     forEvent:nil];
-            }
-            [locationManager startUpdatingLocation];
-        }
-        else if ([CLLocationManager authorizationStatus] == kCLAuthorizationStatusDenied)
-        {
-            UIAlertView * alert = [[UIAlertView alloc]initWithTitle:NSLocalizedString(@"SelectRecip_NoLocAlertTitle", @"Select Recipient No Location Alert Title")
-                                                            message:NSLocalizedString(@"SelectRecip_NoLocAlertBody", @"Select Recipient No Locaiton Alert Body Text")
-                                                           delegate:Nil
-                                                  cancelButtonTitle:@"OK"
-                                                  otherButtonTitles:Nil, nil];
-            [alert show];
-            
-            [self displayEmpty_SearchByLocation];
-        }
-        else if ([CLLocationManager authorizationStatus] == kCLAuthorizationStatusAuthorized  ||
-                 [CLLocationManager authorizationStatus] == kCLAuthorizationStatusAuthorizedWhenInUse)
-        {
-            locationUpdateDelay = 0;
-
-            [self.recents removeAllObjects];
-            [self.contacts reloadData];
-
-            RTSpinKitView * spinner2 = [[RTSpinKitView alloc] initWithStyle:RTSpinKitViewStyleWordPress];
-            spinner2.color = [UIColor whiteColor];
-            self.hud.customView = spinner2;
-            self.hud.labelText = NSLocalizedString(@"SelectRecip_LoadingLocation", @"Select Recipient Find By Location Loading Text");
-            self.hud.detailsLabelText = nil;
-            [self.hud show:YES];
-
-            [locationManager startUpdatingLocation];
-        }
     }
-}
-
--(void)displayEmpty_SearchByLocation
-{
-    [self.hud hide:YES];
-
-    self.backgroundImage = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"SplashPageBckgrnd-568h@2x.png"]];
-    [self.backgroundImage setAlpha:0];
-    [self.view addSubview:self.backgroundImage];
-    [self.view sendSubviewToBack:self.backgroundImage];
-
-    NSShadow * shadow_white = [[NSShadow alloc] init];
-    shadow_white.shadowColor = [UIColor whiteColor];
-    shadow_white.shadowOffset = CGSizeMake(0, 1.0);
-    NSDictionary * shadowWhite = @{NSShadowAttributeName: shadow_white};
-
-    NSShadow * shadow_Dark = [[NSShadow alloc] init];
-    shadow_Dark.shadowColor = Rgb2UIColor(88, 90, 92, .85);
-    shadow_Dark.shadowOffset = CGSizeMake(0, -2.5);
-    NSDictionary * shadowDark = @{NSShadowAttributeName: shadow_Dark};
-
-    self.glyph_emptyLoc = [[UILabel alloc] initWithFrame:CGRectMake(20, 70, 280, 74)];
-    [self.glyph_emptyLoc setFont:[UIFont fontWithName:@"FontAwesome" size:72]];
-    self.glyph_emptyLoc.attributedText = [[NSAttributedString alloc] initWithString:[NSString fontAwesomeIconStringForIconIdentifier:@"fa-map-marker"] attributes:shadowDark];
-    [self.glyph_emptyLoc setTextAlignment:NSTextAlignmentCenter];
-    [self.glyph_emptyLoc setTextColor: kNoochGrayLight];
-    [self.glyph_emptyLoc setAlpha:0];
-    [self.view addSubview:self.glyph_emptyLoc];
-
-    self.emptyLocHdr = [[UILabel alloc] initWithFrame:CGRectMake(20, 146, 280, 40)];
-    [self.emptyLocHdr setFont:[UIFont fontWithName:@"Roboto-regular" size: 23]];
-    self.emptyLocHdr.attributedText = [[NSAttributedString alloc] initWithString:NSLocalizedString(@"SelectRecip_NoNearbyUsers", @"Select Recipient No Nearby Users Title") attributes:shadowWhite];
-    [self.emptyLocHdr setTextColor:kNoochGrayLight];
-    [self.emptyLocHdr setTextAlignment:NSTextAlignmentCenter];
-    [self.emptyLocHdr setAlpha:0];
-    [self.view addSubview: self.emptyLocHdr];
-    
-    self.emptyLocBody = [[UILabel alloc] initWithFrame:CGRectMake(16, 185, 288, 95)];
-    [self.emptyLocBody setFont:[UIFont fontWithName:@"Roboto-light" size: 18]];
-    self.emptyLocBody.attributedText = [[NSAttributedString alloc] initWithString:NSLocalizedString(@"SelectRecip_NoNearbyUsersBody", @"Select Recipient No Nearby Users Body Text") attributes:shadowWhite];
-    [self.emptyLocBody setTextColor:kNoochGrayLight];
-    [self.emptyLocBody setTextAlignment:NSTextAlignmentCenter];
-    [self.emptyLocBody setNumberOfLines:0];
-    [self.emptyLocBody setAlpha:0];
-    [self.view addSubview: self.emptyLocBody];
-
-    [UIView animateKeyframesWithDuration:0.45
-                                   delay:0
-                                 options:2 << 16
-                              animations:^{
-                                  [UIView addKeyframeWithRelativeStartTime:0 relativeDuration:.7 animations:^{
-                                      self.contacts.alpha = 0;
-                                      [self.backgroundImage setAlpha: .5];
-                                  }];
-                                  [UIView addKeyframeWithRelativeStartTime:.25 relativeDuration:.75 animations:^{
-                                      [self.emptyLocHdr setAlpha:1];
-                                      [self.emptyLocBody setAlpha:1];
-                                      [self.glyph_emptyLoc setStyleClass:@"animate_bubble_noAlpha"];
-                                      [self.glyph_emptyLoc setAlpha:1];
-                                  }];
-                              } completion: ^(BOOL finished){
-                                  [search setHidden:YES];
-                              }
-     ];
-}
-
-# pragma mark - CLLocationManager Delegate Methods
-- (void)locationManager:(CLLocationManager *)manager
-     didUpdateLocations:(NSArray *)locations
-{
-    [locationManager stopUpdatingLocation];
-
-    CLLocationCoordinate2D loc = manager.location.coordinate;
-
-    [[assist shared] setlocationAllowed:YES];
-
-    serve * serveOBJ = [serve new];
-    [serveOBJ UpDateLatLongOfUser:[[NSString alloc] initWithFormat:@"%f",loc.latitude]
-                              lng:[[NSString alloc] initWithFormat:@"%f",loc.longitude]];
-
-
-    NSString * searchRadiusString = [ARPowerHookManager getValueForHookById:@"srchRds"];
-    short searchRadiusInt = [searchRadiusString integerValue];
-
-    if (searchRadiusInt < 2) // Just in case value from Artisan is unavailable for some reason, we'll use a default of 12M
-    {
-        searchRadiusString = @"12";
-    }
-
-    serve * ser = [serve new];
-    ser.tagName = @"searchByLocation";
-    [ser setDelegate:self];
-    [ser performSelector:@selector(getLocationBasedSearch:) withObject:searchRadiusString afterDelay:locationUpdateDelay];
-}
-
-- (void)locationManager:(CLLocationManager *)manager
-       didFailWithError:(NSError *)error
-{
-    [[assist shared] setlocationAllowed:NO];
-    
-    NSLog(@"Select Recipient - Location Tab: Location Mgr Error : %@",error);
-
-    [self.hud hide:YES];
-    if ([error code] == kCLErrorDenied)
-    {
-        UIAlertView * alert = [[UIAlertView alloc]initWithTitle:NSLocalizedString(@"SelectRecip_NeedLocAccessTitle", @"Select Recipient Need Location Alert Title")
-                                                        message:NSLocalizedString(@"SelectRecip_NeedLocAccessBody", @"Select Recipient Need Location Alert Body Text")
-                                                       delegate:Nil
-                                              cancelButtonTitle:@"OK"
-                                              otherButtonTitles:Nil, nil];
-        [alert show];
-    }
-    else
-    {
-        [self performSelector:@selector(simulateSegControlChanged) withObject:Nil afterDelay:1.5];
-
-        UIAlertView * alert = [[UIAlertView alloc]initWithTitle:@"Location Error"
-                                                        message:@"Sorry to say, but we're having trouble getting your location to find nearby users. Please try again or contact Nooch support so we can exterminate any bugs!"
-                                                       delegate:Nil
-                                              cancelButtonTitle:@"OK"
-                                              otherButtonTitles:Nil, nil];
-        [alert show];
-    }
-}
-
-- (void)simulateSegControlChanged
-{
-    self.recent_location.selectedSegmentIndex = 0;
-    [self.recent_location sendActionsForControlEvents:UIControlEventValueChanged];
 }
 
 -(void)phonebook:(id)sender
@@ -1036,8 +714,6 @@
 
     [self.glyphEmail setAlpha: 0];
 
-    [self.recent_location setTintColor:kNoochBlue];
-
     searchBar.searchBarStyle = UISearchBarStyleMinimal;
     [searchBar resignFirstResponder];
     [searchBar setText:@""];
@@ -1056,11 +732,9 @@
 
 -(void)searchBarTextDidBeginEditing:(UISearchBar *)searchBar
 {
-    if (!isAddRequest)
-    {
-        [self.navigationController setNavigationBarHidden:YES animated:YES];
-        navIsUp = YES;
-    }
+
+    [self.navigationController setNavigationBarHidden:YES animated:YES];
+    navIsUp = YES;
 
     [search setTintColor:[UIColor whiteColor]]; // For the 'Cancel' text
 
@@ -1069,10 +743,7 @@
                                  options:0 << 16
                               animations:^{
                                   [UIView addKeyframeWithRelativeStartTime:0 relativeDuration:.2 animations:^{
-                                      if (!isAddRequest)
-                                      {
-                                          [self.contacts setFrame:CGRectMake(0, 70, 320, [[UIScreen mainScreen] bounds].size.height - 56)];
-                                      }
+                                      [self.contacts setFrame:CGRectMake(0, 70, 320, [[UIScreen mainScreen] bounds].size.height - 56)];
                                   }];
                                   [UIView addKeyframeWithRelativeStartTime:0 relativeDuration:.6 animations:^{
                                       if ([self.view.subviews containsObject:self.noContact_img])
@@ -1081,25 +752,12 @@
                                       }
                                       [self.view setBackgroundColor:kNoochBlue];
                                       [self.contacts setAlpha:1];
-                                      if (!isAddRequest)
-                                      {
-                                          [self.recent_location setTintColor:kNoochBlue];
-                                          [self.recent_location setAlpha:0];
-                                          [self.glyph_recent setAlpha: 0];
-                                          [self.glyph_location setAlpha: 0];
-                                      }
-                                      else
-                                      {
-                                          [self.recent_location setTintColor:[UIColor whiteColor]];
-                                      }
+
                                       [search setImage:[UIImage imageNamed:@"search_white"] forSearchBarIcon:UISearchBarIconSearch state:UIControlStateNormal];
                                   }];
                                   [UIView addKeyframeWithRelativeStartTime:0 relativeDuration:1 animations:^{
-                                      if (!isAddRequest)
-                                      {
-                                          [self.recent_location setFrame:CGRectMake(7, -8, 306, 30)];
-                                          [searchBar setFrame:CGRectMake(0, 24, 320, 40)];
-                                      }
+                                      [searchBar setFrame:CGRectMake(0, 24, 320, 40)];
+
                                       searchBar.placeholder = @"";
                                   }];
                               } completion: ^(BOOL finished){
@@ -1185,10 +843,6 @@
             if (isRange.location < searchText.length - 1)
             {
                 shouldAnimate = NO;
-            }
-
-            if ([[assist shared] isRequestMultiple]) {
-                return;
             }
         }
         else
@@ -1515,26 +1169,6 @@
         [[assist shared] addAssos:additions];
     }
 
-    /* else if ([tagName isEqualToString:@"fb"])
-    {
-        NSError *error;
-        NSMutableDictionary *temp = [NSJSONSerialization
-                                     JSONObjectWithData:[result dataUsingEncoding:NSUTF8StringEncoding]
-                                     options:kNilOptions
-                                     error:&error];
-        NSLog(@"fb storing %@",temp);
-        if ([[temp valueForKey:@"Result"]isEqualToString:@"Success"])
-        {
-            UIAlertView *av = [[UIAlertView alloc] initWithTitle:@"whoo!" message:@"You account has been connected to facebook successfully." delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
-            [av show];
-        }
-        else
-        {
-            UIAlertView *av = [[UIAlertView alloc] initWithTitle:@"whoo!" message:[temp valueForKey:@"Result"] delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
-            [av show];
-        }
-    } */
-
     else if ([tagName isEqualToString:@"recents"])
     {
         if ([self.view.subviews containsObject:self.hud])
@@ -1559,50 +1193,6 @@
 
         self.recents = temp.mutableCopy;
         [[assist shared] addAssos:[self.recents mutableCopy]];
-
-        if ([[assist shared] isRequestMultiple])
-        {
-            searching = NO;
-            emailEntry = NO;
-            isRecentList = YES;
-            isphoneBook = NO;
-
-            [self.contacts setStyleId:@"select_recipient"];
-
-            [search resignFirstResponder];
-            [search setText:@""];
-            [search setShowsCancelButton:NO];
-
-            arrRequestPersons = [self.recents mutableCopy];
-            //NSLog(@"%@",arrRequestPersons);
-
-            if ([arrRequestPersons count] == 0) {
-                arrRequestPersons = [self.recents mutableCopy];
-            }
-            else
-            {
-                int loc=-1;
-                for (int i = 0; i < [self.recents count]; i++) {
-                    NSDictionary * dict = [self.recents objectAtIndex:i];
-                    
-                    for (int j = 0; j < [arrRequestPersons count]; j++)
-                    {
-                        NSDictionary * dictSub = [arrRequestPersons objectAtIndex:j];
-                        if ([[dict valueForKey:@"MemberId"]caseInsensitiveCompare:[dictSub valueForKey:@"MemberId"]] == NSOrderedSame)
-                            loc = 1;
-                    }
-                    if (loc == -1) {
-                        [arrRequestPersons addObject:dict];
-                    }
-                    else
-                        loc=-1;
-                }
-            }
-            //NSLog(@"%@",arrRequestPersons);
-
-            [self.contacts reloadData];
-            //return;
-        }
 
         [self.hud hide:YES];
         if ([self.recents count] > 0)
@@ -1635,9 +1225,6 @@
                                       animations:^{
                                           [UIView addKeyframeWithRelativeStartTime:0 relativeDuration:.6 animations:^{
                                               [self.backgroundImage setAlpha: 0];
-                                              [self.glyph_emptyLoc setAlpha:0];
-                                              [self.emptyLocHdr setAlpha:0];
-                                              [self.emptyLocBody setAlpha:0];
                                               [search setHidden:NO];
                                           }];
                                           [UIView addKeyframeWithRelativeStartTime:.2 relativeDuration:.8 animations:^{
@@ -1658,47 +1245,6 @@
         {
             [self displayFirstTimeUserImg];
         }
-    }
-
-    else if ([tagName isEqualToString:@"searchByLocation"])
-    {
-        NSError * error;
-        self.recents = [NSJSONSerialization
-                        JSONObjectWithData:[result dataUsingEncoding:NSUTF8StringEncoding]
-                        options:kNilOptions
-                        error:&error];
-    
-        self.recents = [self.recents mutableCopy];
-
-        if ([self.recents count] > 0)
-        {
-            for (int i = 0; i < [ self.recents count]; i++)
-            {
-                for (int j = i + 1; j < [ self.recents count]; j++)
-                {
-                    NSDictionary * recordOne = [ self.recents objectAtIndex:i];
-                    NSDictionary * recordTwo = [ self.recents objectAtIndex:j];
-                    
-                    if ([[recordOne valueForKey:@"Miles"] floatValue] > [[recordTwo valueForKey:@"Miles"] floatValue])
-                    {
-                        [ self.recents exchangeObjectAtIndex:i withObjectAtIndex:j];
-                    }
-                }   
-            }
-
-            [self.noContact_img removeFromSuperview];
-            [self.contacts setStyleId:@"select_recipient"];
-            if ([self.contacts isHidden]) {
-                [self.contacts setHidden:NO];
-            }
-            [self.contacts setAlpha:1];
-            [self.contacts reloadData];
-        }
-        else
-        {
-            [self displayEmpty_SearchByLocation];
-        }
-        [self.hud hide:YES];
     }
 
     else if ([tagName isEqualToString:@"emailCheck"])
@@ -1729,19 +1275,6 @@
 
             [self.navigationItem setLeftBarButtonItem:nil];
 
-            if ([[assist shared]isRequestMultiple])
-            {
-                searching = NO;
-                emailEntry = NO;
-                isRecentList = NO;
-                isphoneBook = NO;
-                [search resignFirstResponder];
-                [search setText:@""];
-                [search setShowsCancelButton:NO];
-                [self.contacts reloadData];
-                return;
-            }
-
             NSMutableDictionary * dict = [[NSMutableDictionary alloc] init];
             if (isphoneBook)
             {
@@ -1754,7 +1287,6 @@
             
             [dict setObject:@"nonuser" forKey:@"nonuser"];
             isFromHome = NO;
-            isFromMyApt = NO;
             isFromArtisanDonationAlert = NO;
 
             HowMuch * how_much = [[HowMuch alloc] initWithReceiver:dict];
@@ -1806,19 +1338,6 @@
 
             [self.navigationItem setLeftBarButtonItem:nil];
 
-            if ([[assist shared]isRequestMultiple])
-            {
-                searching = NO;
-                emailEntry = NO;
-                isRecentList = NO;
-                isphoneBook = NO;
-                [search resignFirstResponder];
-                [search setText:@""];
-                [search setShowsCancelButton:NO];
-                [self.contacts reloadData];
-                return;
-            }
-
             NSMutableDictionary * dict = [[NSMutableDictionary alloc] init];
             if (isphoneBook)
             {
@@ -1831,7 +1350,6 @@
             
             [dict setObject:@"nonuser" forKey:@"nonuser"];
             isFromHome = NO;
-            isFromMyApt = NO;
             isFromArtisanDonationAlert = NO;
 
             HowMuch * how_much = [[HowMuch alloc] initWithReceiver:dict];
@@ -1850,64 +1368,25 @@
                              JSONObjectWithData:[result dataUsingEncoding:NSUTF8StringEncoding]
                              options:kNilOptions
                              error:&error]];
-        
-        if ([[assist shared]isRequestMultiple])
-        {
-            emailEntry = YES;
-            int loc = 0;
 
-            for (int i = 0; i < [arrRequestPersons count]; i++)
-            {
-                if ([[[arrRequestPersons objectAtIndex:i]valueForKey:@"MemberId"]isEqualToString:[dict valueForKey:@"MemberId"]])
-                {
-                    loc = 1;
-                }
-            }
-
-            if (loc == 0) {
-                NSString * PhotoUrl = [dict valueForKey:@"PhotoUrl"];
-                [dict setObject:PhotoUrl forKey:@"Photo"];
-                [arrRequestPersons addObject:dict];
-            }
-            [self.contacts reloadData];
-            [self.hud hide:YES];
-            return;
+        if (navIsUp == YES) {
+            navIsUp = NO;
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [self lowerNavBar];
+            });
         }
-        else
-        {
-            if (navIsUp == YES) {
-                navIsUp = NO;
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    [self lowerNavBar];
-                });
-            }
-            [self.navigationItem setLeftBarButtonItem:nil];
+        [self.navigationItem setLeftBarButtonItem:nil];
 
-            int loc = 0;
+            NSString * PhotoUrl = [dict valueForKey:@"PhotoUrl"];
+            [dict setObject:PhotoUrl forKey:@"Photo"];
 
-            for (int i = 0; i < [arrRequestPersons count]; i++)
-            {
-                if ([[[arrRequestPersons objectAtIndex:i]valueForKey:@"MemberId"]isEqualToString:[dict valueForKey:@"MemberId"]]) {
-                    loc=1;  
-                }
-            }
+        [self.hud hide:YES];
 
-            if (loc == 0)
-            {
-                NSString * PhotoUrl = [dict valueForKey:@"PhotoUrl"];
-                [dict setObject:PhotoUrl forKey:@"Photo"];
-                [arrRequestPersons addObject:dict];
-            }
+        isFromHome = NO;
+        isFromArtisanDonationAlert = NO;
 
-            [self.hud hide:YES];
-
-            isFromHome = NO;
-            isFromMyApt = NO;
-            isFromArtisanDonationAlert = NO;
-
-            HowMuch *how_much = [[HowMuch alloc] initWithReceiver:dict];
-            [self.navigationController pushViewController:how_much animated:YES];
-        }
+        HowMuch *how_much = [[HowMuch alloc] initWithReceiver:dict];
+        [self.navigationController pushViewController:how_much animated:YES];
     }
 }
 
@@ -1932,9 +1411,6 @@
                               animations:^{
                                   [UIView addKeyframeWithRelativeStartTime:0 relativeDuration:.6 animations:^{
                                       [self.backgroundImage setAlpha: 0];
-                                      [self.glyph_emptyLoc setAlpha:0];
-                                      [self.emptyLocHdr setAlpha:0];
-                                      [self.emptyLocBody setAlpha:0];
                                       [search setHidden:NO];
                                       [self.contacts setAlpha: 0];
                                   }];
@@ -1977,10 +1453,7 @@
 
     if (section == 0)
     {
-        if (self.location) {
-            title.text = NSLocalizedString(@"SelectRecip_NearbyUsers", @"Select Recipient Nearby Users");
-        }
-        else if (searching) {
+        if (searching) {
             title.text = NSLocalizedString(@"SelectRecip_SearchResults", @"Select Recipient Search Results");
         }
         else if (isRecentList) {
@@ -2007,10 +1480,6 @@
     if (searching)
     {
         return [arrSearchedRecords count];
-    }
-    else if ([[assist shared] isRequestMultiple])
-    {
-        return [arrRequestPersons count];
     }
     else if (emailEntry)
     {
@@ -2055,95 +1524,7 @@
     [cell.contentView addSubview:pic];
     [cell.contentView addSubview:npic];
 
-    if (self.location)
-    {
-        [cell.textLabel setTextColor:kNoochGrayLight];
-        cell.indentationLevel = 1;
-        cell.indentationWidth = 46;
-        [cell.textLabel setStyleClass:@"select_recipient_pending_name"];
-
-        NSDictionary * temp;
-
-        if ([[assist shared] isRequestMultiple])
-        {
-            temp = [arrRequestPersons objectAtIndex:indexPath.row];
-            arrRecipientsForRequest=[[[assist shared] getArray] mutableCopy];
-
-            int loc = -1;
-            
-            for (int i = 0; i < [arrRecipientsForRequest count]; i++)
-            {
-                NSDictionary * dictionary = [arrRecipientsForRequest objectAtIndex:i];
-                if ([[dictionary valueForKey:@"MemberId"]isEqualToString:temp[@"MemberId"]]) {
-                    loc = 1;
-                }
-            }
-            if (loc == 1) {
-                cell.accessoryType = UITableViewCellAccessoryCheckmark;
-            }
-            else {
-                cell.accessoryType = UITableViewCellAccessoryNone;
-            }
-            
-        }
-        else
-        {
-            temp = [self.recents objectAtIndex:indexPath.row];
-        }
-        
-        UIImageView * pic = [[UIImageView alloc] initWithFrame:CGRectMake(10, 10, 50, 50)];
-        [pic setFrame:CGRectMake(16, 6, 50, 50)];
-        pic.layer.cornerRadius = 25;
-        pic.clipsToBounds = YES;
-        [pic sd_setImageWithURL:[NSURL URLWithString:temp[@"Photo"]] placeholderImage:[UIImage imageNamed:@"profile_picture.png"]];
-        [cell.contentView addSubview:pic];
-
-        NSString * name = [NSString stringWithFormat:@"   %@ %@",[[temp objectForKey:@"FirstName"] capitalizedString],[[temp objectForKey:@"LastName"] capitalizedString]];
-        [cell.textLabel setText:name];
-
-        NSString * miles;
-        
-        if ([[temp objectForKey:@"Miles"] shortValue] < 1)
-        {
-            float threshold = 150;
-            threshold /= 5280;
-
-            if ([[temp objectForKey:@"Miles"] floatValue] > threshold)
-            {
-                miles = [NSString stringWithFormat:@"     %.0f feet",([[temp objectForKey:@"Miles"] floatValue] * 5280)];
-            }
-            else
-            {
-                miles = @"     < 150 feet";
-            }
-        }
-        else
-        {
-            miles = [NSString stringWithFormat:@"     %.0f miles",[[temp objectForKey:@"Miles"] floatValue]];
-        }
-        [cell.detailTextLabel setText:miles];
-        
-        for (NSString * key in [assist shared].assos.allKeys)
-        {
-            NSDictionary * person = [assist shared].assos[key];
-            if ([person[@"MemberId"] isEqualToString:temp[@"MemberId"]])
-            {
-                UIImageView * ab = [UIImageView new];
-                [ab setStyleClass:@"addressbook-icons"];
-                ab.layer.cornerRadius = 4;
-                [ab setStyleClass:@"animate_bubble"];
-                [cell.contentView addSubview:ab];
-                break;
-            }
-        }
-        if (![[assist shared] isRequestMultiple])
-        {
-            [pic setStyleClass:@"animate_bubble"];
-        }
-        return cell;
-    }
-
-    else if (searching)
+    if (searching)
     {
         // Nooch User
         npic.hidden = NO;
@@ -2176,14 +1557,6 @@
         }
         
         [cell.textLabel setStyleClass:@"select_recipient_name"];
-
-        /*if (info[@"facebookId"])
-        {
-            UILabel * fb = [UILabel new];
-            [fb setStyleClass:@"facebook_glyph"];
-            [fb setText:[NSString fontAwesomeIconStringForIconIdentifier:@"fa-facebook"]];
-            [cell.contentView addSubview:fb];
-        }*/
 
         if (info[@"MemberId"]) {
             [cell.contentView addSubview:npic];
@@ -2259,70 +1632,7 @@
             [cell.contentView addSubview:phoneOrEmailLabel];
         }
 
-        if ([[assist shared] isRequestMultiple])
-        {
-            [npic removeFromSuperview];
-            arrRecipientsForRequest = [[[assist shared] getArray] mutableCopy];
-            if ([arrRecipientsForRequest containsObject:info]) {
-                cell.accessoryType=UITableViewCellAccessoryCheckmark;
-            }
-            else
-                cell.accessoryType=UITableViewCellAccessoryNone;
-        }
-        else
-            cell.accessoryType=UITableViewCellAccessoryNone;
-
-    }
-
-    else if ([[assist shared] isRequestMultiple])
-    {
-        [npic setFrame:CGRectMake(278, 19, 23, 27)];
-        [npic setImage:[UIImage imageNamed:@"n_icon_46x54.png"]];
-
-        NSDictionary *info = [arrRequestPersons objectAtIndex:indexPath.row];
-        [pic sd_setImageWithURL:[NSURL URLWithString:info[@"Photo"]]
-            placeholderImage:[UIImage imageNamed:@"profile_picture.png"]];
-        pic.hidden=NO;
-        cell.indentationWidth = 50;
-        [pic setFrame:CGRectMake(16, 6, 50, 50)];
-        pic.layer.cornerRadius = 25;
-        [cell setIndentationLevel:1];
-        cell.textLabel.text = [NSString stringWithFormat:@"   %@ %@",[info[@"FirstName"] capitalizedString],[info[@"LastName"] capitalizedString]];
-        [cell.textLabel setStyleClass:@"select_recipient_name"];
-
-        [npic removeFromSuperview];
-        arrRecipientsForRequest=[[[assist shared] getArray] mutableCopy];
-        //NSLog(@"arrRecipientsForRequest: %@",arrRecipientsForRequest);
-
-        int loc =- 1;
-
-        for (int i = 0; i < [arrRecipientsForRequest count]; i++)
-        {
-            NSDictionary * dictionary = [arrRecipientsForRequest objectAtIndex:i];
-            if ([[dictionary valueForKey:@"MemberId"]caseInsensitiveCompare:info[@"MemberId"]] == NSOrderedSame) {
-                loc = 1;
-            }
-        }
-
-        if (loc == 1)
-        {
-             cell.accessoryType=UITableViewCellAccessoryCheckmark;
-        }
-        else
-        {
-            //loc=-1;
-            cell.accessoryType=UITableViewCellAccessoryNone;
-        }
-
-        if ([[[assist shared] assos] objectForKey:info[@"UserName"]])
-        {
-            if ([[assist shared] assos][info[@"UserName"]][@"addressbook"])
-            {
-                UIImageView *ab = [UIImageView new];
-                [ab setStyleClass:@"addressbook-icons"];
-                [cell.contentView addSubview:ab];
-            }
-        }
+        cell.accessoryType=UITableViewCellAccessoryNone;
     }
 
     else if (isRecentList)
@@ -2354,10 +1664,8 @@
                 [cell.contentView addSubview:ab];
             }
         }
-        if (![[assist shared] isRequestMultiple])
-        {
-            [pic setStyleClass:@"animate_bubble"];
-        }
+
+        [pic setStyleClass:@"animate_bubble"];
     }
     
     else if (emailEntry || phoneNumEntry)
@@ -2405,49 +1713,6 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
-
-    if ([[assist shared] isRequestMultiple])
-    {
-        NSDictionary * receiver = [arrRequestPersons objectAtIndex:indexPath.row];
-
-        if (searching) {
-            receiver = [arrSearchedRecords objectAtIndex:indexPath.row];
-        }
-
-        arrRecipientsForRequest = [[[assist shared] getArray] mutableCopy];
-        int loc = -1;
-        for (int i = 0; i < [arrRecipientsForRequest count]; i++)
-        {
-            NSDictionary * dictionary = [arrRecipientsForRequest objectAtIndex:i];
-            if ([[dictionary valueForKey:@"UserName"]isEqualToString:receiver[@"UserName"]]) {
-                loc = 1;
-            }
-            else
-                loc = -1;
-        }
-        if (loc == 1)
-        {
-            [arrRecipientsForRequest removeObject:receiver];
-            [[assist shared]setArray:[arrRecipientsForRequest mutableCopy]];
-        }
-        else
-        {
-            if ([[[assist shared]getArray] count] == 10)
-            {
-                UIAlertView *alert = [[UIAlertView alloc]initWithTitle:NSLocalizedString(@"SelectRecip_TooManyRecipAlertTitle", @"Select Recipient Too Many Recipients Alert Title")
-                                                               message:[NSString stringWithFormat:@"\xE2\x98\x9D\n%@", NSLocalizedString(@"SelectRecip_TooManyRecipAlertBody", @"Select Recipient Too Many Recipients Alert Body Text")]
-                                                              delegate:Nil
-                                                     cancelButtonTitle:@"OK"
-                                                     otherButtonTitles:Nil, nil];
-                [alert show];
-                return;
-            }
-            [arrRecipientsForRequest addObject:receiver];
-            [[assist shared]setArray:[arrRecipientsForRequest mutableCopy]];
-        }
-        [tableView reloadData];
-        return;
-    }
 
     if (phoneNumEntry)
     {
@@ -2666,7 +1931,6 @@
         }
 
         isFromHome = NO;
-        isFromMyApt = NO;
         isFromArtisanDonationAlert = NO;
 
         HowMuch * how_much = [[HowMuch alloc] initWithReceiver:receiver];
@@ -2683,7 +1947,6 @@
         }
         [self.navigationItem setLeftBarButtonItem:nil];
         isFromHome = NO;
-        isFromMyApt = NO;
         isFromArtisanDonationAlert = NO;
 
         NSDictionary * receiver = [self.recents objectAtIndex:indexPath.row];
@@ -2714,33 +1977,13 @@
     {
         [search becomeFirstResponder];
         
-        /*if ([UIAlertController class]) // for iOS 8
-        {
-            UIAlertController * alert = [UIAlertController
-                                         alertControllerWithTitle:@"Try A Different Email"
-                                         message:@"\xF0\x9F\x93\xA7\nTo protect all Nooch accounts, we ask that you please only make payments to a regular (not anonymous) email address."
-                                         preferredStyle:UIAlertControllerStyleAlert];
-            
-            UIAlertAction * ok = [UIAlertAction
-                                  actionWithTitle:@"OK"
-                                  style:UIAlertActionStyleDefault
-                                  handler:^(UIAlertAction * action)
-                                  {
-                                      [alert dismissViewControllerAnimated:YES completion:nil];
-                                  }];
-            [alert addAction:ok];
-            
-            [self presentViewController:alert animated:YES completion:nil];
-        }
-        else  // for iOS 7 and prior
-        {
-          */UIAlertView *av = [[UIAlertView alloc] initWithTitle:@"Try A Different Email"
+        UIAlertView *av = [[UIAlertView alloc] initWithTitle:@"Try A Different Email"
                                                          message:@"\xF0\x9F\x93\xA7\nTo protect all Nooch accounts, we ask that you please only make payments to a regular (not anonymous) email address."
                                                         delegate:self
                                                cancelButtonTitle:@"OK"
                                                otherButtonTitles:nil];
-            [av show];
-        //}
+        [av show];
+
         return false;
     }
     else

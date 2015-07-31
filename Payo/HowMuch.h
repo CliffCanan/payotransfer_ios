@@ -10,11 +10,11 @@
 #import "Home.h"
 #import "serve.h"
 BOOL isFromHome;
-BOOL isFromStats,isFromMyApt;
+BOOL isFromStats;
 BOOL isPayBack,isFromArtisanDonationAlert;
 BOOL isUserByLocation;
 
-@interface HowMuch : GAITrackedViewController<UITextFieldDelegate,serveD,UIImagePickerControllerDelegate, UINavigationControllerDelegate>
+@interface HowMuch : GAITrackedViewController<UITextFieldDelegate,serveD, UINavigationControllerDelegate>
 {
     NSString * transLimitFromArtisanString;
     int transLimitFromArtisanInt;

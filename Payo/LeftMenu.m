@@ -9,7 +9,6 @@
 #import "HistoryFlat.h"
 #import "SettingsOptions.h"
 #import "LimitsAndFees.h"
-#import "Statistics.h"
 #import "SendInvite.h"
 #import "ProfileInfo.h"
 #import "UIImageView+WebCache.h"
@@ -19,8 +18,6 @@
 #import "webView.h"
 #import "tour.h"
 #import "Appirater.h"
-#import "SelectApt.h"
-#import "MyApartment.h"
 
 @interface LeftMenu ()
 @property(nonatomic,strong) UITableView *menu;
@@ -342,35 +339,19 @@
     {
         if (indexPath.row == 0)
         {
-            cell.textLabel.attributedText = [[NSAttributedString alloc] initWithString:NSLocalizedString(@"LSidebar_Home", @"Left Sidebar Row Title - 'Home'")//@"Home"
+            cell.textLabel.attributedText = [[NSAttributedString alloc] initWithString:NSLocalizedString(@"LSidebar_Home", @"Left Sidebar Row Title - 'Home'")
                                                                             attributes:textAttributes];
             iv.attributedText = [[NSAttributedString alloc] initWithString:[NSString fontAwesomeIconStringForIconIdentifier:@"fa-home"] attributes:textAttributes];
         }
         else if (indexPath.row == 1)
         {
-            cell.textLabel.attributedText = [[NSAttributedString alloc] initWithString:NSLocalizedString(@"LSidebar_Hist", @"Left Sidebar Row Title - 'Transaction History'")//@"Transaction History"
+            cell.textLabel.attributedText = [[NSAttributedString alloc] initWithString:NSLocalizedString(@"LSidebar_Hist", @"Left Sidebar Row Title - 'Transaction History'")
                                                                             attributes:textAttributes];
             iv.attributedText = [[NSAttributedString alloc] initWithString:[NSString fontAwesomeIconStringForIconIdentifier:@"fa-clock-o"] attributes:textAttributes];
-
-            UILabel * pending_notif = [UILabel new];
-
-            if ([user boolForKey:@"hasPendingItems"] == true)
-            {
-                //  NSLog(@"The current pending count is: %@",[defaults objectForKey:@"Pending_count"]);
-                [pending_notif setText:[NSString stringWithFormat:@"%@",[user objectForKey:@"Pending_count"]]];
-                [pending_notif setFrame:CGRectMake(212, 10, 22, 22)];
-                [pending_notif setStyleId:@"pending_notif"];
-                [pending_notif setStyleId:@"pending_notif_lsideMenu"];
-                [cell.contentView addSubview:pending_notif];
-            }
-            else {
-                [pending_notif removeFromSuperview];
-            }
-            
         }
         else if (indexPath.row == 2)
         {
-            cell.textLabel.attributedText = [[NSAttributedString alloc] initWithString:NSLocalizedString(@"LSidebar_Stats", @"Left Sidebar Row Title - 'Statistics'")//@"Statistics"
+            cell.textLabel.attributedText = [[NSAttributedString alloc] initWithString:@"Settings"
                                                                             attributes:textAttributes];
             iv.attributedText = [[NSAttributedString alloc] initWithString:[NSString fontAwesomeIconStringForIconIdentifier:@"fa-line-chart"] attributes:textAttributes];
             [iv setStyleClass:@"lside_menu_icons_sm"];
@@ -383,14 +364,7 @@
             [iv setStyleClass:@"lside_menu_icons_sm"];
         }
     }
-    /*else if(indexPath.section == 9)
-    {
-        if (indexPath.row == 0) {
-            cell.textLabel.attributedText = [[NSAttributedString alloc] initWithString:NSLocalizedString(@"LSidebar_Donate", @"Left Sidebar Row Title - 'Donate to a Cause'")//@"Donate to a Cause"
-                                                                            attributes:textAttributes];
-            iv.text = [NSString fontAwesomeIconStringForIconIdentifier:@"fa-globe"];
-        }
-    }*/
+
     else if (indexPath.section == 1)
     {
         if (indexPath.row == 0)
@@ -463,25 +437,9 @@
         }
         else if (indexPath.row == 2)
         {
-            Statistics *stats = [[Statistics alloc] init];
-            [nav_ctrl pushViewController:stats animated:NO];
+            SettingsOptions * settings  = [[SettingsOptions alloc] init];
+            [nav_ctrl pushViewController:settings animated:NO];
             [self.slidingViewController resetTopView];
-        }
-        else if (indexPath.row == 3)
-        {
-            if (hasAptSet)
-            {
-                isFromPropertySearch = NO;
-                MyApartment * myApt = [[MyApartment alloc] init];
-                [nav_ctrl pushViewController: myApt animated:NO];
-                [self.slidingViewController resetTopView];
-            }
-            else
-            {
-                SelectApt * selectApt = [[SelectApt alloc] init];
-                [nav_ctrl pushViewController:selectApt animated:NO];
-                [self.slidingViewController resetTopView];
-            }
         }
     }
     else if (indexPath.section == 1)

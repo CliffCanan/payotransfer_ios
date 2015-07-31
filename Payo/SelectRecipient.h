@@ -14,8 +14,7 @@
 #import <AddressBookUI/AddressBookUI.h>
 #import "SpinKit/RTSpinKitView.h"
 
-BOOL isphoneBook, isAddRequest, isFromBankWebView;
-NSMutableArray*arrRecipientsForRequest;
+BOOL isphoneBook, isFromBankWebView;
 int screenLoadedTimes;
 
 @interface SelectRecipient : GAITrackedViewController<UITableViewDelegate,UITableViewDataSource,serveD,UISearchBarDelegate,ABPeoplePickerNavigationControllerDelegate,CLLocationManagerDelegate,UIActionSheetDelegate,MBProgressHUDDelegate>
@@ -32,7 +31,6 @@ int screenLoadedTimes;
     UIImageView *arrow;
     UILabel *em;
     NSArray *emailAddresses;
-    NSMutableArray*arrRequestPersons;
     CLLocationManager*locationManager;
     float locationUpdateDelay;
 }
