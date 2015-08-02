@@ -1,7 +1,7 @@
 //  SelectRecipient.m
 //  Nooch
 //
-//  Created by crks on 9/25/13.
+//  Created by Cliff Canan on 7/30/15.
 //  Copyright (c) 2015 Nooch. All rights reserved.
 
 #import "SelectRecipient.h"
@@ -45,8 +45,6 @@
     UIButton * back_button = [UIButton buttonWithType:UIButtonTypeRoundedRect];
     UIBarButtonItem * menu = [[UIBarButtonItem alloc] initWithCustomView:back_button];
     [self.navigationItem setLeftBarButtonItem:menu];
-
-    isPayBack = NO;
 
     isUserByLocation = NO;
     isphoneBook = NO;

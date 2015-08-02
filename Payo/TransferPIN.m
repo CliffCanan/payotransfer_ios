@@ -154,11 +154,6 @@
         [self.prompt setText:NSLocalizedString(@"EnterPIN_InstructTransfer", @"Enter PIN Screen instructions transfer")];
         [self.prompt setStyleId:@"Transferpin_instructiontext_send"];
     }
-    else if ([self.type isEqualToString:@"request"])
-    {
-        [self.prompt setText:NSLocalizedString(@"EnterPIN_InstructRequest", @"Enter PIN Screen instructions request")];
-        [self.prompt setStyleId:@"pin_instructiontext_request"];
-    }
     [self.prompt setTextAlignment:NSTextAlignmentCenter];
     [self.view addSubview:self.prompt];
 
@@ -178,10 +173,6 @@
     if ([self.type isEqualToString:@"send"] || [self.type isEqualToString:@"requestRespond"])
     {
         [bar setStyleId:@"pin_recipientname_send"];
-    }
-    else if ([self.type isEqualToString:@"request"])
-    {
-        [bar setStyleId:@"pin_recipientname_request"];
     }
 
     [self.view addSubview:bar];
@@ -348,27 +339,6 @@
     [self.view addSubview:self.second_num];
     [self.view addSubview:self.third_num];
     [self.view addSubview:self.fourth_num];
-    
-    if ([[assist shared] getTranferImage])
-    {
-        UIImageView * trans_image = [[UIImageView alloc] initWithFrame:CGRectMake(252, 205, 56, 56)];
-        [memo_label setStyleClass:@"pin_memotext_wPic"];
-        [to_label setStyleClass:@"pin_recipientname_text_wPic"];
-
-        if ([[UIScreen mainScreen] bounds].size.height < 500)
-        {
-            [memo_label setStyleClass:@"pin_memotext_wPic_4"];
-            [to_label setStyleClass:@"pin_recipientname_text_wPic_4"];
-            [trans_image setFrame:CGRectMake(264, 143, 44, 44)];
-        }
-
-        trans_image.layer.cornerRadius = 5;
-        trans_image.layer.borderWidth = 1;
-        trans_image.clipsToBounds = YES;
-        trans_image.layer.borderColor = [UIColor whiteColor].CGColor;
-        [trans_image setImage:[[assist shared] getTranferImage]];
-        [self.view addSubview:trans_image];
-    }
 
     if ([[assist shared] checkIfTouchIdAvailable] &&
         [[user objectForKey:@"requiredTouchId"] boolValue] == YES)
@@ -571,9 +541,6 @@ NSString * calculateArrivalDate()
     [finalDateFormatter setDateFormat:formatString];
 
     NSString * arrivalDateFormatted = [finalDateFormatter stringFromDate:arrivalDate];
-
-
-
     NSTimeZone * systimeZone = [NSTimeZone systemTimeZone];
     NSString * timeZoneString = [systimeZone localizedName:NSTimeZoneNameStyleGeneric locale:[NSLocale currentLocale]];
 
@@ -733,7 +700,7 @@ NSString * calculateArrivalDate()
     {
         self.first_num.layer.borderColor = self.second_num.layer.borderColor = self.third_num.layer.borderColor = self.fourth_num.layer.borderColor = kNoochGreen.CGColor;
     }
-    else if ([self.type isEqualToString:@"request"] || [self.type isEqualToString:@"requestRespond"])
+    else if ([self.type isEqualToString:@"requestRespond"])
     {
         self.first_num.layer.borderColor = self.second_num.layer.borderColor = self.third_num.layer.borderColor = self.fourth_num.layer.borderColor = kNoochBlue.CGColor;
     }
@@ -766,9 +733,6 @@ NSString * calculateArrivalDate()
         UIColor * color;
         if ([self.type isEqualToString:@"send"] || [self.type isEqualToString:@"requestRespond"]) {
             color = kNoochGreen;
-        }
-        else if ([self.type isEqualToString:@"request"] ){
-            color = kNoochBlue;
         }
 
         switch (len) {
@@ -894,25 +858,6 @@ NSString * calculateArrivalDate()
             {
                 transactionInputTransfer = [[NSMutableDictionary alloc]init];
 
-                if ([[assist shared] getTranferImage])
-                {
-                    NSData *data = UIImagePNGRepresentation([[assist shared] getTranferImage]);
-                    NSUInteger len = data.length;
-                    uint8_t *bytes = (uint8_t *)[data bytes];
-                    NSMutableString *result1 = [NSMutableString stringWithCapacity:len * 3];
-
-                    for (NSUInteger i = 0; i < len; i++)
-                    {
-                        if (i) {
-                            [result1 appendString:@","];
-                        }
-                        [result1 appendFormat:@"%d", bytes[i]];
-                    }
-
-                    NSArray * arr = [result1 componentsSeparatedByString:@","];
-                    [transactionInputTransfer setValue:arr forKey:@"Picture"];
-                }
-
                 NSDate *date = [NSDate date];
                 NSDateFormatter *dateFormat = [[NSDateFormatter alloc] init];
                 [dateFormat setDateFormat:@"yyyy-MM-dd HH:mm:ss.SS"];
@@ -955,45 +900,6 @@ NSString * calculateArrivalDate()
                     }
                 }
 
-                if ([self.type isEqualToString:@"request"])
-                {
-                    // set 'RecepientId' (sic) to be the Sender's MemberID, this is how some Server methods identify a Request to a Non-Noocher
-                    [transactionInputTransfer setValue:[self.receiver valueForKey:@"MemberId"] forKey:@"RecepientId"];
-                    [transactionInputTransfer setValue:@"" forKey:@"SenderId"];
-                    [transactionInputTransfer setValue:@"Pending" forKey:@"TransactionStatus"];
-
-                    NSString * receiverName = @"";
-                    if ([self.receiver objectForKey:@"firstName"] && [self.receiver objectForKey:@"lastName"])
-                    {
-                        receiverName = [NSString stringWithFormat:@"%@ %@", [self.receiver objectForKey:@"firstName"], [self.receiver objectForKey:@"lastName"]];
-                    }
-                    else if ([self.receiver objectForKey:@"email"])
-                    {
-                        receiverName = [self.receiver valueForKey:@"email"];
-                    }
-                    else if ([self.receiver objectForKey:@"phone"])
-                    {
-                        receiverName = [self.receiver valueForKey:@"phone"];
-                    }
-                    [transactionInputTransfer setValue:receiverName forKey:@"Name"];
-
-                    if ([self.receiver objectForKey:@"email"])
-                    {
-                        [transactionInputTransfer setObject:[self.receiver objectForKey:@"email"] forKey:@"MoneySenderEmailId"];
-
-                        transactionTransfer = [[NSMutableDictionary alloc] initWithObjectsAndKeys:
-                                                    transactionInputTransfer, @"requestInput",
-                                                    [user valueForKey:@"OAuthToken"],@"accessToken", nil];
-                    }
-                    else if ([self.receiver objectForKey:@"phone"])
-                    {
-                        transactionTransfer = [[NSMutableDictionary alloc] initWithObjectsAndKeys:
-                                               transactionInputTransfer, @"requestInput",
-                                               [user valueForKey:@"OAuthToken"], @"accessToken",
-                                               self.phone,@"PayorPhoneNumber", nil];
-                    }
-                }
-
                 NSLog(@"SEND/REQUEST --> transactionINPUTTransfer is: %@", transactionInputTransfer);
                 NSLog(@"Type: %@ - transactionTransfer: %@", self.type, transactionTransfer);
 
@@ -1003,18 +909,7 @@ NSString * calculateArrivalDate()
                 self.respData = [NSMutableData data];
                 urlStrTranfer = [[NSString alloc] initWithString:MyUrl];
 
-                if ([self.type isEqualToString:@"request"])
-                {
-                    if ([self.receiver objectForKey:@"email"])
-                    {
-                        urlStrTranfer = [urlStrTranfer stringByAppendingFormat:@"/%@", @"RequestMoneyToNonNoochUserUsingSynapse"];
-                    }
-                    else if ([self.receiver objectForKey:@"phone"])
-                    {
-                        urlStrTranfer = [urlStrTranfer stringByAppendingFormat:@"/%@", @"RequestMoneyToNonNoochUserThroughPhoneUsingSynapse"];
-                    }
-                }
-                else if ([self.type isEqualToString:@"send"])
+                if ([self.type isEqualToString:@"send"])
                 {
                     if ([self.receiver objectForKey:@"email"])
                     {
@@ -1130,28 +1025,11 @@ NSString * calculateArrivalDate()
         }
     }
 
-    else if ([self.type isEqualToString:@"send"] || [self.type isEqualToString:@"request"])
+    else if ([self.type isEqualToString:@"send"])
     {
         if ([tagName isEqualToString:@"ValidatePinNumber"])
         {
             transactionInputTransfer = [[NSMutableDictionary alloc]init];
-
-            if ([[assist shared] getTranferImage])
-            {
-                NSData *data = UIImagePNGRepresentation([[assist shared] getTranferImage]);
-                NSUInteger len = data.length;
-                uint8_t *bytes = (uint8_t *)[data bytes];
-                NSMutableString *result1 = [NSMutableString stringWithCapacity:len * 3];
-                for (NSUInteger i = 0; i < len; i++)
-                {
-                    if (i) {
-                        [result1 appendString:@","];
-                    }
-                    [result1 appendFormat:@"%d", bytes[i]];
-                }
-                NSArray *arr = [result1 componentsSeparatedByString:@","];
-                [transactionInputTransfer setValue:arr forKey:@"Picture"];
-            }
 
             [transactionInputTransfer setValue:[dictResult valueForKey:@"Status"] forKey:@"PinNumber"];
             [transactionInputTransfer setValue:[user stringForKey:@"MemberId"] forKey:@"MemberId"];
@@ -1360,8 +1238,6 @@ NSString * calculateArrivalDate()
         // Specific 'Result' Strings - SYNAPSE
         NSString * sendNonNoochUser_Email_SynapseResult = [[dictResultTransfer valueForKey:@"TransferMoneyToNonNoochUserUsingSynapseResult"] valueForKey:@"Result"];
         NSString * sendNonNoochUser_Phone_SynapseResult = [[dictResultTransfer valueForKey:@"TransferMoneyToNonNoochUserThroughPhoneUsingsynapseResult"] valueForKey:@"Result"];
-        NSString * requestNonNoochUser_Email_SynapseResult = [[dictResultTransfer valueForKey:@"RequestMoneyToNonNoochUserUsingSynapseResult"] valueForKey:@"Result"];
-        NSString * requestNonNoochUser_Phone_SynapseResult = [[dictResultTransfer valueForKey:@"RequestMoneyToNonNoochUserThroughPhoneUsingSynapseResult"] valueForKey:@"Result"];
 
         //NSLog(@"sendNonNoochUser_Email_SynapseResult is: %@",sendNonNoochUser_Email_SynapseResult);
         //NSLog(@"sendNonNoochUser_Phone_SynapseResult is: %@",sendNonNoochUser_Phone_SynapseResult);
@@ -1369,14 +1245,10 @@ NSString * calculateArrivalDate()
         //NSLog(@"requestNonNoochUser_Phone_SynapseResult is: %@",requestNonNoochUser_Phone_SynapseResult);
 
         if ([sendNonNoochUser_Email_SynapseResult rangeOfString:@"successfully"].length != 0 ||
-            [sendNonNoochUser_Phone_SynapseResult rangeOfString:@"successfully"].length != 0 ||
-            [requestNonNoochUser_Email_SynapseResult rangeOfString:@"successfully"].length != 0 ||
-            [requestNonNoochUser_Phone_SynapseResult rangeOfString:@"successfully"].length != 0 )
+            [sendNonNoochUser_Phone_SynapseResult rangeOfString:@"successfully"].length != 0)
         {
-            [[assist shared] setTranferImage:nil];
-            UIImage * imgempty = [UIImage imageNamed:@""];
-            [[assist shared] setTranferImage:imgempty];
             NSString * alertMsg = @"";
+
             if ([self.type isEqualToString:@"request"])
             {
                 alertMsg = NSLocalizedString(@"EnterPIN_NonUsrSuccessAlrtTitle", @"Enter PIN Screen send to nonuser success Alert Body Text");
@@ -1396,9 +1268,7 @@ NSString * calculateArrivalDate()
         }
 
         else if ([sendNonNoochUser_Email_SynapseResult rangeOfString:@"not have any bank added"].length != 0 ||
-                 [sendNonNoochUser_Phone_SynapseResult rangeOfString:@"not have any bank added"].length != 0 ||
-                 [requestNonNoochUser_Email_SynapseResult rangeOfString:@"not have any bank added"].length != 0 ||
-                 [requestNonNoochUser_Phone_SynapseResult rangeOfString:@"not have any bank added"].length != 0)
+                 [sendNonNoochUser_Phone_SynapseResult rangeOfString:@"not have any bank added"].length != 0)
         {
             UIAlertView *av = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"EnterPIN_TrnsfrFaildAlrtTitle", @"Enter PIN Screen transfer failed Alert Title")
                                                          message:[NSString stringWithFormat:@"\xF0\x9F\x98\xA9\n%@", NSLocalizedString(@"EnterPIN_TrnsfrFaildAlrtBody", @"Enter PIN Screen transfer failed Alert Body Text")]
@@ -1412,9 +1282,7 @@ NSString * calculateArrivalDate()
 
         // Per Transaction Limit Exceeded
         else if ([sendNonNoochUser_Email_SynapseResult rangeOfString:@"maximum amount you can"].length != 0 ||
-                 [sendNonNoochUser_Phone_SynapseResult rangeOfString:@"maximum amount you can"].length != 0 ||
-                 [requestNonNoochUser_Email_SynapseResult rangeOfString:@"maximum amount you can"].length != 0 ||
-                 [requestNonNoochUser_Phone_SynapseResult rangeOfString:@"maximum amount you can"].length != 0)
+                 [sendNonNoochUser_Phone_SynapseResult rangeOfString:@"maximum amount you can"].length != 0)
         {
             NSString * transLimitFromArtisan = [ARPowerHookManager getValueForHookById:@"transLimit"];
             
@@ -1455,24 +1323,10 @@ NSString * calculateArrivalDate()
             return;
         }
 
-        else if ([requestNonNoochUser_Email_SynapseResult rangeOfString:@"failed"].length != 0 ||
-                 [requestNonNoochUser_Phone_SynapseResult rangeOfString:@"failed"].length != 0)
-        {
-            [self errorAlerts:@"420"];
-            return;
-        }
-
-        else if (requestNonNoochUser_Phone_SynapseResult != NULL)
-        {
-            [self errorAlerts:@"421"];
-            return;
-        }
-
     }
 
     // Specific 'Result' Strings
     NSString * sendMoneyToExistingUserSynapseResult = [[dictResultTransfer valueForKey:@"TransferMoneyUsingSynapseResult"] valueForKey:@"Result"];
-    NSString * makeRequestToExistingUserResult = [[dictResultTransfer objectForKey:@"RequestMoneyResult"] valueForKey:@"Result"];
     NSString * payRequestResult = [[dictResultTransfer objectForKey:@"HandleRequestMoneyResult"] valueForKey:@"Result"];
 
     if ([sendMoneyToExistingUserSynapseResult rangeOfString:@"cash was sent successfully"].length != 0)
@@ -1628,8 +1482,7 @@ NSString * calculateArrivalDate()
     }
 
     // Per Transaction Limit Exceeded
-    else if ([sendMoneyToExistingUserSynapseResult rangeOfString:@"maximum amount you can send"].length != 0 ||
-             [makeRequestToExistingUserResult rangeOfString:@"maximum amount you can"].length != 0)
+    else if ([sendMoneyToExistingUserSynapseResult rangeOfString:@"maximum amount you can send"].length != 0)
     {
         NSString * transLimitFromArtisan = [ARPowerHookManager getValueForHookById:@"transLimit"];
 
@@ -1705,7 +1558,6 @@ NSString * calculateArrivalDate()
 
     // PIN-related errors common to all methods
     else if ([sendMoneyToExistingUserSynapseResult isEqualToString:@"PIN number you have entered is incorrect."] ||
-             [makeRequestToExistingUserResult isEqualToString:@"PIN number you have entered is incorrect."] ||
              [payRequestResult isEqualToString:@"PIN number you have entered is incorrect."] ||
              [[dictResultTransfer valueForKey:@"Result"] isEqualToString:@"PIN number you have entered is incorrect."])
     {
@@ -1729,7 +1581,6 @@ NSString * calculateArrivalDate()
     }
 
     else if ([sendMoneyToExistingUserSynapseResult rangeOfString:@"PIN number you entered again is incorrect"].length != 0 ||
-             [makeRequestToExistingUserResult rangeOfString:@"PIN number you entered again is incorrect"].length != 0 ||
              [payRequestResult rangeOfString:@"PIN number you entered again is incorrect"].length != 0)
     {
         AudioServicesPlaySystemSound(kSystemSoundID_Vibrate);
@@ -1758,7 +1609,6 @@ NSString * calculateArrivalDate()
     }
 
     else if ([sendMoneyToExistingUserSynapseResult rangeOfString:@"Your account has been suspended for 24 hours from now"].length != 0 ||
-             [makeRequestToExistingUserResult rangeOfString:@"Your account has been suspended for 24 hours from now"].length != 0 ||
              [payRequestResult rangeOfString:@"Your account has been suspended for 24 hours from now"].length != 0)
     {
         [[assist shared]setSusPended:YES];
@@ -1787,8 +1637,7 @@ NSString * calculateArrivalDate()
         return;
     }
 
-    else if ([sendMoneyToExistingUserSynapseResult isEqualToString:@"Receiver does not exist."] ||
-             [makeRequestToExistingUserResult rangeOfString:@"user does not exist"].length != 0)
+    else if ([sendMoneyToExistingUserSynapseResult isEqualToString:@"Receiver does not exist."])
     {
         UIAlertView *av = [[UIAlertView alloc] initWithTitle:@"Transfer Error #423"
                                                      message:@"\xF0\x9F\x98\xB3\nLooks like we screwed up. We hate when this happens - sorry for the delay!\n\nPlease try making your transfer again or contact us if the problem persists."
@@ -1799,28 +1648,9 @@ NSString * calculateArrivalDate()
         [av show];
     }
 
-    else if ([makeRequestToExistingUserResult rangeOfString:@"failed"].length != 0 ||
-             [payRequestResult rangeOfString:@"failed"].length != 0)
-    {
-        [self errorAlerts:@"710"];
-    }
-
     else
     {
-        NSString *resultValue = [dictResultTransfer objectForKey:@"RaiseDisputeResult"];
-        if ([resultValue valueForKey:@"Result"])
-        {
-            UIAlertView *av = [[UIAlertView alloc] initWithTitle:@""
-                                                         message:[resultValue valueForKey:@"Result"]
-                                                        delegate:self
-                                               cancelButtonTitle:@"OK"
-                                               otherButtonTitles:nil];
-            [av show];
-        }
-        else
-        {
-            [self errorAlerts:@"430"];
-        }
+        [self errorAlerts:@"430"];
     }
 
 
@@ -1876,19 +1706,8 @@ NSString * calculateArrivalDate()
         {
             NSMutableDictionary *input = [self.trans mutableCopy];
 
-            if ([[self.trans valueForKey:@"TransactionType"]isEqualToString:@"Request"] &&
-                [[user valueForKey:@"MemberId"] isEqualToString:[self.trans valueForKey:@"MemberId"]])
-            {
-                NSString *MemberId = [input valueForKey:@"MemberId"];
-                NSString *ResID = [input valueForKey:@"SenderId"];
-                [input setObject:MemberId forKey:@"RecepientId"];
-                [input setObject:ResID forKey:@"MemberId"];
-                [input setObject:dictResultTransfer[@"requestId"] forKey:@"TransactionId"];
-            }
-            else  if ([self.type isEqualToString:@"send"])
-            {
-                [input setObject:dictResultTransfer[@"trnsactionId"] forKey:@"TransactionId"];
-            }
+
+            [input setObject:dictResultTransfer[@"trnsactionId"] forKey:@"TransactionId"];
 
             if ([self.receiver objectForKey:@"nonuser"])
             {
@@ -1939,7 +1758,7 @@ NSString * calculateArrivalDate()
 
             //NSLog(@"TransferPIN -> nav_ctrl.viewControllers is: %@", nav_ctrl.viewControllers);
 
-            TransactionDetails *td = [[TransactionDetails alloc] initWithData:input];
+            TransactionDetails * td = [[TransactionDetails alloc] initWithData:input];
             [nav_ctrl pushViewController:td animated:YES];
         }
     }

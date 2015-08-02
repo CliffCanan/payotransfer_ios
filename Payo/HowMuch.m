@@ -1,7 +1,7 @@
 //  HowMuch.m
 //  Nooch
 //
-//  Created by crks on 9/26/13.
+//  Created by Cliff Canan on 7/30/15.
 //  Copyright (c) 2015 Nooch. All rights reserved.
 
 #import "HowMuch.h"
@@ -14,13 +14,11 @@
 @property(nonatomic,strong) UITextField *amount;
 @property(nonatomic,strong) UITextField *memo;
 @property(nonatomic,strong) UIButton *send;
-@property(nonatomic,strong) UIButton *request;
 @property(nonatomic,strong) UIButton *reset_type;
 @property(nonatomic) NSMutableString *amnt;
 @property(nonatomic) BOOL decimals;
 @property(nonatomic,strong) UIView *shade;
 @property(nonatomic,strong) UIView *choose;
-@property(nonatomic,strong) UIImageView *divider;
 @property(nonatomic,strong) UILabel *recip_back;
 @property(nonatomic,strong) UIView *back;
 @property(nonatomic,strong) UIButton *trans_image;
@@ -54,7 +52,7 @@
 
     [self.navigationController setNavigationBarHidden:NO];
     self.navigationController.navigationBar.topItem.title = @"";
-    //@"How Much?"
+
     [self.navigationItem setTitle:NSLocalizedString(@"HowMuch_ScrnTitle", @"How Much Screen Title")];
     [self.navigationItem setHidesBackButton:YES];
 
@@ -198,23 +196,9 @@
         }
         else
         {
-            if ([[[assist shared]getArray] count] == 1)
-            {
-                NSString * photoURL = @"";
-                for (NSDictionary * dictRecord in [[assist shared]getArray])
-                {
-                    //NSLog(@"DictRecord is: %@",dictRecord);
-                    photoURL = [NSString stringWithFormat:@"%@", dictRecord[@"Photo"]];
-                }
-                [self.user_pic sd_setImageWithURL:[NSURL URLWithString:photoURL]
-                            placeholderImage:[UIImage imageNamed:@"profile_picture.png"]];
+            [self.user_pic sd_setImageWithURL:[NSURL URLWithString:self.receiver[@"PhotoUrl"]]
+                             placeholderImage:[UIImage imageNamed:@"profile_picture.png"]];
 
-            }
-            else
-            {
-                [self.user_pic sd_setImageWithURL:[NSURL URLWithString:self.receiver[@"PhotoUrl"]]
-                     placeholderImage:[UIImage imageNamed:@"profile_picture.png"]];
-            }
         }
     }
     [self.back addSubview:self.user_pic];
@@ -238,6 +222,7 @@
 
     self.memo = [[UITextField alloc] initWithFrame:CGRectMake(2, 0, 255, 38)];
     [self.memo setPlaceholder:NSLocalizedString(@"HowMuch_MemoPlaceholder", @"How Much memo placeholder text")];
+    [self.memo setText:[self.receiver objectForKey:@"Memo"]];
     [self.memo setTextAlignment:NSTextAlignmentCenter];
     [self.memo setTextColor:kNoochGrayDark];
     [self.memo setDelegate:self];
@@ -247,13 +232,6 @@
     self.memo.inputAccessoryView = [[UIView alloc] init]; // To override the IQ Keyboard Mgr
     [memoShell addSubview:self.memo];
 
-    if ( [self.receiver objectForKey:@"Memo"] &&
-        [[self.receiver objectForKey:@"Memo"] length] > 2 &&
-        !isPayBack)
-    {
-        [self.memo setText:[self.receiver objectForKey:@"Memo"]];
-    }
-
     self.send = [UIButton buttonWithType:UIButtonTypeRoundedRect];
     [self.send setFrame:CGRectMake(160, 194, 150, 50)];
     [self.send setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
@@ -261,15 +239,6 @@
     [self.send setTitleShadowColor:Rgb2UIColor(26, 38, 19, 0.21) forState:UIControlStateNormal];
     self.send.titleLabel.shadowOffset = CGSizeMake(0.0, -1.0);
     [self.send addTarget:self action:@selector(initialize_send) forControlEvents:UIControlEventTouchUpInside];
-
-    self.request = [UIButton buttonWithType:UIButtonTypeRoundedRect];
-    [self.request setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-    [self.request setTitleShadowColor:Rgb2UIColor(26, 32, 38, 0.21) forState:UIControlStateNormal];
-    self.request.titleLabel.shadowOffset = CGSizeMake(0.0, -1.0);
-    [self.request addTarget:self action:@selector(initialize_request) forControlEvents:UIControlEventTouchUpInside];
-    [self.request setStyleId:@"howmuch_request"];
-    [self.request setFrame:CGRectMake(10, 160, 150, 50)];
-    [self.back addSubview:self.request];
 
     self.reset_type = [UIButton buttonWithType:UIButtonTypeRoundedRect];
     [self.reset_type setFrame:CGRectMake(0, 160, 30, 56)];
@@ -291,11 +260,8 @@
 
     if (isFromArtisanDonationAlert)
     {
-        [self.request removeFromSuperview];
-
         [self.send setStyleClass:@"howmuch_buttons"];
         [self.send setStyleId:@"howmuch_send"];
-        [self.send setStyleId:@"howmuch_send_expand"];
         if (isFromArtisanDonationAlert)
         {
             [self.send setTitle:@"Confirm Donation" forState:UIControlStateNormal];
@@ -310,16 +276,9 @@
     }
     else
     {
-        [self.request setTitle:NSLocalizedString(@"HowMuch_RequestBtn", @"How Much request button text") forState:UIControlStateNormal];
         [self.send setStyleClass:@"howmuch_buttons"];
         [self.send setStyleId:@"howmuch_send"];
         [self.back addSubview:self.send];
-
-        [self.request setStyleClass:@"howmuch_buttons"];
-
-        self.divider = [UIImageView new];
-        [self.divider setStyleId:@"howmuch_divider"];
-        [self.back addSubview:self.divider];
     }
 
     [self.back addSubview:self.reset_type];
@@ -327,8 +286,6 @@
     if ([[UIScreen mainScreen] bounds].size.height == 480)
     {
         [self.send setStyleId:@"howmuch_send_4"];
-        [self.request setStyleId:@"howmuch_request_4"];
-        [self.divider setStyleId:@"howmuch_divider_4"];
 
         [self.user_pic setFrame:CGRectMake(6, 45, 72, 72)];
         self.user_pic.layer.cornerRadius = 36;
@@ -378,7 +335,7 @@
     self.artisanNameTag = @"How Much Screen";
 
     [self.amount becomeFirstResponder];
-    //@"How Much?"
+
     [self.navigationItem setTitle:NSLocalizedString(@"HowMuch_ScrnTitle", @"How Much Screen Title")];
 }
 
@@ -396,48 +353,15 @@
     origin.size.width = 149;
     origin.origin.x = 162;
 
-    origin = self.request.frame;
-    origin.size.width = 149;
-    origin.origin.x = 9;
-
     self.user_pic.layer.borderColor = kNoochGreen.CGColor;
 
     [self.send addTarget:self action:@selector(confirm_send) forControlEvents:UIControlEventTouchUpInside];
-    //@"Confirm Send"
     [self.send setTitle:NSLocalizedString(@"HowMuch_ConfirmSend", @"How Much confirm send payment text") forState:UIControlStateNormal];
-    [self.request setStyleId:@"howmuch_request_hide"];
-    [self.send setStyleId:@"howmuch_send_expand"];
     [self.reset_type setAlpha:1];
     [self.reset_type setStyleId:@"cancel_request"];
     [self.back bringSubviewToFront:self.reset_type];
 
     [UIView commitAnimations];
-
-    [self.divider setStyleClass:@"animate_roll_left"];
-}
-
-- (void) initialize_request
-{
-    [self.recip_back setStyleClass:@"barbackground_blue"];
-    
-    [UIView beginAnimations:nil context:nil];
-    [UIView setAnimationDuration:0.55];
-    [UIView setAnimationCurve:UIViewAnimationCurveEaseOut];
-
-    self.user_pic.layer.borderColor = kNoochBlue.CGColor;
-
-    [self.request addTarget:self action:@selector(confirm_request) forControlEvents:UIControlEventTouchUpInside];
-    //@"Confirm Request"
-    [self.request setTitle:NSLocalizedString(@"HowMuch_ConfirmRequest", @"How Much confirm request button text") forState:UIControlStateNormal];
-    [self.send setStyleId:@"howmuch_send_hide"];
-    [self.request setStyleId:@"howmuch_request_expand"];
-    [self.reset_type setAlpha:1];
-    [self.reset_type setStyleId:@"cancel_send"];
-    [self.back bringSubviewToFront:self.reset_type];
-
-    [UIView commitAnimations];
-
-    [self.divider setStyleClass:@"animate_roll_right"];
 }
 
 - (void) reset_send_request
@@ -450,26 +374,19 @@
     self.user_pic.layer.borderColor = [Helpers hexColor:@"939598"].CGColor;
 
     [self.send setTitle:@"Send" forState:UIControlStateNormal];
-    [self.request setTitle:@"Request" forState:UIControlStateNormal];
 
     if ([[UIScreen mainScreen] bounds].size.height == 480)
     {
         [self.send setStyleId:@"howmuch_send_4"];
-        [self.request setStyleId:@"howmuch_request_4"];
-        [self.divider setStyleId:@"howmuch_divider_4"];
     }
     else
     {
         [self.send setStyleId:@"howmuch_send"];
-        [self.request setStyleId:@"howmuch_request"];
     }
 
     [self.send removeTarget:self action:@selector(confirm_send) forControlEvents:UIControlEventTouchUpInside];
-    [self.request removeTarget:self action:@selector(confirm_request) forControlEvents:UIControlEventTouchUpInside];
     [self.send addTarget:self action:@selector(initialize_send) forControlEvents:UIControlEventTouchUpInside];
-    [self.request addTarget:self action:@selector(initialize_request) forControlEvents:UIControlEventTouchUpInside];
 
-    [self.divider setAlpha:1];
     [self.reset_type setAlpha:0];
     [UIView commitAnimations];
 }
@@ -518,71 +435,13 @@
 
     [self.navigationItem setLeftBarButtonItem:nil];
 
-    if ([self.receiver valueForKey:@"nonuser"])
-    {
-        TransferPIN *pin = [[TransferPIN alloc] initWithReceiver:transaction type:@"send" amount:input_amount];
-        [self.navigationController pushViewController:pin animated:YES];
-    }
-    else
-    {
-        TransferPIN *pin = [[TransferPIN alloc] initWithReceiver:transaction type:@"send" amount: input_amount];
-        [self.navigationController pushViewController:pin animated:YES];
-    }
-}
-
-#pragma mark  - alert view delegation
-- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
-{
-}
-
-- (void) confirm_request
-{
-    if ([self.amnt floatValue] == 0)
-    {
-        NSString * alertMessage = @"";
-        if ([self.receiver valueForKey:@"nonuser"] && ![self.receiver objectForKey:@"firstName"])
-        {
-            alertMessage = [NSString stringWithFormat:@"\xF0\x9F\x98\xAC\n%@", NSLocalizedString(@"HowMuch_CnfrmRequestZeroNoNameAlertTitle", @"How Much confirm request when amount is zero and no first or last name Alert Body")];
-        }
-        else if ([self.receiver valueForKey:@"nonuser"] && [self.receiver objectForKey:@"firstName"])
-        {
-            alertMessage = [NSString stringWithFormat:NSLocalizedString(@"HowMuch_CnfrmRequestZeroFirstNameAlertTitle", @"How Much confirm request when amount is zero and only first name Alert Body"), [[self.receiver objectForKey:@"firstName"] capitalizedString]];
-        }
-        else
-        {
-            alertMessage = [NSString stringWithFormat:@"\xF0\x9F\x98\xAC\n%@", [NSString stringWithFormat:NSLocalizedString(@"HowMuch_CnfrmRequestZeroFirstNameAlertTitle", @"How Much confirm request when amount is zero and only first name Alert Body"), [[self.receiver objectForKey:@"FirstName"] capitalizedString]]];
-        }
-        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Non-cents!"
-                                                        message:alertMessage
-                                                       delegate:self
-                                              cancelButtonTitle:nil
-                                              otherButtonTitles:@"OK", nil];
-        [alert show];
-        return;
-    }
-    else if ([[[self.amount text] substringFromIndex:1] doubleValue] > transLimitFromArtisanInt)
-    {
-        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"HowMuch_CnfrmRequestOverLimitAlertTitle", @"How Much confirm request when amount is over limit Alert Title")
-                                                        message:[NSString stringWithFormat:@"\xF0\x9F\x98\x87\n%@", [NSString stringWithFormat:NSLocalizedString(@"HowMuch_CnfrmRequestOverLimitAlertBody", @"How Much confirm request when amount is over limit Alert Body Text"), transLimitFromArtisanString]]
-                                                       delegate:self
-                                              cancelButtonTitle:nil
-                                              otherButtonTitles:@"OK", nil];
-        [alert show];
-        return;
-    }
-
-    [self.navigationItem setLeftBarButtonItem:nil];
-
-    NSMutableDictionary *transaction = [self.receiver mutableCopy];
-    [transaction setObject:[self.memo text] forKey:@"memo"];
-    float input_amount = [[[self.amount text] substringFromIndex:1] floatValue];
     TransferPIN *pin;
-    
+
     if ([self.receiver valueForKey:@"nonuser"]) {
-        pin = [[TransferPIN alloc] initWithReceiver:transaction type:@"request" amount:input_amount];
+        pin = [[TransferPIN alloc] initWithReceiver:transaction type:@"send" amount:input_amount];
     }
     else {
-        pin = [[TransferPIN alloc] initWithReceiver:transaction type:@"request" amount:input_amount];
+        pin = [[TransferPIN alloc] initWithReceiver:transaction type:@"send" amount:input_amount];
     }
     [self.navigationController pushViewController:pin animated:YES];
 }
@@ -645,22 +504,6 @@
 {
     [textField resignFirstResponder];
     return YES;
-}
-
--(void)Error:(NSError *)Error
-{
-    /* UIAlertView *alert = [[UIAlertView alloc]
-                          initWithTitle:@"Message"
-                          message:@"Error connecting to server"
-                          delegate:nil
-                          cancelButtonTitle:@"OK"
-                          otherButtonTitles:nil];
-    [alert show]; */
-}
-
-#pragma mark - server delegation
-- (void) listen:(NSString *)result tagName:(NSString *)tagName
-{
 }
 
 - (void)didReceiveMemoryWarning

@@ -1,7 +1,7 @@
 //  PINSettings.m
 //  Nooch
 //
-//  Created by crks on 10/7/13.
+//  Created by Cliff Canan on 7/30/15.
 //  Copyright (c) 2015 Nooch Inc. All rights reserved.
 
 #import "PINSettings.h"
@@ -17,7 +17,6 @@
     UITableView * touchIdMenu;
 }
 @property(nonatomic,strong)UISwitch * ri;
-@property(nonatomic,strong)UISwitch * search;
 @property(nonatomic,strong)UISwitch * touchId;
 @end
 
@@ -35,9 +34,9 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-	// Do any additional setup after loading the view.
+
     self.navigationController.navigationBar.topItem.title = @"";
-    //@"Security Settings"
+
     [self.navigationItem setTitle:NSLocalizedString(@"SecSettings_ScrnTitle", @"Security Settings Scrn Title")];
     [self.navigationItem setHidesBackButton:YES];
 
@@ -127,42 +126,6 @@
     [PwSettings setDataSource:self];
     [PwSettings setScrollEnabled:NO];
     [scrollView addSubview:PwSettings];
-
-    UILabel * PrivacyHeader = [[UILabel alloc] initWithFrame:CGRectMake(15, 300, 250, 25)];
-    [PrivacyHeader setStyleClass:@"refer_header"];
-    [PrivacyHeader setText:@"Privacy "];
-    [scrollView addSubview:PrivacyHeader];
-
-    UILabel *show_search = [[UILabel alloc] initWithFrame:CGRectMake(-1, PrivacyHeader.frame.origin.y + PrivacyHeader.frame.size.height + 4, 322, 50)];
-    [show_search setBackgroundColor:[UIColor whiteColor]];
-    [show_search setFont:[UIFont fontWithName:@"Roboto-regular" size:17]];
-    [show_search setText:NSLocalizedString(@"SecSettings_ShowInSrch", @"Security Settings show in search label")];
-    [show_search setTextColor:[Helpers hexColor:@"313233"]];
-    show_search.layer.borderColor = Rgb2UIColor(188, 190, 192, 0.85).CGColor;
-    show_search.layer.borderWidth = 1;
-    [scrollView addSubview:show_search];
-    
-    self.search = [[UISwitch alloc] initWithFrame:CGRectMake(260, show_search.frame.origin.y + 10, 40, 30)];
-    self.search.transform = CGAffineTransformMakeScale(0.9, 0.9);
-    [self.search setOnTintColor:kNoochGreen];
-    [self.search addTarget:self action:@selector(show_in_search) forControlEvents:UIControlEventValueChanged];
-    [self.search setOn:YES];
-    if ([user objectForKey:@"show_in_search"])
-    {
-        if ([[user objectForKey:@"show_in_search"] isEqualToString:@"YES"]) [self.search setOn:YES];
-        else [self.search setOn:NO animated:YES];
-    }
-    [scrollView addSubview:self.search];
-
-    UILabel * info2 = [UILabel new];
-    [info2 setFrame:CGRectMake(10, show_search.frame.origin.y + show_search.frame.size.height, 300, 48)];
-    [info2 setNumberOfLines:0];
-    [info2 setStyleClass:@"helpText"];
-    //[info2 setTextAlignment:NSTextAlignmentCenter];
-    //[info2 setFont:[UIFont fontWithName:@"Roboto-Light" size:15]];
-    //[info2 setTextColor:[Helpers hexColor:@"6c6e71"]];
-    [info2 setText:NSLocalizedString(@"SecSettings_ShowInSrchInstruc", @"Security Settings show in search instruction text")];
-    [scrollView addSubview:info2];
 
     if ([[assist shared] checkIfTouchIdAvailable])
     {
@@ -380,24 +343,6 @@
     }
     else if (tableView == touchIdMenu)
     {
-        /*if (indexPath.row == 1)
-        {
-            if (touch1selected == YES)
-                touch1selected = NO;
-            else
-                touch1selected = YES;
-        }
-        if (indexPath.row == 1)
-        {
-            if (touchForPayments == YES)
-            {
-                touchForPayments = NO;
-            }
-            else
-            {
-                touchForPayments = YES;
-            }
-        }*/
         if (indexPath.row != 0)
         {
             [tableView reloadRowsAtIndexPaths:[NSArray arrayWithObject:indexPath]
@@ -422,15 +367,6 @@
 {
     ResetPIN * reset = [ResetPIN new];
     [self.navigationController presentViewController:reset animated:YES completion:nil];
-}
-
--(void)show_in_search
-{
-    self.search.isOn ? [user setObject:@"YES" forKey:@"show_in_search"] : [user setObject:@"NO" forKey:@"show_in_search"];
-    serve * set_search = [serve new];
-    [set_search setDelegate:self];
-    [set_search setTagName:@"set_search"];
-    [set_search show_in_search:self.search.isOn ? YES : NO];
 }
 
 - (void)req
@@ -632,14 +568,6 @@
 - (void) listen:(NSString *)result tagName:(NSString *)tagName
 {
     if ([tagName isEqualToString:@"requiredImmediately"])
-    {
-        NSError * error;
-        Dictresponse = [NSJSONSerialization
-                        JSONObjectWithData:[result dataUsingEncoding:NSUTF8StringEncoding]
-                        options:kNilOptions
-                        error:&error];
-    }
-    if ([tagName isEqualToString:@"set_search"])
     {
         NSError * error;
         Dictresponse = [NSJSONSerialization

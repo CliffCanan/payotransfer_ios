@@ -2,7 +2,7 @@
 //  TransactionDetails.h
 //  Nooch
 //
-//  Created by crks on 10/4/13.
+//  Created by Cliff Canan on 7/30/15.
 //  Copyright (c) 2015 Nooch. All rights reserved.
 //
 
@@ -14,20 +14,17 @@
 #import <Social/Social.h>
 #import <Accounts/Accounts.h>
 
-BOOL shouldDeletePendingRow;
-
 @interface TransactionDetails : GAITrackedViewController<serveD,UIAlertViewDelegate,MFMailComposeViewControllerDelegate,MBProgressHUDDelegate,UIScrollViewDelegate>{
-    GMSMapView *mapView_;
-    UIView *blankView;
-    UILabel *amount;
-    UIView *overlay,*mainView;
+    GMSMapView * mapView_;
+    UIView * blankView;
+    UILabel * amount;
+    UIView * overlay,*mainView;
     double lat;
     double lon;
     NSMutableDictionary * tranDetailResult;
-    NSData *datos;
 }
-@property (nonatomic, retain) ACAccount *twitterAccount;
+@property (nonatomic, retain) ACAccount * twitterAccount;
 @property (nonatomic) bool twitterAllowed;
-@property (nonatomic, retain) ACAccountStore *accountStore;
-- (id)initWithData:(NSDictionary *)trans;
+@property (nonatomic, retain) ACAccountStore * accountStore;
+-(id)initWithData:(NSDictionary *)trans;
 @end

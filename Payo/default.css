@@ -1371,12 +1371,6 @@ table-view#select_recipientwithoutSeperator {
     border-top-left-radius: 4px;
     border-top-right-radius: 4px;
 }
-/** For REQUESTS **/
-.barbackground_blue {
-    background-image: linear-gradient(#40a9de, #3b9cce);
-    border-top-left-radius: 4px;
-    border-top-right-radius: 4px;
-}
 
 /**  Sets the recipient's profile pic in the middle (left side) of the main box. **/
 #howmuch_recipientpic {
@@ -1423,40 +1417,25 @@ table-view#select_recipientwithoutSeperator {
     text-transform		: uppercase;
 }
 
-/**  Sets the position for the Request Button. **/
-#howmuch_request {
-    left                        : 0px;
-    height                      : 56px;
-    background-image            : linear-gradient(#6dbee8, #41abe1);
-    border-bottom-left-radius   : 4px;
-    top                         : 194px;
-    opacity                     : 1;
-}
-#howmuch_request_4 {
-    left                : 0px;
-    top                 : 139px;
-    height              : 50px;
-    background-image    : linear-gradient(#6dbee8, #41abe1);
-    border-bottom-left-radius: 4px;
-
-    opacity: 1;
-}
 /**  Sets the position for the Send Button. **/
 #howmuch_send {
-    height                      : 56px;
-    background-image            : linear-gradient(#7fd034, #6ab029);
-    left                        : 154px;
-    top                         : 194px;
-    border-bottom-right-radius  : 4px;
-    opacity                     : 1;
+    height: 56px;
+    background-image: linear-gradient(#7fd034, #6ab029);
+    left: 0px;
+    top: 194px;
+    width: 304px;
+    border-bottom-right-radius: 4px;
+    border-bottom-left-radius: 4px;
 }
 #howmuch_send_4 {
-    height              : 50px;
+    height: 50px;
     background-image: linear-gradient(#7fd034, #6ab029);
-    left                : 153px;
-    top                 : 139px;
+    left: 0px;
+    top: 139px;
+    width: 304px;
     border-bottom-right-radius: 4px;
-    opacity             : 1;
+    border-bottom-left-radius: 4px;
+    opacity: 1;
 }
 .nonhowmuch_send {
     background-image	: linear-gradient(#7fd034, #6ab029);
@@ -1491,37 +1470,7 @@ table-view#select_recipientwithoutSeperator {
     background-image: url(dollar-sign.png);
     background-size	: 39px;
 }
-#howmuch_send_expand {
-    background-image: linear-gradient(#7fd034, #6ab029);
-    left: 0px;
-    width: 304px;
-    border-bottom-right-radius: 4px;
-    border-bottom-left-radius: 4px;
-}
-#howmuch_send_hide {
-    left:311px;
-    width:1px;
-    opacity : 0;
-}
-#howmuch_request_expand {
-    background-image: linear-gradient(#6dbee8, #41abe1);
-    width: 304px;
-    left: 0px;
-    border-bottom-right-radius: 4px;
-    border-bottom-left-radius: 4px;
-}
-#howmuch_request_mult_expand {
-    background-image: linear-gradient(#6dbee8, #41abe1);
-    left: 0px;
-    width: 304px;
-    height: 56px;
-    border-bottom-right-radius: 4px;
-    border-bottom-left-radius: 4px;
-}
-#howmuch_request_hide {
-    width: 1px;
-    opacity : 0;
-}
+
 #reset_glyph {
     color: white;
     font-family	: "FontAwesome";

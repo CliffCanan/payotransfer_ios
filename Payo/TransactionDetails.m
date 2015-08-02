@@ -1,7 +1,7 @@
 //  TransactionDetails.m
 //  Nooch
 //
-//  Created by crks on 10/4/13.
+//  Created by Cliff Canan on 7/30/15.
 //  Copyright (c) 2015 Nooch Inc. All rights reserved.
 
 #import "TransactionDetails.h"
@@ -21,7 +21,6 @@
 @property (nonatomic,strong) NSDictionary *trans;
 @property(nonatomic,strong) NSMutableData *responseData;
 @property(nonatomic,strong) MBProgressHUD *hud;
-@property(nonatomic,strong) UIImageView *imgTran;
 @end
 
 @implementation TransactionDetails
@@ -63,10 +62,10 @@
 
     [self.view setBackgroundColor:[UIColor whiteColor]];
 
-    UIView *member_since_back = [UIView new];
-    [member_since_back setFrame:CGRectMake(-1, -1, 322, 110)];
-    [member_since_back setStyleId:@"transDetailsTopSectionBG"];
-    [self.view addSubview:member_since_back];
+    UIView * topSectionBg = [UIView new];
+    [topSectionBg setFrame:CGRectMake(-1, -1, 322, 110)];
+    [topSectionBg setStyleId:@"transDetailsTopSectionBG"];
+    [self.view addSubview:topSectionBg];
 
     UIView * shadowUnder = [[UIView alloc] initWithFrame:CGRectMake(11, 28, 76, 76)];
     shadowUnder.backgroundColor = Rgb2UIColor(207, 210, 213, .5);
@@ -76,70 +75,33 @@
     shadowUnder.layer.shadowOpacity = 0.5;
     shadowUnder.layer.shadowRadius = 3.0;
 
-    UILabel *other_party = [[UILabel alloc] initWithFrame:CGRectMake(20, 20, 280, 60)];  // Other user's NAME
-    UIImageView *user_picture = [[UIImageView alloc] initWithFrame:CGRectMake(10, 27, 78, 78)];  // Other user's PICTURE
+    UILabel * other_party = [[UILabel alloc] initWithFrame:CGRectMake(20, 20, 280, 60)];  // Other user's NAME
+    UIImageView * user_picture = [[UIImageView alloc] initWithFrame:CGRectMake(10, 27, 78, 78)];  // Other user's PICTURE
+
     user_picture.layer.cornerRadius = 39;
     user_picture.clipsToBounds = YES;
 
-    if ( [[self.trans valueForKey:@"TransactionType"]isEqualToString:@"Invite"] ||         // Transfers to Non-Noochers
-         [[self.trans valueForKey:@"TransactionType"]isEqualToString:@"InviteRequest"] ||  // Requests to Non-Noochers coming straight from PIN screen
-	    ([[self.trans valueForKey:@"TransactionType"]isEqualToString:@"Request"] &&
-        !([self.trans valueForKey:@"InvitationSentTo"] == NULL || [[self.trans objectForKey:@"InvitationSentTo"] isKindOfClass:[NSNull class]]) ) )
-    {
-        BOOL containsLetters = NSNotFound != [[self.trans objectForKey:@"InvitationSentTo"] rangeOfCharacterFromSet:NSCharacterSet.letterCharacterSet].location;
-        BOOL containsPunctuation = NSNotFound != [[self.trans objectForKey:@"InvitationSentTo"] rangeOfCharacterFromSet:NSCharacterSet.punctuationCharacterSet].location;
-        BOOL containsNumbers = NSNotFound != [[self.trans objectForKey:@"InvitationSentTo"] rangeOfCharacterFromSet:NSCharacterSet.decimalDigitCharacterSet].location;
-        BOOL containsSymbols = NSNotFound != [[self.trans objectForKey:@"InvitationSentTo"] rangeOfCharacterFromSet:NSCharacterSet.symbolCharacterSet].location;
 
-        // Check if it's a phone number
-        if (containsNumbers && !containsLetters && !containsPunctuation && !containsSymbols)
-        {
-            NSMutableString * mu = [NSMutableString stringWithString:[self.trans objectForKey:@"InvitationSentTo"]];
-            [mu insertString:@"(" atIndex:0];
-            [mu insertString:@")" atIndex:4];
-            [mu insertString:@" " atIndex:5];
-            [mu insertString:@"-" atIndex:9];
-            
-            NSString * phoneWithSymbolsAddedBack = [NSString stringWithString:mu];
-
-            [other_party setStyleClass:@"details_namePhoneNum"];
-            [other_party setText:phoneWithSymbolsAddedBack];
-        }
-        else if (containsPunctuation && [[self.trans objectForKey:@"InvitationSentTo"] rangeOfString:@"("].location == 0) // Server might send Phone Number formatted as (XXX) XXX-XXXX
-        {
-            [other_party setStyleClass:@"details_namePhoneNum"];
-            [other_party setText:[self.trans objectForKey:@"InvitationSentTo"]];
-        }
-        else // It's an email address
-        {
-            [other_party setStyleClass:@"details_othername_nonnooch"];
-            [other_party setText:[self.trans objectForKey:@"InvitationSentTo"]];
-        }
-        [user_picture setImage:[UIImage imageNamed:@"profile_picture.png"]];
-    }
-    else // transfers with an existing Nooch user
+    if ([[self.trans valueForKey:@"TransactionType"]isEqualToString:@"Reward"] ||
+        [[self.trans valueForKey:@"Name"]isEqualToString:@"Team Nooch"])
     {
-        if ([[self.trans valueForKey:@"TransactionType"]isEqualToString:@"Reward"] ||
-            [[self.trans valueForKey:@"Name"]isEqualToString:@"Team Nooch"])
-        {
-            [shadowUnder setFrame:CGRectMake(15, 32, 63, 63)];
-            shadowUnder.layer.cornerRadius = 11;
-            [user_picture setImage:[UIImage imageNamed:@"Icon120"]];
-            [user_picture setFrame:CGRectMake(14, 31, 65, 65)];
-            user_picture.layer.cornerRadius = 11;
-        }
-        else
-        {
-            [user_picture sd_setImageWithURL:[NSURL URLWithString:[self.trans objectForKey:@"Photo"]]
-                            placeholderImage:[UIImage imageNamed:@"profile_picture.png"]];
-        }
-        [other_party setText:[[self.trans objectForKey:@"Name"] capitalizedString]];
-        [other_party setStyleClass:@"details_othername"];
+        [shadowUnder setFrame:CGRectMake(15, 32, 63, 63)];
+        shadowUnder.layer.cornerRadius = 11;
+        [user_picture setImage:[UIImage imageNamed:@"Icon120"]];
+        [user_picture setFrame:CGRectMake(14, 31, 65, 65)];
+        user_picture.layer.cornerRadius = 11;
     }
+    else
+    {
+        [user_picture sd_setImageWithURL:[NSURL URLWithString:[self.trans objectForKey:@"Photo"]]
+                        placeholderImage:[UIImage imageNamed:@"profile_picture.png"]];
+    }
+    [other_party setText:[[self.trans objectForKey:@"Name"] capitalizedString]];
+    [other_party setStyleClass:@"details_othername"];
+
     [self.view addSubview:other_party];
     [self.view addSubview:shadowUnder];
     [self.view addSubview:user_picture];
-
 
 	// SET TEXT LABEL ABOVE OTHER USER'S NAME
     UILabel *payment = [UILabel new];
@@ -150,9 +112,7 @@
     shadow.shadowOffset = CGSizeMake(0, 1);
     NSDictionary * textAttributes = @{NSShadowAttributeName: shadow };
     
-    if ( [[self.trans valueForKey:@"TransactionType"] isEqualToString:@"Transfer"] ||
-        ([[self.trans valueForKey:@"TransactionType"] isEqualToString:@"Invite"] &&
-         [[self.trans valueForKey:@"InvitationSentTo"] isEqualToString:[user valueForKey:@"UserName"]]))
+    if ([[self.trans valueForKey:@"TransactionType"] isEqualToString:@"Transfer"])
     {
 	    if ([[user valueForKey:@"MemberId"] isEqualToString:[self.trans valueForKey:@"MemberId"]]) {
 	        payment.attributedText = [[NSAttributedString alloc] initWithString:NSLocalizedString(@"TransDeets_PaidToTxt", @"Transfer Details 'Paid To:' text") attributes:textAttributes];
@@ -163,33 +123,7 @@
             [payment setStyleClass:@"details_intro_green"];
         }
 	}
-    else if ([[self.trans valueForKey:@"TransactionType"]isEqualToString:@"Request"])
-    {
-        if ([[user valueForKey:@"MemberId"] isEqualToString:[self.trans valueForKey:@"RecepientId"]]) {
-            payment.attributedText = [[NSAttributedString alloc] initWithString:NSLocalizedString(@"TransDeets_RqstSntToTxt1", @"Transfer Details 'Request Sent To:' text") attributes:textAttributes];
-        }
-        else {
-            payment.attributedText = [[NSAttributedString alloc] initWithString:NSLocalizedString(@"TransDeets_RqstFrmTxt", @"Transfer Details 'Request From:' text") attributes:textAttributes];
-        }
-        [payment setStyleClass:@"details_intro_blue"];
-    }
-    else if ([[self.trans valueForKey:@"TransactionType"]isEqualToString:@"Invite"])
-    {
-        payment.attributedText = [[NSAttributedString alloc] initWithString:NSLocalizedString(@"TransDeets_InvtSntTo", @"Transfer Details 'Invite Sent To:' text") attributes:textAttributes];
-        [payment setStyleClass:@"details_intro_green"];
-    }
-    else if ([[self.trans valueForKey:@"TransactionType"]isEqualToString:@"InviteRequest"] ||
-	         ([[self.trans valueForKey:@"TransactionType"]isEqualToString:@"Request"] && [[user valueForKey:@"MemberId"] isEqualToString:[self.trans valueForKey:@"RecepientId"]]))
-    {
-        payment.attributedText = [[NSAttributedString alloc] initWithString:NSLocalizedString(@"TransDeets_RqstSntToTxt2", @"Transfer Details 'Request Sent To:' text (2nd)") attributes:textAttributes];
-        [payment setStyleClass:@"details_intro_blue"];
-    }
-    else if([[self.trans valueForKey:@"TransactionType"] isEqualToString:@"Reward"])
-    {
-        [payment setText:@"REWARD FROM"];
-        [payment setStyleClass:@"details_intro_reward"];
-    }
-    else if([[self.trans valueForKey:@"TransactionType"] isEqualToString:@"Disputed"])
+    else if ([[self.trans valueForKey:@"TransactionType"] isEqualToString:@"Disputed"])
     {
         payment.attributedText = [[NSAttributedString alloc] initWithString:NSLocalizedString(@"TransDeets_DsptdTrnsfrTxt", @"Transfer Details 'Disputed Transfer:' text") attributes:textAttributes];
         [payment setStyleClass:@"details_intro_red"];
@@ -212,7 +146,8 @@
         else
             [memo setText:[NSString stringWithFormat:@"\"%@\"",[self.trans valueForKey:@"Memo"]]];
     }
-    else {
+    else
+    {
         memo.text = NSLocalizedString(@"TransDeets_NoMemoTxt2", @"Transfer Details 'No memo attached' text (2nd)");
     }
 
@@ -226,7 +161,7 @@
     [pay_back setTitle:@"" forState:UIControlStateNormal];
     [pay_back setStyleCSS:@"background-image : url(pay-back-icon.png)"];
     [pay_back setStyleId:@"details_payback"];
-    [pay_back addTarget:self action:@selector(pay_back) forControlEvents:UIControlEventTouchUpInside];
+    [pay_back addTarget:self action:@selector(pay_again) forControlEvents:UIControlEventTouchUpInside];
 
     UILabel * pay_text = [UILabel new];
     [pay_text setFrame:pay_back.frame];
@@ -296,106 +231,14 @@
         [disp setStyleClass:@"details_buttons_4"];
         [disp_text setStyleClass:@"details_buttons_labels_4"];
     }
-    if ([[self.trans objectForKey:@"MemberId"] isEqualToString:[user objectForKey:@"MemberId"]])
-    {
-        [pay_text setStyleId:@"details_buttons_labels_long"];
-        CGRect frame1 = pay_text.frame;
-        [pay_text setFrame:CGRectMake(frame1.origin.x - 5, frame1.origin.y, frame1.size.width, frame1.size.height)];
-        [pay_text setText:NSLocalizedString(@"TransDeets_PayAgn", @"Transfer Details 'Pay Again' text")];
-    }
-    else {
-        [pay_text setText:NSLocalizedString(@"TransDeets_PayBck", @"Transfer Details 'Pay Back' text")];
-    }
 
+    [pay_text setStyleId:@"details_buttons_labels_long"];
+    CGRect frame1 = pay_text.frame;
+    [pay_text setFrame:CGRectMake(frame1.origin.x - 5, frame1.origin.y, frame1.size.width, frame1.size.height)];
+    [pay_text setText:NSLocalizedString(@"TransDeets_PayAgn", @"Transfer Details 'Pay Again' text")];
 
-    if ([[self.trans objectForKey:@"TransactionStatus"]isEqualToString:@"Pending"])
-    {
-        // Pay & Cancel Buttons
-        UIButton *pay = [UIButton buttonWithType:UIButtonTypeRoundedRect];
-        [pay setStyleClass:@"details_btn_left"];
-        [pay setTitle:NSLocalizedString(@"TransDeets_PayBtn", @"Transfer Details 'Pay' Btn Text") forState:UIControlStateNormal];
-        [pay setTitleShadowColor:Rgb2UIColor(26, 38, 19, 0.2) forState:UIControlStateNormal];
-        pay.titleLabel.shadowOffset = CGSizeMake(0.0, -1.0);
-
-        UIButton *cancel = [UIButton buttonWithType:UIButtonTypeRoundedRect];
-        [cancel setTitle:NSLocalizedString(@"TransDeets_CnclBtn", @"Transfer Details 'Cancel' Btn Text") forState:UIControlStateNormal];
-        [cancel setStyleClass:@"details_btn_right"];
-        [cancel setTitleShadowColor:Rgb2UIColor(36, 22, 19, 0.26) forState:UIControlStateNormal];
-        cancel.titleLabel.shadowOffset = CGSizeMake(0.0, -1.0);
-
-        UIButton *remind = [UIButton buttonWithType:UIButtonTypeRoundedRect];
-        [remind setTitle:NSLocalizedString(@"TransDeets_RmndBtn", @"Transfer Details 'Remind' Btn Text") forState:UIControlStateNormal];
-        [remind setStyleClass:@"details_btn_remind"];
-        [remind setTitleShadowColor:Rgb2UIColor(19, 32, 38, 0.26) forState:UIControlStateNormal];
-        remind.titleLabel.shadowOffset = CGSizeMake(0.0, -1.0);
-
-        if ([[UIScreen mainScreen] bounds].size.height == 480)
-        {
-            [pay setStyleClass:@"details_btn_left_4"];
-            [cancel setStyleClass:@"details_btn_right_4"];
-            [remind setStyleClass:@"details_btn_remind_4"];
-        }
-
-        if ([[self.trans objectForKey:@"TransactionType"] isEqualToString:@"Request"] ||
-            [[self.trans objectForKey:@"TransactionType"] isEqualToString:@"InviteRequest"])
-        {
-            if ([[self.trans objectForKey:@"RecepientId"] isEqualToString:[user objectForKey:@"MemberId"]] ||
-                [[self.trans objectForKey:@"TransactionType"] isEqualToString:@"InviteRequest"] )
-            {
-                [cancel setTag:13];
-                [cancel setEnabled:YES];
-
-                [remind setTag:14];
-                [remind setEnabled:YES];
-
-                if (( [self.trans valueForKey:@"InvitationSentTo"] == NULL ||
-                     [[self.trans objectForKey:@"InvitationSentTo"] isKindOfClass:[NSNull class]]) )
-                {  // Requests to Existing Users
-                    [cancel addTarget:self action:@selector(cancel_request_to_existing) forControlEvents:UIControlEventTouchUpInside];
-                    [self.view addSubview:cancel];
-
-                    [remind addTarget:self action:@selector(remind_request_existinguser) forControlEvents:UIControlEventTouchUpInside];
-                    [self.view addSubview:remind];
-                }
-                else
-                {  // Requests to Non-Nooch Users
-                    [cancel addTarget:self action:@selector(cancel_request_to_nonNoochUser) forControlEvents:UIControlEventTouchUpInside];
-                    [self.view addSubview:cancel];
-
-                    [remind addTarget:self action:@selector(remind_request_newuser) forControlEvents:UIControlEventTouchUpInside];
-                    [self.view addSubview:remind];
-                }
-            }
-            else
-            {
-                [pay addTarget:self action:@selector(fulfill_request) forControlEvents:UIControlEventTouchUpInside];
-                [pay setTag:23];
-
-                [cancel setTitle:NSLocalizedString(@"TransDeets_RjctBtn", @"Transfer Details 'Reject' Btn Text") forState:UIControlStateNormal];
-                [cancel addTarget:self action:@selector(decline_request) forControlEvents:UIControlEventTouchUpInside];
-                [cancel setTag:24];
-                [self.view addSubview:pay];
-                [self.view addSubview:cancel];
-            }
-        }
-        else if ([[self.trans valueForKey:@"TransactionType"]isEqualToString:@"Invite"])
-        {
-            [cancel setTag:13];
-            [cancel setEnabled:YES];
-            [cancel addTarget:self action:@selector(cancel_invite) forControlEvents:UIControlEventTouchUpInside];
-            [self.view addSubview:cancel];
-            
-            [remind setTag:14];
-            [remind setEnabled:YES];
-            [remind addTarget:self action:@selector(remind_invite_newuser) forControlEvents:UIControlEventTouchUpInside];
-            [self.view addSubview:remind];
-        }
-    }
-
-    else if (([[self.trans valueForKey:@"TransactionType"] isEqualToString:@"Transfer"] ||
-              [[self.trans valueForKey:@"TransactionType"] isEqualToString:@"Invite"]   ||
-              [[self.trans valueForKey:@"TransactionType"] isEqualToString:@"Reward"]) &&
-              [[self.trans valueForKey:@"TransactionStatus"] isEqualToString:@"Success"])
+    if ([[self.trans valueForKey:@"TransactionType"] isEqualToString:@"Transfer"] &&
+        [[self.trans valueForKey:@"TransactionStatus"] isEqualToString:@"Success"])
     {
         if ([[self.trans objectForKey:@"MemberId"] isEqualToString:[user objectForKey:@"MemberId"]])
         {
@@ -421,8 +264,6 @@
     serveOBJ.tagName = @"tranDetail";
     [serveOBJ setDelegate:self];
     [serveOBJ GetTransactionDetail:[self.trans valueForKey:@"TransactionId"]];
-
-    shouldDeletePendingRow = NO;
 }
 
 
@@ -445,39 +286,6 @@
 {
     [self.hud hide:YES];
     [super viewDidDisappear:animated];
-}
-
--(void)remind_request_existinguser
-{
-    UIAlertView *av = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"TransDeets_SndRmndrAlrtTtl1", @"'Send Reminder' Alert Title")
-                                                 message:[NSString stringWithFormat:NSLocalizedString(@"TransDeets_SndRmndrAlrtBody1", @"'Send Reminder' Alert Body Text"),[[self.trans objectForKey:@"FirstName"] capitalizedString]]
-                                                delegate:self
-                                       cancelButtonTitle:NSLocalizedString(@"TransDeets_SndRmndrAlrtNoBtn1", @"'No' Button Text")
-                                       otherButtonTitles:NSLocalizedString(@"TransDeets_SndRmndrAlrtYesBtn1", @"'Yes' Button Text"), nil];
-    [av setTag:2012];
-    [av show];
-}
-
--(void)remind_request_newuser
-{
-    UIAlertView *av = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"TransDeets_SndRmndrAlrtTtl2", @"'Send Reminder' Alert Title (2nd)")
-                                                 message:NSLocalizedString(@"TransDeets_SndRmndrAlrtBody3", @"'Send Reminder' Alert Body Text")//@"Do you want to send a reminder about this request?"
-                                                delegate:self
-                                       cancelButtonTitle:NSLocalizedString(@"TransDeets_SndRmndrAlrtNoBtn2", @"'No' Button Text (2nd)")
-                                       otherButtonTitles:NSLocalizedString(@"TransDeets_SndRmndrAlrtYesBtn2", @"'Yes' Button Text (2nd)"), nil];
-    [av setTag:2013];
-    [av show];
-}
-
--(void)remind_invite_newuser
-{
-    UIAlertView *av = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"TransDeets_SndRmndrAlrtTtl3", @"'Send Reminder' Alert Body Text (3rd)")
-                                                 message:NSLocalizedString(@"TransDeets_SndRmndrAlrtBody3", @"'Send Reminder' Alert Body Text (3rd)")
-                                                delegate:self
-                                       cancelButtonTitle:NSLocalizedString(@"TransDeets_SndRmndrAlrtNoBtn3", @"'No' Button Text (3rd)")
-                                       otherButtonTitles:NSLocalizedString(@"TransDeets_SndRmndrAlrtYesBtn3", @"'Yes' Button Text (3rd)"), nil];
-    [av setTag:2014];
-    [av show];
 }
 
 #pragma mark LightBox Methods
@@ -636,199 +444,7 @@
      ];
 }
 
--(void)Picture_LightBox
-{
-    overlay = [[UIView alloc]init];
-    overlay.frame = CGRectMake(0, 0, 320, [[UIScreen mainScreen] bounds].size.height);
-    overlay.backgroundColor = [UIColor colorWithRed:0 green:0 blue:0 alpha:0.0];
-    [self.navigationController.view addSubview:overlay];
-    
-    mainView = [[UIView alloc]init];
-    mainView.layer.cornerRadius = 8;
-    
-    if ([[UIScreen mainScreen] bounds].size.height < 500) {
-        mainView.frame = CGRectMake(9, -500, 302, 373);
-    }
-    else {
-        mainView.frame = CGRectMake(9, -540, 302, self.view.frame.size.height - 104);
-    }
-    mainView.backgroundColor = [UIColor whiteColor];
-    
-    [overlay addSubview:mainView];
-    mainView.layer.masksToBounds = NO;
-    mainView.layer.shadowOffset = CGSizeMake(0, 2);
-    mainView.layer.shadowRadius = 5;
-    mainView.layer.shadowOpacity = 0.65;
-    
-    [UIView animateWithDuration:.4
-                     animations:^{
-                         overlay.backgroundColor = [UIColor colorWithRed:0 green:0 blue:0 alpha:0.7];
-                     }];
-    
-    [UIView animateWithDuration:0.35
-                     animations:^{
-                         [UIView setAnimationCurve:UIViewAnimationCurveEaseInOut];
-                         if ([[UIScreen mainScreen] bounds].size.height < 500) {
-                             mainView.frame = CGRectMake(9, 70, 302, 379);
-                         } else {
-                             mainView.frame = CGRectMake(9, 70, 302, self.view.frame.size.height - 104);
-                         }
-                     } completion:^(BOOL finished) {
-                         [UIView animateWithDuration:.24
-                                          animations:^{
-                                              [UIView setAnimationCurve:UIViewAnimationCurveEaseOut];
-                                              if ([[UIScreen mainScreen] bounds].size.height < 500) {
-                                                  mainView.frame = CGRectMake(9, 35, 302, 373);
-                                              } else {
-                                                  mainView.frame = CGRectMake(9, 50, 302, self.view.frame.size.height - 104);
-                                              }
-                                          }];
-                     }];
-    
-    UIView * head_container = [[UIView alloc]initWithFrame:CGRectMake(0, 0, 302, 44)];
-    head_container.backgroundColor = [UIColor colorWithRed:244.0f/255.0f green:244.0f/255.0f blue:244.0f/255.0f alpha:1.0];
-    [mainView addSubview:head_container];
-    head_container.layer.cornerRadius = 10;
-    
-    UIView * space_container = [[UIView alloc]initWithFrame:CGRectMake(0, 34, 302, 10)];
-    space_container.backgroundColor = [UIColor colorWithRed:244.0f/255.0f green:244.0f/255.0f blue:244.0f/255.0f alpha:1.0];
-    [mainView addSubview:space_container];
-    
-    UILabel * title = [[UILabel alloc]initWithFrame:CGRectMake(0, 10, 302, 30)];
-    [title setBackgroundColor:[UIColor clearColor]];
-    [title setText:NSLocalizedString(@"TransDeets_PicLtBxDesc", @"Picture Lightbox 'Transfer Picture' Title")];
-    [title setStyleClass:@"lightbox_title"];
-    [mainView addSubview:title];
-
-    // if picture is attached
-    if (![[tranDetailResult valueForKey:@"Picture"] isKindOfClass:[NSNull class]] &&
-          [tranDetailResult valueForKey:@"Picture"] != NULL)
-    {
-        UIView * pic_container = [[UIView alloc]initWithFrame:CGRectMake(51, 60, 200, 200)];
-        pic_container.backgroundColor = [UIColor colorWithRed:244.0f/255.0f green:244.0f/255.0f blue:244.0f/255.0f alpha:1.0];
-        pic_container.layer.cornerRadius = 6;
-        pic_container.clipsToBounds = YES;
-        [mainView addSubview:pic_container];
-
-        UIImageView * imgTranCopy = [[UIImageView alloc]initWithFrame:CGRectMake(0, 0, 200, 200)];
-        [imgTranCopy setImage:[UIImage imageWithData:datos]];
-        imgTranCopy.contentMode = UIViewContentModeScaleAspectFill;
-        imgTranCopy.layer.cornerRadius = 6;
-        imgTranCopy.layer.borderWidth = 1;
-        imgTranCopy.clipsToBounds = YES;
-        imgTranCopy.layer.borderColor = [UIColor whiteColor].CGColor;
-        [pic_container addSubview:imgTranCopy];
-    }
-
-    UIView * desc_container = [[UIView alloc]initWithFrame:CGRectMake(35, 275, 230, 48)];
-    desc_container.backgroundColor = [UIColor clearColor];
-    [mainView addSubview:desc_container];
-
-    UIButton * fb_share = [UIButton buttonWithType:UIButtonTypeRoundedRect];
-    [fb_share setFrame:CGRectMake(0, 0, 115, 44)];
-    [fb_share setStyleClass:@"lightbox_socialBtns"];
-    [fb_share addTarget:self action:@selector(post) forControlEvents:UIControlEventTouchUpInside];
-    [fb_share setTitle:[NSString fontAwesomeIconStringForIconIdentifier:@"fa-circle-thin"] forState:UIControlStateNormal];
-    [fb_share setTitleColor:kNoochBlue forState:UIControlStateNormal];
-    [fb_share setTitleShadowColor:Rgb2UIColor(251, 252, 253, 0.2) forState:UIControlStateNormal];
-    fb_share.titleLabel.shadowOffset = CGSizeMake(0.0, -1.0);
-    [desc_container addSubview:fb_share];
-
-    UILabel * glyphFb = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 115, 44)];
-    [glyphFb setFont:[UIFont fontWithName:@"FontAwesome" size: 24]];
-    [glyphFb setText: [NSString fontAwesomeIconStringForIconIdentifier:@"fa-facebook"]];
-    [glyphFb setTextAlignment:NSTextAlignmentCenter];
-    [glyphFb setTextColor:kNoochBlue];
-    [fb_share addSubview:glyphFb];
-
-    UIButton * twitter_share = [UIButton buttonWithType:UIButtonTypeRoundedRect];
-    [twitter_share setFrame:CGRectMake(115, 0, 115, 44)];
-    [twitter_share setStyleClass:@"lightbox_socialBtns"];
-    [twitter_share addTarget:self action:@selector(post_to_twitter) forControlEvents:UIControlEventTouchUpInside];
-    [twitter_share setTitle:[NSString fontAwesomeIconStringForIconIdentifier:@"fa-circle-thin"] forState:UIControlStateNormal];
-    [twitter_share setTitleColor:kNoochBlue forState:UIControlStateNormal];
-    [twitter_share setTitleShadowColor:Rgb2UIColor(251, 252, 253, 0.2) forState:UIControlStateNormal];
-    twitter_share.titleLabel.shadowOffset = CGSizeMake(0.0, -1.0);
-    [desc_container addSubview:twitter_share];
-
-    UILabel * glyphTwitter = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 115, 44)];
-    [glyphTwitter setFont:[UIFont fontWithName:@"FontAwesome" size: 24]];
-    [glyphTwitter setText: [NSString fontAwesomeIconStringForIconIdentifier:@"fa-twitter"]];
-    [glyphTwitter setTextAlignment:NSTextAlignmentCenter];
-    [glyphTwitter setTextColor:kNoochBlue];
-    [twitter_share addSubview:glyphTwitter];
-    
-    UIView * line_container = [[UIView alloc]initWithFrame:CGRectMake(0, desc_container.frame.origin.y+desc_container.frame.size.height + 12, 302, 1)];
-    line_container.backgroundColor = [UIColor colorWithRed:229.0f/255.0f green:229.0f/255.0f blue:229.0f/255.0f alpha:1.0];
-    [mainView addSubview:line_container];
-    
-    UIButton * btnclose = [UIButton buttonWithType:UIButtonTypeCustom];
-    [btnclose setFrame:CGRectMake(170, mainView.frame.size.height - 52, 110, 40)];
-    [btnclose setTitle:NSLocalizedString(@"TransDeets_PicLtBxClsBtn", @"Picture Lightbox 'Close' Btn Title") forState:UIControlStateNormal];
-    [btnclose setTitleShadowColor:Rgb2UIColor(26, 32, 38, 0.26) forState:UIControlStateNormal];
-    btnclose.titleLabel.shadowOffset = CGSizeMake(0.0, -1.0);
-    [btnclose addTarget:self action:@selector(close_PicturelightBox) forControlEvents:UIControlEventTouchUpInside];
-    if ([[UIScreen mainScreen] bounds].size.height < 500) {
-        [btnclose setStyleClass:@"button_blue_closeLightbox_smscrn"];
-    }
-    else {
-        [btnclose setStyleClass:@"button_blue_closeLightbox"];
-    }
-    [mainView addSubview:btnclose];
-}
-
--(void)close_PicturelightBox
-{
-    [UIView animateWithDuration:0.15
-                     animations:^{
-                         [UIView setAnimationCurve:UIViewAnimationCurveEaseInOut];
-                         if ([[UIScreen mainScreen] bounds].size.height < 500) {
-                             mainView.frame = CGRectMake(9, 70, 302, 373);
-                         } else {
-                             mainView.frame = CGRectMake(9, 70, 302, self.view.frame.size.height - 104);
-                         }
-                     } completion:^(BOOL finished) {
-                         [UIView animateWithDuration:.38
-                                          animations:^{
-                                              [UIView setAnimationCurve:UIViewAnimationCurveEaseOut];
-                                              if ([[UIScreen mainScreen] bounds].size.height < 500) {
-                                                  mainView.frame = CGRectMake(9, -500, 302, 373);
-                                              }
-                                              else {
-                                                  mainView.frame = CGRectMake(9, -540, 302, self.view.frame.size.height - 104);
-                                              }
-                                              overlay.alpha = 0.1;
-                                          } completion:^(BOOL finished) {
-                                              [overlay removeFromSuperview];
-                                          }
-                          ];
-                     }
-     ];
-}
-
-
 #pragma mark Transfer Responses
-- (void)fulfill_request
-{
-    if ([self isUsersStatusOk])
-    {
-        NSMutableDictionary *input = [self.trans mutableCopy];
-        [input setValue:@"accept" forKey:@"response"];
-        TransferPIN *trans = [[TransferPIN alloc] initWithReceiver:input type:@"requestRespond" amount:[[self.trans objectForKey:@"Amount"] floatValue]];
-    [nav_ctrl pushViewController:trans animated:YES];
-    }
-}
-
-- (void)decline_request
-{
-    UIAlertView *av = [[UIAlertView alloc] initWithTitle:[NSString stringWithFormat:@"Reject %@'s Request",[self.trans objectForKey:@"FirstName"]]
-                                                 message:[NSString stringWithFormat:@"Are you sure you want to reject this request from %@?",[[self.trans objectForKey:@"Name"] capitalizedString]]
-                                                delegate:self
-                                       cancelButtonTitle:@"Yes - Reject"
-                                       otherButtonTitles:@"No", nil];
-    [av show];
-    [av setTag:1011];
-}
 
 -(void)cancel_invite
 {
@@ -841,29 +457,7 @@
     [av setTag:310];
 }
 
-- (void)cancel_request_to_existing
-{
-    UIAlertView *av = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"TransDeets_CnclRqstAlrtTtl1", @"Cancel This Request Alert Title")
-                                                 message:[NSString stringWithFormat:NSLocalizedString(@"TransDeets_CnclRqstAlrtBody1", @"Cancel This Request Alert Body Text"),[[self.trans objectForKey:@"Name"] capitalizedString]]
-                                                delegate:self
-                                       cancelButtonTitle:NSLocalizedString(@"TransDeets_CnclRqstAlrtYesBtn1", @"Cancel This Request Alert 'Yes' Btn")
-                                       otherButtonTitles:NSLocalizedString(@"TransDeets_CnclRqstfrAlrtNoBtn1", @"Cancel This Request Alert 'No' Btn"), nil];
-    [av show];
-    [av setTag:1010];
-}
-
-- (void)cancel_request_to_nonNoochUser
-{
-    UIAlertView *av = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"TransDeets_CnclRqstAlrtTtl2", @"Cancel This Request Alert Title (2nd)")
-                                                 message:NSLocalizedString(@"TransDeets_CnclRqstAlrtBody2", @"Cancel This Request Alert Body (2nd)")
-                                                delegate:self
-                                       cancelButtonTitle:NSLocalizedString(@"TransDeets_CnclRqstAlrtYesBtn2", @"Cancel This Request Alert 'Yes' Btn")
-                                       otherButtonTitles:NSLocalizedString(@"TransDeets_CnclRqstAlrtNoBtn2", @"Cancel This Request Alert 'No' Btn"), nil];
-    [av show];
-    [av setTag:2010];
-}
-
--(void)pay_back
+-(void)pay_again
 {
     if ([self isUsersStatusOk] == YES)
     {
@@ -874,7 +468,7 @@
             [input setObject:MemberId forKey:@"MemberId"];
         }
 
-        isPayBack = YES;
+        //isPayBack = YES;
 
         // NSLog(@"%@",self.trans);
         HowMuch *payback = [[HowMuch alloc] initWithReceiver:input];
@@ -1017,9 +611,8 @@
     SLComposeViewController * controller = [SLComposeViewController composeViewControllerForServiceType:SLServiceTypeTwitter];
     [controller setInitialText: post_text];
     [controller addURL:[NSURL URLWithString:@"http://bit.ly/1xdG2le"]];
-    if (datos != nil) {
-        [controller addImage:[UIImage imageWithData:datos]];
-    }
+    //[controller addImage:[UIImage imageWithData:datos]];
+
     [self presentViewController:controller animated:YES completion:Nil];
 
     SLComposeViewControllerCompletionHandler myBlock = ^(SLComposeViewControllerResult result){
@@ -1177,31 +770,7 @@
 
 - (void) alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
 {
-    if (alertView.tag == 2012 && buttonIndex == 1)  // REMIND Request to Existing User
-    {
-        serve * serveObj = [serve new];
-        [serveObj setDelegate:self];
-        serveObj.tagName = @"remind";
-        [serveObj SendReminderToRecepient:[self.trans valueForKey:@"TransactionId"] reminderType:@"RequestMoneyReminderToExistingUser"];
-    }
-
-    else if (alertView.tag == 2013 && buttonIndex == 1)  // REMIND Request to New User
-    {
-        serve * serveObj = [serve new];
-        [serveObj setDelegate:self];
-        serveObj.tagName = @"remind";
-        [serveObj SendReminderToRecepient:[self.trans valueForKey:@"TransactionId"] reminderType:@"RequestMoneyReminderToNewUser"];
-    }
-
-    else if (alertView.tag == 2014 && buttonIndex == 1)  // REMIND Transfer/Invite to New User
-    {
-        serve * serveObj = [serve new];
-        [serveObj setDelegate:self];
-        serveObj.tagName = @"remind";
-        [serveObj SendReminderToRecepient:[self.trans valueForKey:@"TransactionId"] reminderType:@"InvitationReminderToNewUser"];
-    }
-
-    else if (alertView.tag == 147 && buttonIndex == 1)  // PHONE NOT VERIFIED, GO TO PROFILE
+    if (alertView.tag == 147 && buttonIndex == 1)  // PHONE NOT VERIFIED, GO TO PROFILE
     {
         ProfileInfo *prof = [ProfileInfo new];
         isProfileOpenFromSideBar=NO;
@@ -1270,70 +839,6 @@
         [self presentViewController:mailComposer animated:YES completion:nil];
     }
 
-    else if ((alertView.tag == 1010 || alertView.tag == 2010) && buttonIndex == 0) // CANCEL Request
-    {
-        RTSpinKitView *spinner1 = [[RTSpinKitView alloc] initWithStyle:RTSpinKitViewStyleArcAlt];
-        spinner1.color = [UIColor whiteColor];
-        self.hud = [[MBProgressHUD alloc] initWithView:self.navigationController.view];
-        [self.navigationController.view addSubview:self.hud];
-        
-        self.hud.mode = MBProgressHUDModeCustomView;
-        self.hud.customView = spinner1;
-        self.hud.delegate = self;
-        self.hud.labelText = NSLocalizedString(@"TransDeets_cnclRqstHUDlbl", @"'Cancelling this request...' HUD Text");
-        [self.hud show:YES];
-        
-        serve *serveObj = [serve new];
-        [serveObj setDelegate:self];
-        
-        if (alertView.tag == 1010) {
-            serveObj.tagName = @"cancelRequestToExisting";  // Cancel Request for Existing User
-            [serveObj CancelMoneyRequestForExistingNoochUser:[self.trans valueForKey:@"TransactionId"]];
-        }
-        else if (alertView.tag == 2010) {  // CANCEL Request to NonNoochUser
-            serveObj.tagName = @"cancelRequestToNonNoochUser";
-            [serveObj CancelMoneyRequestForExistingNoochUser:[self.trans valueForKey:@"TransactionId"]];
-        }
-    }
-
-    else if (alertView.tag == 310 && buttonIndex == 0) // CANCEL Transfer (Send) Invite
-    {
-        RTSpinKitView *spinner1 = [[RTSpinKitView alloc] initWithStyle:RTSpinKitViewStyleArcAlt];
-        spinner1.color = [UIColor whiteColor];
-        self.hud = [[MBProgressHUD alloc] initWithView:self.navigationController.view];
-        [self.navigationController.view addSubview:self.hud];
-        
-        self.hud.mode = MBProgressHUDModeCustomView;
-        self.hud.customView = spinner1;
-        self.hud.delegate = self;
-        self.hud.labelText = NSLocalizedString(@"TransDeets_cnclTrnsfrHUDlbl", @"'Cancelling this transfer...' HUD Text");
-        [self.hud show:YES];
-
-        serve * serveObj = [serve new];
-        [serveObj setDelegate:self];
-        serveObj.tagName = @"CancelMoneyTransferToNonMemberForSender";  // Cancel Request for Existing User
-        [serveObj CancelMoneyTransferToNonMemberForSender:[self.trans valueForKey:@"TransactionId"]];
-    }
-
-    else if (alertView.tag == 1011 && buttonIndex == 0)  // REJECT
-    {
-        RTSpinKitView *spinner1 = [[RTSpinKitView alloc] initWithStyle:RTSpinKitViewStyleArcAlt];
-        spinner1.color = [UIColor whiteColor];
-        self.hud = [[MBProgressHUD alloc] initWithView:self.navigationController.view];
-        [self.navigationController.view addSubview:self.hud];
-
-        self.hud.mode = MBProgressHUDModeCustomView;
-        self.hud.customView = spinner1;
-        self.hud.delegate = self;
-        self.hud.labelText = NSLocalizedString(@"TransDeets_RejRqstHUDlbl", @"'Rejecting this request...' HUD Text");
-        [self.hud show:YES];
-
-        serve * serveObj = [serve new];
-        [serveObj setDelegate:self];
-        serveObj.tagName = @"reject";
-        [serveObj CancelRejectTransaction:[self.trans valueForKey:@"TransactionId"] resp:@"Rejected"];
-    }
-
     else if (alertView.tag == 81 && buttonIndex == 1)
     {
         SettingsOptions * mainSettingsScrn = [SettingsOptions new];
@@ -1350,16 +855,9 @@
     }
 }
 
--(void)Error:(NSError *)Error {
+-(void)Error:(NSError *)Error
+{
     [self.hud hide:YES];
-   
-    UIAlertView * alert = [[UIAlertView alloc]
-                          initWithTitle:@"Message"
-                          message:@"Error connecting to server"
-                          delegate:nil
-                          cancelButtonTitle:@"OK"
-                          otherButtonTitles:nil];
-    [alert show];
 }
 
 -(void)DisputeDetailClicked:(UIButton*)sender
@@ -1424,79 +922,25 @@
                                                                     longitude:lon
                                                                          zoom:11];
             
-            UIButton *btnShowMapOverlay = [[UIButton alloc]init];
+            UIButton * btnShowMapOverlay = [[UIButton alloc]init];
             [btnShowMapOverlay setBackgroundColor:[UIColor clearColor]];
 
-            UIButton *btnShowPicOverlay = [[UIButton alloc]init];
+            UIButton * btnShowPicOverlay = [[UIButton alloc]init];
             [btnShowPicOverlay setBackgroundColor:[UIColor clearColor]];
-            
-            // if picture is attached
-            if (![[tranDetailResult valueForKey:@"Picture"] isKindOfClass:[NSNull class]] &&
-                  [tranDetailResult valueForKey:@"Picture"] != NULL)
+
+            mapView_ = [GMSMapView mapWithFrame:CGRectMake(-1, 226, 322, 180) camera:camera];
+
+            if ([[UIScreen mainScreen] bounds].size.height == 480)
             {
-                NSArray *bytedata = [tranDetailResult valueForKey:@"Picture"];
-                long c = bytedata.count;
-                uint8_t *bytes = malloc(sizeof(*bytes) * c);
-
-                unsigned i;
-                for (i = 0; i < c; i++) {
-                    NSString *str = [bytedata objectAtIndex:i];
-                    int byte = [str intValue];
-                    bytes[i] = (uint8_t)byte;
-                }
-
-                datos = [NSData dataWithBytes:bytes length:c];
-
-                self.imgTran = [[UIImageView alloc]initWithFrame:CGRectMake(5, 240, 150, 160)];
-                [self.imgTran setImage:[UIImage imageWithData:datos]];
-                self.imgTran.contentMode = UIViewContentModeScaleAspectFill;
-                self.imgTran.layer.cornerRadius = 8;
-                self.imgTran.layer.borderWidth = 1;
-                self.imgTran.clipsToBounds = YES;
-                self.imgTran.layer.borderColor = [UIColor whiteColor].CGColor;
-
-                mapView_ = [GMSMapView mapWithFrame:CGRectMake(165, 240, 150, 160) camera:camera];
-                mapView_.layer.cornerRadius = 8;
-                mapView_.layer.borderWidth = 0;
-                mapView_.clipsToBounds = YES;
-
-                if ([[UIScreen mainScreen] bounds].size.height == 480)
-                {
-                    [self.imgTran setFrame:CGRectMake(5, 240, 150, 90)];
-                    [mapView_ setFrame:CGRectMake(165, 240, 150, 80)];
-                    btnShowMapOverlay.frame = mapView_.frame;
-                }
-                else
-                {
-                    [self.imgTran setFrame:CGRectMake(5, 240, 150, 160)];
-                    [mapView_ setFrame:CGRectMake(165, 240, 150, 160)];
-                    btnShowMapOverlay.frame = CGRectMake(165, 240, 150, 160);
-                }
-
-                [self.view addSubview:self.imgTran];
-
-                btnShowPicOverlay.frame = self.imgTran.frame;
-                [btnShowPicOverlay addTarget:self action:@selector(Picture_LightBox) forControlEvents:UIControlEventTouchUpInside];
-
-                [self.view addSubview:btnShowPicOverlay];
-                [self.view bringSubviewToFront:btnShowPicOverlay];
+                [mapView_ setFrame:CGRectMake(-1, 220, 322, 116)];
+                btnShowMapOverlay.frame = CGRectMake(-1, 220, 322, 116);
             }
-            else  // if no picture is attached
+            else
             {
-                mapView_ = [GMSMapView mapWithFrame:CGRectMake(-1, 226, 322, 180) camera:camera];
-
-                if ([[UIScreen mainScreen] bounds].size.height == 480)
-                {
-                    [mapView_ setFrame:CGRectMake(-1, 220, 322, 116)];
-                    btnShowMapOverlay.frame = CGRectMake(-1, 220, 322, 116);
-                }
-                else
-                {
-                    [mapView_ setFrame:CGRectMake(-1, 226, 322, 180)];
-                    btnShowMapOverlay.frame = CGRectMake(-1, 226, 322, 180);
-                }
-                
+                [mapView_ setFrame:CGRectMake(-1, 226, 322, 180)];
+                btnShowMapOverlay.frame = CGRectMake(-1, 226, 322, 180);
             }
+
            [self.view addSubview:mapView_];
             mapView_.myLocationEnabled = YES;
             
@@ -1519,15 +963,6 @@
         [amount setTextAlignment:NSTextAlignmentCenter];
 
         UILabel * location = [[UILabel alloc] initWithFrame:CGRectMake(-1, 180, 322, 20)];
-        CGRect frame = location.frame;
-
-        if (![[tranDetailResult valueForKey:@"Picture"] isKindOfClass:[NSNull class]] && [tranDetailResult valueForKey:@"Picture"] != NULL)
-        {
-            frame.origin.x = 165;
-            frame.size.width = 155;
-            [location setFrame:frame];
-        }
-
         location.numberOfLines = 1;
         [location setStyleClass:@"details_label_location"];
         
@@ -1578,7 +1013,7 @@
             [dateFormatter setPMSymbol:@"PM"];
             dateFormatter.dateFormat = @"M/d/yyyy h:mm:ss a";
             
-            NSDate *yourDate = [dateFormatter dateFromString:[tranDetailResult objectForKey:@"TransactionDate"]];
+            NSDate * yourDate = [dateFormatter dateFromString:[tranDetailResult objectForKey:@"TransactionDate"]];
             dateFormatter.dateFormat = @"dd-MMMM-yyyy";
             //[dateFormatter setTimeZone:[NSTimeZone localTimeZone]];
 
@@ -1588,41 +1023,11 @@
                 statusstr = NSLocalizedString(@"TransDeets_CncldTxt", @"'Canceled' Status Text");
                 [status setStyleClass:@"red_text"];
             }
-            else if ([[tranDetailResult objectForKey:@"TransactionStatus"]isEqualToString:@"Rejected"]) {
-                statusstr = NSLocalizedString(@"TransDeets_RjctdTxt", @"'Rejected' Status Text");
-                [status setStyleClass:@"red_text"];
-            }
-            else if (![[tranDetailResult valueForKey:@"TransactionType"]isEqualToString:@"Invite"] &&
-                      [[tranDetailResult objectForKey:@"TransactionStatus"]isEqualToString:@"Pending"]) {
-                statusstr = NSLocalizedString(@"TransDeets_PndngTxt", @"'Pending' Status Text");
-                [status setStyleClass:@"yellow_text"];
-            }
-            else if ([[tranDetailResult valueForKey:@"TransactionType"]isEqualToString:@"Invite"] &&
-                     [[tranDetailResult objectForKey:@"TransactionStatus"]isEqualToString:@"Success"])
-            {
-                statusstr = NSLocalizedString(@"TransDeets_PymntAccptdPdTxt", @"'Complete (Payment Accepted)' Status Text");
-                [status setFont: [UIFont fontWithName:@"Roboto-medium" size:18]];
-                [status setStyleClass:@"green_text"];
-            }
             else if ([[tranDetailResult valueForKey:@"TransactionType"] isEqualToString:@"Sent"]     ||
-                     [[tranDetailResult valueForKey:@"TransactionType"] isEqualToString:@"Received"] ||
-                     [[tranDetailResult valueForKey:@"TransactionType"] isEqualToString:@"Transfer"] ||
-                     [[tranDetailResult valueForKey:@"TransactionType"] isEqualToString:@"Reward"])
+                     [[tranDetailResult valueForKey:@"TransactionType"] isEqualToString:@"Transfer"])
             {
                 statusstr = NSLocalizedString(@"TransDeets_CmpltTxt", @"'Complete' Status Text");
                 [status setStyleClass:@"green_text"];
-            }
-            else if ([[tranDetailResult valueForKey:@"TransactionType"]isEqualToString:@"Request"] &&
-                     [[tranDetailResult objectForKey:@"TransactionStatus"]isEqualToString:@"Success"])
-            {
-                statusstr = NSLocalizedString(@"TransDeets_CmpltRqstPdTxt", @"'Complete (Request Paid)' Status Text");
-                [status setStyleClass:@"green_text"];
-            }
-            else if ([[tranDetailResult valueForKey:@"TransactionType"]isEqualToString:@"Invite"] &&
-                     [[tranDetailResult valueForKey:@"TransactionStatus"]isEqualToString:@"Pending"])
-            {
-                statusstr = NSLocalizedString(@"TransDeets_InvtdPndgTxt", @"'Invited - Pending' Status Text");
-                [status setStyleClass:@"yellow_text"];
             }
             
             if ( ![[self.trans valueForKey:@"DisputeId"] isKindOfClass:[NSNull class]] && [self.trans valueForKey:@"DisputeId"]!=NULL )
@@ -1644,11 +1049,11 @@
                 [detailbutton setTitleColor:kNoochBlue forState:UIControlStateNormal];
                 [self.view addSubview:detailbutton];
 
-				UIImageView *arrow_direction = [[UIImageView alloc]initWithFrame:CGRectMake(detailbutton.frame.origin.x+detailbutton.frame.size.width - 15, 198, 12, 15)];
+				UIImageView * arrow_direction = [[UIImageView alloc]initWithFrame:CGRectMake(detailbutton.frame.origin.x+detailbutton.frame.size.width - 15, 198, 12, 15)];
                 arrow_direction.image = [UIImage imageNamed:@"arrow-blue.png"];
                 [self.view addSubview:arrow_direction];
 
-                UIView *line = [[UIView alloc]initWithFrame:CGRectMake(118, 213, 78, 1)];
+                UIView * line = [[UIView alloc]initWithFrame:CGRectMake(118, 213, 78, 1)];
                 line.backgroundColor=kNoochBlue;
                 [self.view addSubview:line];
             }
@@ -1679,98 +1084,6 @@
         [info getDetails:[user valueForKey:@"MemberId"]];
     }
 
-    if ([tagName isEqualToString:@"reject"])
-    {
-        UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"Request Rejected"
-                                                     message:@"\xe2\x98\x9d\nYou got it, you have rejected that request successfully."
-                                                    delegate:nil
-                                           cancelButtonTitle:@"OK"
-                                           otherButtonTitles:nil, nil];
-        [alert show];
-        
-        for (UIView *subview in self.view.subviews)
-        {
-            if (subview.tag == 12 || (subview.tag == 23) || (subview.tag == 24)) {  // Remove 'Cancel' Button, Dispute Button, "Pending" status
-                [subview removeFromSuperview];
-            }
-        }
-        UILabel *status = [[UILabel alloc] initWithFrame:CGRectMake(20, 166, 320, 30)];
-        [status setStyleClass: @"details_label"];
-        [status setStyleId: @"details_status"];
-
-        NSString *statusstr = @"Rejected";
-        [status setStyleClass: @"red_text"];
-        [status setText:statusstr];
-        [self.view addSubview:status];
-
-        shouldDeletePendingRow = YES;
-    }
-
-    else if ([tagName isEqualToString:@"cancelRequestToExisting"] || [tagName isEqualToString:@"cancelRequestToNonNoochUser"])
-    {
-        UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"Request Cancelled"
-                                                       message:@"\xE2\x9D\x8C\nYou got it. That request has been cancelled successfully."
-                                                      delegate:nil
-                                             cancelButtonTitle:@"OK"
-                                             otherButtonTitles:nil, nil];
-        [alert show];
-        
-        for (UIView *subview in self.view.subviews)
-        {
-            if (subview.tag == 12 || (subview.tag == 13) || (subview.tag == 14)) {  // Remove 'Cancel' Button, Dispute Button, "Pending" status
-                [subview removeFromSuperview];
-            }
-        }
-        UILabel *status = [[UILabel alloc] initWithFrame:CGRectMake(20, 166, 320, 30)];
-        [status setStyleClass: @"details_label"];
-        [status setStyleId: @"details_status"];
-        NSString *statusstr = @"Cancelled";
-        [status setStyleClass: @"red_text"];
-        [status setText:statusstr];
-        [self.view addSubview:status];
-
-        shouldDeletePendingRow = YES;
-    }
-
-    if ([tagName isEqualToString:@"cancel_invite"])
-    {
-        UIAlertView * alert = [[UIAlertView alloc]initWithTitle:@"Payment Cancelled"
-                                                        message:@"\xE2\x9D\x8C\nNo problem, this transfer has been cancelled successfully."
-                                                       delegate:nil
-                                              cancelButtonTitle:@"OK"
-                                              otherButtonTitles:nil, nil];
-        [alert show];
-        [nav_ctrl popViewControllerAnimated:YES];
-        shouldDeletePendingRow = YES;
-    }
-
-    else if ([tagName isEqualToString:@"CancelMoneyTransferToNonMemberForSender"])
-    {
-        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Transfer Cancelled"
-                                                        message:@"\xE2\x9D\x8C\nAye aye. That transfer has been cancelled successfully."
-                                                       delegate:nil
-                                              cancelButtonTitle:@"OK"
-                                              otherButtonTitles:nil, nil];
-        [alert show];
-
-        for (UIView *subview in self.view.subviews)
-        {
-            if (subview.tag == 12 || (subview.tag == 13) || (subview.tag == 14)) {  // Remove 'Cancel' Button, Remind Button, "Pending" status
-                [subview removeFromSuperview];
-            }
-        }
-        UILabel *status = [[UILabel alloc] initWithFrame:CGRectMake(20, 166, 320, 30)];
-        [status setStyleClass: @"details_label"];
-        [status setStyleId: @"details_status"];
-
-        NSString *statusstr = @"Cancelled";
-        [status setStyleClass: @"red_text"];
-        [status setText:statusstr];
-        [self.view addSubview:status];
-
-        shouldDeletePendingRow = YES;
-    }
-
     else if ([tagName isEqualToString:@"dispute"])
     {
         for (UIView *subview in self.view.subviews)
@@ -1779,7 +1092,7 @@
                 [subview removeFromSuperview];
         }
 
-        UIAlertView*alert=[[UIAlertView alloc]initWithTitle:@"Transfer Disputed"
+        UIAlertView * alert=[[UIAlertView alloc]initWithTitle:@"Transfer Disputed"
                                                     message:@"Thanks for letting us know. We will investigate and may contact you for more information.\n\nIf you would like to tell us more please contact Nooch Support."
                                                    delegate:self
                                           cancelButtonTitle:@"OK"
@@ -1810,17 +1123,6 @@
             //[user setObject:[Result valueForKey:@"DateCreated"] forKey:@"DateCreated"];
             //[user setObject:[Result valueForKey:@"PhotoUrl"] forKey:@"Photo"];
         }
-    }
-    
-    else if ([tagName isEqualToString:@"remind"])
-    {
-        NSLog(@"Remind response was: %@",result);
-        UIAlertView * alert = [[UIAlertView alloc] initWithTitle:@"Reminder Sent Successfully"
-                                                         message:@"\xF0\x9F\x91\x8D"
-                                                        delegate:nil
-                                               cancelButtonTitle:@"OK"
-                                               otherButtonTitles:nil, nil];
-        [alert show];
     }
 }
 

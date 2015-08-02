@@ -2,7 +2,7 @@
 //  Home.m
 //  Payo
 //
-//  Created by crks on 9/25/13.
+//  Created by Cliff Canan on 7/30/15.
 //  Copyright (c) 2015 Nooch Inc. All rights reserved.
 //
 
@@ -35,11 +35,9 @@ NSMutableURLRequest *request;
 @property(nonatomic,strong) UIView *profile_incomplete;
 @property(nonatomic,strong) UIView *phone_incomplete;
 @property(nonatomic,strong) UIView *phone_unverified;
-@property(nonatomic,strong) UIView *pending_requests;
 @property(nonatomic,strong) iCarousel *carousel;
 @property(nonatomic,strong) UILabel * selectedFavName;
 @property(nonatomic,strong) UILabel *glyphNoBank;
-@property(nonatomic,strong) UILabel *pending_notif;
 @end
 
 @implementation Home
@@ -141,9 +139,6 @@ NSMutableURLRequest *request;
         [fb storeFB:[user objectForKey:@"facebook_id"] isConnect:@"YES"];
     }
 
-    self.pending_notif = [UILabel new];
-    [self.pending_notif setHidden:YES];
-
     firstNameAB = @"";
     lastNameAB = @"";
 
@@ -236,22 +231,15 @@ NSMutableURLRequest *request;
 
         [[assist shared] setisloggedout:NO];
 
-        NSString * KnoxOnOff = [[ARPowerHookManager getValueForHookById:@"knox_OnOff"] lowercaseString];
         NSString * SynapseOnOff = [[ARPowerHookManager getValueForHookById:@"synps_OnOff"] lowercaseString];
 
-        if ([KnoxOnOff isEqualToString:@"on"]) {
-            isKnoxOn = YES;
-        }
-        else {
-            isKnoxOn = NO;
-        }
         if ([SynapseOnOff isEqualToString:@"on"]) {
             isSynapseOn = YES;
         }
-        else {
+        else
+        {
             isSynapseOn = NO;
         }
-        //NSLog(@"isSynapseOn is: %d",isSynapseOn);
     }
     else
     {
@@ -325,7 +313,6 @@ NSMutableURLRequest *request;
     }
 
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        [ARProfileManager registerString:@"IsKnoxBankAttached" withValue:@"unknown"];
         [ARProfileManager registerString:@"IsSynapseBankAttached" withValue:@"unknown"];
         [ARProfileManager registerString:@"IPaddress" withValue:@"unknown"];
 
@@ -333,17 +320,9 @@ NSMutableURLRequest *request;
         {
             [ARProfileManager setStringValue:@"YES" forVariable:@"IsSynapseBankAttached"];
         }
-        else if (isSynapseOn)
+        else
         {
             [ARProfileManager setStringValue:@"NO" forVariable:@"IsSynapseBankAttached"];
-        }
-        else if (isKnoxOn && [user boolForKey:@"IsKnoxBankAvailable"])
-        {
-            [ARProfileManager setStringValue:@"YES" forVariable:@"IsKnoxBankAttached"];
-        }
-        else if (isKnoxOn)
-        {
-            [ARProfileManager setStringValue:@"NO" forVariable:@"IsKnoxBankAttached"];
         }
     });
 
@@ -361,15 +340,6 @@ NSMutableURLRequest *request;
     [super viewDidDisappear:animated];
 
     [top_button removeFromSuperview];
-
-    if ([self.view.subviews containsObject:self.pending_requests])
-    {
-        [self dismiss_requestsPendingBanner];
-    }
-    if ([self.view.subviews containsObject:self.pending_notif])
-    {
-        [self.pending_notif setHidden:YES];
-    }
 }
 
 #pragma mark - Address Book Functions
@@ -718,12 +688,6 @@ void addressBookChanged(ABAddressBookRef addressBook, CFDictionaryRef info, void
     carouselTopValue = 48;
     topBtnTopValue = 260;
 
-    // for the red notification bubble if a user has a pending RECEIVED Request
-    serve * getPendingCount = [serve new];
-    [getPendingCount setDelegate:self];
-    [getPendingCount setTagName:@"getPendingTransfersCount"];
-    [getPendingCount getPendingTransfersCount];
-
     NSShadow * shadowRed = [[NSShadow alloc] init];
     shadowRed.shadowColor = Rgb2UIColor(71, 8, 7, .4);
     shadowRed.shadowOffset = CGSizeMake(0, 1);
@@ -731,9 +695,6 @@ void addressBookChanged(ABAddressBookRef addressBook, CFDictionaryRef info, void
 
     if ([[assist shared] getSuspended])
     {
-        if ([self.view.subviews containsObject:self.pending_requests]) {
-            [self dismiss_requestsPendingBanner];
-        }
         if ([self.view.subviews containsObject:self.phone_incomplete]) {
             [self dismiss_phone_unvalidated];
         }
@@ -992,23 +953,6 @@ void addressBookChanged(ABAddressBookRef addressBook, CFDictionaryRef info, void
 
     //NSLog(@"Banner count is: %d",bannerAlert);
 
-    //Update Pending Status
-    if ([[user objectForKey:@"Pending_count"] intValue] > 0 &&
-         [user boolForKey:@"IsSynapseBankAvailable"] )
-    {
-        [self addPendingBanner];
-    }
-    else
-    {
-        if ([self.view.subviews containsObject:self.pending_requests])
-        {
-            if (bannerAlert > 0 && ![self.view.subviews containsObject:self.suspended]) {
-                bannerAlert--;
-            }
-            [self dismiss_requestsPendingBanner];
-        }
-    }
-
     NSString * homeBtnColorFromArtisan = [ARPowerHookManager getValueForHookById:@"homeBtnClr"];
 
     if (![self.view.subviews containsObject:top_button])
@@ -1053,121 +997,6 @@ void addressBookChanged(ABAddressBookRef addressBook, CFDictionaryRef info, void
         [self.hud hide:YES];
     }
 
-    [self drawCarousel];
-}
-
--(void)addPendingBanner
-{
-    //Update Pending Status
-    [self.navigationItem setLeftBarButtonItem:nil];
-
-    UIButton * hamburger = [UIButton buttonWithType:UIButtonTypeRoundedRect];
-    [hamburger setStyleId:@"navbar_hamburger"];
-    [hamburger addTarget:self action:@selector(showMenu) forControlEvents:UIControlEventTouchUpInside];
-    [hamburger setTitle:[NSString fontAwesomeIconStringForIconIdentifier:@"fa-bars"] forState:UIControlStateNormal];
-    [hamburger setTitleShadowColor:Rgb2UIColor(19, 32, 38, 0.22) forState:UIControlStateNormal];
-    hamburger.titleLabel.shadowOffset = CGSizeMake(0.0, -1.0);
-
-    if ([self.pending_notif isHidden])
-    {
-        [self.pending_notif setHidden:NO];
-        [self.pending_notif setText:[user objectForKey:@"Pending_count"]];
-        [self.pending_notif setFrame:CGRectMake(16, -2, 22, 22)];
-        [self.pending_notif setStyleId:@"pending_notif"];
-    }
-    [hamburger addSubview:self.pending_notif];
-
-    UIBarButtonItem * menu = [[UIBarButtonItem alloc] initWithCustomView:hamburger];
-    [self.navigationItem setLeftBarButtonItem:menu];
-
-    if ([[user objectForKey:@"Status"] isEqualToString:@"Active"] &&
-        [[user valueForKey:@"IsVerifiedPhone"]isEqualToString:@"YES"])
-    {
-        bannerAlert++;
-
-        if (![self.view.subviews containsObject:self.pending_requests])
-        {
-            [self.pending_requests removeFromSuperview];
-
-            self.pending_requests = [UIView new];
-            [self.pending_requests setStyleId:@"pendingRequestBanner"];
-            [self.pending_requests addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(go_history)]];
-
-            NSShadow * shadowBlue = [[NSShadow alloc] init];
-            shadowBlue.shadowColor = Rgb2UIColor(19, 32, 38, .25);
-            shadowBlue.shadowOffset = CGSizeMake(0, 1);
-            NSDictionary * textShadowBlue = @{NSShadowAttributeName:shadowBlue};
-
-            UILabel * em = [UILabel new];
-            [em setStyleClass:@"banner_header"];
-
-            UILabel * em_exclaim = [UILabel new];
-            [em_exclaim setStyleClass:@"banner_alert_glyph"];
-            [em_exclaim setText:[NSString fontAwesomeIconStringForIconIdentifier:@"fa-inbox"]];
-            CGRect frameOfGlyph = em_exclaim.frame;
-            frameOfGlyph.origin.x += 6;
-            [em_exclaim setFrame:frameOfGlyph];
-            [self.pending_requests addSubview:em_exclaim];
-
-            UILabel * em_info = [UILabel new];
-            [em_info setStyleClass:@"banner_info"];
-            [em_info setNumberOfLines:0];
-            if ([[user objectForKey:@"Pending_count"] intValue] == 1)
-            {
-                em.attributedText = [[NSAttributedString alloc] initWithString:NSLocalizedString(@"PendingBannerTitleSingular", @"Home Screen Pending Title Singular") attributes:textShadowBlue];
-                em_info.attributedText = [[NSAttributedString alloc] initWithString:NSLocalizedString(@"PendingBannerBodyTxtSingular", @"Home Screen Pending Body Text Singular") attributes:textShadowBlue];
-            }
-            else if ([[user objectForKey:@"Pending_count"] intValue] > 1)
-            {
-                em.attributedText = [[NSAttributedString alloc] initWithString:NSLocalizedString(@"PendingBannerTitlePlural", @"Home Screen Pending Title Plural") attributes:textShadowBlue];
-                em_info.attributedText = [[NSAttributedString alloc] initWithString:[NSString stringWithFormat:NSLocalizedString(@"PendingBannerBodyTxtPlural", @"Home Screen Pending Body Text Plural"), [[user objectForKey:@"Pending_count"] intValue]] attributes:textShadowBlue];
-            }
-            [self.pending_requests addSubview:em];
-            [self.pending_requests addSubview:em_info];
-
-            UIButton * goHistory = [UIButton buttonWithType:UIButtonTypeRoundedRect];
-            [goHistory setStyleClass:@"go_now_text"];
-            [goHistory setTitle:NSLocalizedString(@"PendingBannerActionTxt", @"Home Screen Pending Banner Action Text") forState:UIControlStateNormal];
-            [goHistory setTitleShadowColor:Rgb2UIColor(19, 32, 38, .25) forState:UIControlStateNormal];
-            goHistory.titleLabel.shadowOffset = CGSizeMake(0.0, 1.0);
-            [goHistory addTarget:self action:@selector(go_history) forControlEvents:UIControlEventTouchUpInside];
-            [self.pending_requests addSubview:goHistory];
-
-            UIButton * dis = [UIButton buttonWithType:UIButtonTypeCustom];
-            [dis setStyleClass:@"dismiss_banner"];
-            [dis setTitle:[NSString fontAwesomeIconStringForIconIdentifier:@"fa-times-circle"] forState:UIControlStateNormal];
-            [dis setTitleShadowColor:Rgb2UIColor(19, 32, 38, .25) forState:UIControlStateNormal];
-            [dis setTitleColor:[Helpers hexColor:@"a5d8f1"] forState:UIControlStateHighlighted];
-            dis.titleLabel.shadowOffset = CGSizeMake(0.0, 1.0);
-            [dis addTarget:self action:@selector(dismiss_requestsPendingBanner) forControlEvents:UIControlEventTouchUpInside];
-
-            [self.pending_requests addSubview:dis];
-
-            [self.view addSubview:self.pending_requests];
-
-            [UIView animateKeyframesWithDuration:.6
-                                           delay:0
-                                         options:2 << 16
-                                      animations:^{
-                                          [UIView addKeyframeWithRelativeStartTime:.28 relativeDuration:.72 animations:^{
-                                              CGRect frame = self.pending_requests.frame;
-                                              frame.origin.y = 0;
-                                              [self.pending_requests setFrame:frame];
-                                          }];
-                                      } completion: ^(BOOL finished) {
-                                          [self.view bringSubviewToFront:self.pending_requests];
-                                      }
-             ];
-        }
-    }
-    else if ([self.view.subviews containsObject:self.pending_requests])
-    {
-        if (bannerAlert > 0 && ![self.view.subviews containsObject:self.suspended]) {
-            bannerAlert--;
-        }
-        [self dismiss_requestsPendingBanner];
-    }
-    
     [self drawCarousel];
 }
 
@@ -1264,66 +1093,17 @@ void addressBookChanged(ABAddressBookRef addressBook, CFDictionaryRef info, void
      ];
 }
 
--(void)dismiss_requestsPendingBanner
-{
-    [UIView setAnimationCurve:UIViewAnimationCurveEaseOut];
-    
-    [UIView animateKeyframesWithDuration:.38
-                                   delay:0
-                                 options:2 << 16
-                              animations:^{
-                                  [UIView addKeyframeWithRelativeStartTime:0 relativeDuration:1 animations:^{
-                                      CGRect frame = self.pending_requests.frame;
-                                      frame.origin.y = -57;
-                                      [self.pending_requests setFrame:frame];
-
-                                      CGRect carouselFrame = _carousel.frame;
-                                      carouselFrame.origin.y -= 30;
-                                      [_carousel setFrame:carouselFrame];
-
-                                      CGRect topBtnFrame = top_button.frame;
-                                      topBtnFrame.origin.y -= 25;
-                                      [top_button setFrame:topBtnFrame];
-                                  }];
-                              } completion: ^(BOOL finished){
-                                  [self.pending_requests removeFromSuperview];
-                              }
-     ];
-}
-
 -(void)contact_support
 {
     if (![MFMailComposeViewController canSendMail])
     {
-      /*if ([UIAlertController class]) // for iOS 8
-        {
-            UIAlertController * alert = [UIAlertController
-                                         alertControllerWithTitle:@"No Email Detected"
-                                         message:@"You don't have an email account configured for this device."
-                                         preferredStyle:UIAlertControllerStyleAlert];
-            
-            UIAlertAction * ok = [UIAlertAction
-                                  actionWithTitle:@"OK"
-                                  style:UIAlertActionStyleDefault
-                                  handler:^(UIAlertAction * action)
-                                  {
-                                      [alert dismissViewControllerAnimated:YES completion:nil];
-                                  }];
-            [alert addAction:ok];
-            
-            [self presentViewController:alert animated:YES completion:nil];
-            return;
-        }
-        else
-        {
-          */UIAlertView * av = [[UIAlertView alloc] initWithTitle:@"No Email Detected"
-                                                          message:@"You don't have an email account configured for this device."
-                                                         delegate:nil
-                                                cancelButtonTitle:@"OK"
-                                                otherButtonTitles:nil];
-            [av show];
-            return;
-      //}
+        UIAlertView * av = [[UIAlertView alloc] initWithTitle:@"No Email Detected"
+                                                      message:@"You don't have an email account configured for this device."
+                                                     delegate:nil
+                                            cancelButtonTitle:@"OK"
+                                            otherButtonTitles:nil];
+        [av show];
+        return;
     }
 
     NSString * memberId = [user valueForKey:@"MemberId"];
@@ -1360,8 +1140,7 @@ void addressBookChanged(ABAddressBookRef addressBook, CFDictionaryRef info, void
 
 -(void)go_history
 {
-    [self dismiss_requestsPendingBanner];
-    HistoryFlat *goToHistory = [HistoryFlat new];
+    HistoryFlat * goToHistory = [HistoryFlat new];
     [self.navigationController pushViewController:goToHistory animated:NO];
 }
 
@@ -1816,14 +1595,6 @@ void addressBookChanged(ABAddressBookRef addressBook, CFDictionaryRef info, void
             if ( favorite[@"MemberId"] ||
                 (favorite[@"UserName"] && [favorite[@"emailCount"]intValue] == 1))
             {
-                if ([self.view.subviews containsObject:self.pending_requests])
-                {
-                    if (bannerAlert > 0) {
-                        bannerAlert--;
-                    }
-                    [self dismiss_requestsPendingBanner];
-                }
-                
                 self.selectedFavName = [[UILabel alloc] initWithFrame:CGRectMake(20, carousel.bounds.origin.y + 12, 280, 30)];
                 [self.selectedFavName setFont:[UIFont fontWithName:@"Roboto-regular" size: 22]];
 
@@ -2094,7 +1865,7 @@ void addressBookChanged(ABAddressBookRef addressBook, CFDictionaryRef info, void
         [alertView show];
         return NO;
     }
-
+    return YES;
     // 4. HAS USER COMPLETED & VERIFIED PROFILE INFO? (EMAIL, PHONE, ADDRESS)?
     if (![[assist shared] isProfileCompleteAndValidated] ||  // this line covers: being suspended, IsVerifiedPhone, and status = active
         ![[user objectForKey:@"ProfileComplete"] isEqualToString:@"YES"]) // this line covers that the address is not empty or null
@@ -2326,109 +2097,50 @@ void addressBookChanged(ABAddressBookRef addressBook, CFDictionaryRef info, void
 
     else if ([tagName isEqualToString:@"getPendingTransfersCount"])
     {
-        NSError *error;
         [self.hud hide:YES];
 
-        NSDictionary * dict = [NSJSONSerialization JSONObjectWithData:[result dataUsingEncoding:NSUTF8StringEncoding] options:0 error:&error];
+        UIButton * hamburger = [UIButton buttonWithType:UIButtonTypeRoundedRect];
+        [hamburger setStyleId:@"navbar_hamburger"];
+        [hamburger addTarget:self action:@selector(showMenu) forControlEvents:UIControlEventTouchUpInside];
+        [hamburger setTitle:[NSString fontAwesomeIconStringForIconIdentifier:@"fa-bars"] forState:UIControlStateNormal];
+        [hamburger setTitleShadowColor:Rgb2UIColor(19, 32, 38, 0.22) forState:UIControlStateNormal];
+        hamburger.titleLabel.shadowOffset = CGSizeMake(0.0, -1.0);
 
-        //NSLog(@"getPendingTransfersCount dict is: %@",dict);
-        int pendingRequestsReceived = [[dict valueForKey:@"pendingRequestsReceived"] intValue];
-        NSString * count;
-
-        if (pendingRequestsReceived > 0 &&
-            ((isSynapseOn && [user boolForKey:@"IsSynapseBankAvailable"]) ||
-             (isKnoxOn && [user boolForKey:@"IsKnoxBankAvailable"])))
+        if (isSynapseOn && ![user boolForKey:@"IsSynapseBankAvailable"])
         {
-            if ([self.view.subviews containsObject:self.glyphNoBank])
+            if (![self.view.subviews containsObject:self.glyphNoBank])
             {
-                [self.glyphNoBank removeFromSuperview];
-            }
-
-            if ([self.pending_notif isHidden])
-            {
-                [self.pending_notif setText:[NSString stringWithFormat:@"%d", pendingRequestsReceived]];
-                [self.pending_notif setFrame:CGRectMake(16, -2, 22, 22)];
-                [self.pending_notif setStyleId:@"pending_notif"];
-                [self.pending_notif setStyleClass:@"animate_bubble"];
-            }
-            UIButton * hamburger = [UIButton buttonWithType:UIButtonTypeRoundedRect];
-            [hamburger setStyleId:@"navbar_hamburger"];
-            [hamburger addTarget:self action:@selector(showMenu) forControlEvents:UIControlEventTouchUpInside];
-            [hamburger setTitle:[NSString fontAwesomeIconStringForIconIdentifier:@"fa-bars"] forState:UIControlStateNormal];
-            [hamburger setTitleShadowColor:Rgb2UIColor(19, 32, 38, 0.22) forState:UIControlStateNormal];
-            hamburger.titleLabel.shadowOffset = CGSizeMake(0.0, -1.0);
-            [hamburger addSubview:self.pending_notif];
-
-            UIBarButtonItem * menu = [[UIBarButtonItem alloc] initWithCustomView:hamburger];
-            [self.navigationItem setLeftBarButtonItem:menu];
-            [self.pending_notif setHidden:NO];
-    
-            [user setBool:true forKey:@"hasPendingItems"];
-            count = [dict valueForKey:@"pendingRequestsReceived"];
-
-            [user setValue: count forKey:@"Pending_count"];
-
-            if (![self.view.subviews containsObject:self.pending_requests])
-            {
-                [self addPendingBanner];
+                self.glyphNoBank = [UILabel new];
+                [self.glyphNoBank setText:[NSString fontAwesomeIconStringForIconIdentifier:@"fa-exclamation"]];
+                [self.glyphNoBank setStyleId:@"noBank_Home"];
+                [self.glyphNoBank setFrame:CGRectMake(16, -2, 22, 22)];
+                [self.glyphNoBank setAlpha:1];
+                [self.glyphNoBank setStyleClass:@"animate_bubble"];
+                [hamburger addSubview:self.glyphNoBank];
             }
         }
         else
         {
-            [self.pending_notif setHidden:YES];
-            UIButton * hamburger = [UIButton buttonWithType:UIButtonTypeRoundedRect];
-            [hamburger setStyleId:@"navbar_hamburger"];
-            [hamburger addTarget:self action:@selector(showMenu) forControlEvents:UIControlEventTouchUpInside];
-            [hamburger setTitle:[NSString fontAwesomeIconStringForIconIdentifier:@"fa-bars"] forState:UIControlStateNormal];
-            [hamburger setTitleShadowColor:Rgb2UIColor(19, 32, 38, 0.22) forState:UIControlStateNormal];
-            hamburger.titleLabel.shadowOffset = CGSizeMake(0.0, -1.0);
-
-            if ((isKnoxOn && ![user boolForKey:@"IsKnoxBankAvailable"]) ||
-                (isSynapseOn && ![user boolForKey:@"IsSynapseBankAvailable"]))
+            if ([self.view.subviews containsObject:self.glyphNoBank])
             {
-                if (![self.view.subviews containsObject:self.glyphNoBank])
-                {
-                    self.glyphNoBank = [UILabel new];
-                    [self.glyphNoBank setText:[NSString fontAwesomeIconStringForIconIdentifier:@"fa-exclamation"]];
-                    [self.glyphNoBank setStyleId:@"noBank_Home"];
-                    [self.glyphNoBank setFrame:CGRectMake(16, -2, 22, 22)];
-                    [self.glyphNoBank setAlpha:1];
-                    [self.glyphNoBank setStyleClass:@"animate_bubble"];
-                    [hamburger addSubview:self.glyphNoBank];
-                }
-            }
-            else
-            {
-                if ([self.view.subviews containsObject:self.glyphNoBank])
-                {
-                    [UIView animateKeyframesWithDuration:.4
-                                                   delay:0
-                                                 options:UIViewKeyframeAnimationOptionCalculationModeCubic
-                                              animations:^{
-                                                  [UIView addKeyframeWithRelativeStartTime:0 relativeDuration:1 animations:^{
-                                                      [self.glyphNoBank setAlpha:0];
-                                                  }];
-                                                  
-                                              } completion:^(BOOL finished){
-                                                  [self.glyphNoBank removeFromSuperview];
+                [UIView animateKeyframesWithDuration:.4
+                                               delay:0
+                                             options:UIViewKeyframeAnimationOptionCalculationModeCubic
+                                          animations:^{
+                                              [UIView addKeyframeWithRelativeStartTime:0 relativeDuration:1 animations:^{
+                                                  [self.glyphNoBank setAlpha:0];
                                               }];
-                }
+                                              
+                                          } completion:^(BOOL finished){
+                                              [self.glyphNoBank removeFromSuperview];
+                                          }];
             }
-
-            UIBarButtonItem * menu = [[UIBarButtonItem alloc] initWithCustomView:hamburger];
-            [self.navigationItem setLeftBarButtonItem:menu];
-
-            [user setBool:false forKey:@"hasPendingItems"];
-
-            count = @"0";
-
-            if ([self.view.subviews containsObject:self.pending_requests])
-            {
-                [self dismiss_requestsPendingBanner];
-            }
-
-            [user setValue:count forKey:@"Pending_count"];
         }
+
+        UIBarButtonItem * menu = [[UIBarButtonItem alloc] initWithCustomView:hamburger];
+        [self.navigationItem setLeftBarButtonItem:menu];
+
+        [user setBool:false forKey:@"hasPendingItems"];
         [user synchronize];
 
         if ([self.view.subviews containsObject:self.hud])

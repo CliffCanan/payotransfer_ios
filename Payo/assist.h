@@ -51,7 +51,7 @@ NSString *histSearching;
 -(NSMutableArray*)allHist;
 -(NSMutableArray*)assosSearch:(NSString*)searchText;
 -(NSMutableArray*)assosAll;
--(NSMutableArray*)getArray;
+//-(NSMutableArray*)getArray;
 -(NSMutableArray*)hist;
 -(NSMutableArray*)histFilter:(NSString*)filterPick;
 
