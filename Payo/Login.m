@@ -51,7 +51,7 @@
         [self.email.text rangeOfString:@"."].location != NSNotFound &&
         [self.password.text length] > 5)
     {
-        RTSpinKitView * spinner1 = [[RTSpinKitView alloc] initWithStyle:RTSpinKitViewStyleWanderingCubes];
+        RTSpinKitView * spinner1 = [[RTSpinKitView alloc] initWithStyle:RTSpinKitViewStyleArcAlt];
         spinner1.color = [UIColor whiteColor];
         self.hud = [[MBProgressHUD alloc] initWithView:self.navigationController.view];
         [self.navigationController.view addSubview:self.hud];
@@ -61,7 +61,7 @@
         self.hud.delegate = self;
         self.hud.labelText = NSLocalizedString(@"Login_HUDlbl", @"'Checking Login Credentials...' HUD Label");
         [self.hud show:YES];
-//[[assist shared]setPassValue:self.password.text]; //Cliff (7/4/15: why are we storing the pw value?? Can't imagine why it's needed...s
+        //[[assist shared]setPassValue:self.password.text]; //Cliff (7/4/15: why are we storing the pw value?? Can't imagine why it's needed...
 
         serve *log = [serve new];
         [log setDelegate:self];
@@ -111,7 +111,7 @@
     [glyph_back setTextAlignment:NSTextAlignmentCenter];
     [glyph_back setFrame:CGRectMake(0, 14, 44, 44)];
     [glyph_back setText:[NSString fontAwesomeIconStringForIconIdentifier:@"fa-arrow-circle-o-left"]];
-    [glyph_back setTextColor:kNoochBlue];
+    [glyph_back setTextColor:kPayoBlue];
     [btnback addSubview:glyph_back];
 
     [self.view addSubview:btnback];
@@ -200,7 +200,7 @@
 
     UILabel * emailLbl = [[UILabel alloc] initWithFrame:CGRectMake(19, 165, 120, 40)];
     [emailLbl setFont:[UIFont fontWithName:@"Roboto-regular" size:17]];
-    [emailLbl setTextColor:kNoochBlue];
+    [emailLbl setTextColor:kPayoBlue];
     [emailLbl setText:NSLocalizedString(@"Login_EmailTxt", @"'Email' Text")];
     [emailLbl setTextAlignment:NSTextAlignmentLeft];
     [self.view addSubview:emailLbl];
@@ -219,7 +219,7 @@
 
     UILabel * pass = [[UILabel alloc] initWithFrame:CGRectMake(19, 207, 120, 40)];
     [pass setFont:[UIFont fontWithName:@"Roboto-regular" size:17]];
-    [pass setTextColor:kNoochBlue];
+    [pass setTextColor:kPayoBlue];
     [pass setText:NSLocalizedString(@"Login_PwTxt", @"'Password' Text")];
     [pass setTextAlignment:NSTextAlignmentLeft];
 
@@ -248,7 +248,7 @@
 
     self.stay_logged_in = [[UISwitch alloc] initWithFrame:CGRectMake(110, 319, 34, 21)];
     [self.stay_logged_in setStyleClass:@"login_switch"];
-    [self.stay_logged_in setOnTintColor:kNoochBlue];
+    [self.stay_logged_in setOnTintColor:kPayoBlue];
     [self.stay_logged_in setOn: YES];
     self.stay_logged_in.transform = CGAffineTransformMakeScale(0.8, 0.8);
 
@@ -456,7 +456,7 @@
 
             isloginWithFB = YES;
 
-            RTSpinKitView * spinner1 = [[RTSpinKitView alloc] initWithStyle:RTSpinKitViewStyleThreeBounce];
+            RTSpinKitView * spinner1 = [[RTSpinKitView alloc] initWithStyle:RTSpinKitViewStyleArcAlt];
             spinner1.color = [UIColor whiteColor];
             self.hud = [[MBProgressHUD alloc] initWithView:self.navigationController.view];
             [self.navigationController.view addSubview:self.hud];
@@ -541,102 +541,23 @@
 
 - (void)forgot_pass_Login
 {
-    NSLog(@"FORGOT_PASS_LOGIN fired");
     NSString * avTitle = NSLocalizedString(@"Login_ForgPwAlrtTtl", @"'Forgot Password' Alert Title");
     NSString * avMsg = NSLocalizedString(@"Login_ForgPwAlrtBody", @"'Please enter your email and we will send you a reset link.' Alert Body Text");
     NSString * avCancel = NSLocalizedString(@"Login_ForgPwAlrtCncl", @"'Cancel' Alert Button Text");
 
-    /*if ([UIAlertController class]) // for iOS 8
-    {
-        UIAlertController * alert = [UIAlertController
-                                     alertControllerWithTitle:avTitle
-                                     message:avMsg
-                                     preferredStyle:UIAlertControllerStyleAlert];
-
-        [alert addTextFieldWithConfigurationHandler:^(UITextField *textField)
-        {
-            //textField.placeholder = NSLocalizedString(@"Email Address", @"'Email' Field Placeholder");
-            //[textField setText:self.email.text];
-            //[textField setKeyboardType:UIKeyboardTypeEmailAddress];
-            //[textField setStyleClass:@"customTextField_2"];
-            textField.inputAccessoryView = [[UIView alloc] init];
-        }];
-
-        UIAlertAction * cancel = [UIAlertAction
-                                  actionWithTitle:avCancel
-                                  style:UIAlertActionStyleCancel
-                                  handler:^(UIAlertAction *action)
-                                  {
-                                      NSLog(@"Cancel action");
-                                      [alert dismissViewControllerAnimated:NO completion:nil];
-                                  }];
-
-        UIAlertAction * ok = [UIAlertAction
-                              actionWithTitle:@"OK"
-                              style:UIAlertActionStyleDefault
-                              handler:^(UIAlertAction * action)
-                              {
-                                  [alert dismissViewControllerAnimated:YES completion:nil];
-
-                                  UITextField * emailField = alert.textFields.firstObject;
-                                  
-                                  if ([emailField.text length] > 0 &&
-                                      [emailField.text rangeOfString:@"@"].location != NSNotFound &&
-                                      [emailField.text rangeOfString:@"."].location != NSNotFound &&
-                                      1 < [emailField.text rangeOfString:@"."].location < [emailField.text length] - 2)
-                                  {
-                                      RTSpinKitView * spinner1 = [[RTSpinKitView alloc] initWithStyle:RTSpinKitViewStyleBounce];
-                                      spinner1.color = [UIColor whiteColor];
-                                      self.hud = [[MBProgressHUD alloc] initWithView:self.navigationController.view];
-                                      [self.navigationController.view addSubview:self.hud];
-
-                                      self.hud.mode = MBProgressHUDModeCustomView;
-                                      self.hud.customView = spinner1;
-                                      self.hud.delegate = self;
-                                      self.hud.labelText = @"Working hard...";
-                                      [self.hud show:YES];
-
-                                      serve * forgetful = [serve new];
-                                      forgetful.Delegate = self;
-                                      forgetful.tagName = @"ForgotPass";
-                                      [forgetful forgotPass:emailField.text];
-                                  }
-                                  else
-                                  {
-                                      UIAlertView * alert = [[UIAlertView alloc]initWithTitle:avTitle
-                                                                                      message:@"Please make sure you've entered a valid email address."
-                                                                                     delegate:self
-                                                                            cancelButtonTitle:avCancel
-                                                                            otherButtonTitles:@"OK", nil];
-                                      alert.alertViewStyle = UIAlertViewStylePlainTextInput;
-                                      [alert setTag:22];
-                                      [[alert textFieldAtIndex:0] setText:emailField.text];
-                                      [[alert textFieldAtIndex:0] setKeyboardType:UIKeyboardTypeEmailAddress];
-                                      [[alert textFieldAtIndex:0] setTextAlignment:NSTextAlignmentCenter];
-                                      [alert show];
-                                  }
-                              }];
-        [alert addAction:cancel];
-        [alert addAction:ok];
-        
-        [self presentViewController:alert animated:YES completion:nil];
-    }
-    else // iOS 7 and prior
-    {*/
-        [self.view endEditing:YES];
-        UIAlertView * alert = [[UIAlertView alloc]initWithTitle:avTitle
-                                                        message:avMsg
-                                                       delegate:self
-                                              cancelButtonTitle:avCancel
-                                              otherButtonTitles:@"OK", nil];
-        alert.alertViewStyle = UIAlertViewStylePlainTextInput;
-        [[alert textFieldAtIndex:0] setText:self.email.text];
-        [[alert textFieldAtIndex:0] setKeyboardType:UIKeyboardTypeEmailAddress];
-        [[alert textFieldAtIndex:0] setStyleClass:@"customTextField_2"];
-        [alert textFieldAtIndex:0].inputAccessoryView = [[UIView alloc] init];
-        [alert setTag:22];
-        [alert show];
-    //}
+    [self.view endEditing:YES];
+    UIAlertView * alert = [[UIAlertView alloc]initWithTitle:avTitle
+                                                    message:avMsg
+                                                   delegate:self
+                                          cancelButtonTitle:avCancel
+                                          otherButtonTitles:@"OK", nil];
+    alert.alertViewStyle = UIAlertViewStylePlainTextInput;
+    [[alert textFieldAtIndex:0] setText:self.email.text];
+    [[alert textFieldAtIndex:0] setKeyboardType:UIKeyboardTypeEmailAddress];
+    [[alert textFieldAtIndex:0] setStyleClass:@"customTextField_2"];
+    [alert textFieldAtIndex:0].inputAccessoryView = [[UIView alloc] init];
+    [alert setTag:22];
+    [alert show];
 }
 
 - (void)alertView:(UIAlertView *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex
@@ -650,7 +571,7 @@
             [emailField.text rangeOfString:@"."].location != NSNotFound &&
             1 < [emailField.text rangeOfString:@"."].location < [emailField.text length] - 2)
         {
-            RTSpinKitView * spinner1 = [[RTSpinKitView alloc] initWithStyle:RTSpinKitViewStyleBounce];
+            RTSpinKitView * spinner1 = [[RTSpinKitView alloc] initWithStyle:RTSpinKitViewStyleArcAlt];
             spinner1.color = [UIColor whiteColor];
             self.hud = [[MBProgressHUD alloc] initWithView:self.navigationController.view];
             [self.navigationController.view addSubview:self.hud];

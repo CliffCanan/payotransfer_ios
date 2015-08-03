@@ -2,7 +2,7 @@
 //  serve.m
 //  Nooch
 //
-//  Created by Preston Hults on 2/6/13.
+//  Created by Cliff Canan on 7/30/15.
 //  Copyright (c) 2015 Nooch. All rights reserved.
 //
 
@@ -1075,24 +1075,6 @@ NSString *amnt;
     
     requestList = [[NSMutableURLRequest alloc] initWithURL:url];
     
-    connectionList = [[NSURLConnection alloc] initWithRequest:requestList delegate:self];
-    if (!connectionList)
-        NSLog(@"connect error");
-}
-
--(void)getLocationBasedSearch:(NSString *)radius
-{
-    ServiceType = @"LocationSearch";
-    self.responseData = [[NSMutableData alloc] init];
-    NSUserDefaults * defaults = [NSUserDefaults standardUserDefaults];
-    NSString * memId = [defaults objectForKey:@"MemberId"];
-    [[NSURLCache sharedURLCache] removeAllCachedResponses];
-    NSString *urlString = [NSString stringWithFormat:@"%@/GetLocationSearch?MemberId=%@&accessToken=%@&Radius=%@",ServerUrl,memId,[defaults valueForKey:@"OAuthToken"],radius];
-
-    NSURL *url = [NSURL URLWithString:urlString];
-
-    requestList = [[NSMutableURLRequest alloc] initWithURL:url];
-
     connectionList = [[NSURLConnection alloc] initWithRequest:requestList delegate:self];
     if (!connectionList)
         NSLog(@"connect error");

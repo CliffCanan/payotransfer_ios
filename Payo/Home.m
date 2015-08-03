@@ -147,16 +147,6 @@ NSMutableURLRequest *request;
     NSTimeZone * timeZone = [NSTimeZone timeZoneWithName:@"America/New_York"];
     [NSTimeZone setDefaultTimeZone:timeZone];
 
-    NSString * isXtraIdVerOn_fromArtisan = [ARPowerHookManager getValueForHookById:@"requireSSN_DOB"];
-    if ([isXtraIdVerOn_fromArtisan isEqualToString:@"yes"])
-    {
-        isXtraIdVerOn = YES;
-    }
-    else
-    {
-        isXtraIdVerOn = NO;
-    }
-
     [ARProfileManager setSharedUserId:[user valueForKey:@"MemberId"]];
     [ARProfileManager registerLocation:@"lastKnownLocation"];
 }
@@ -197,7 +187,6 @@ NSMutableURLRequest *request;
 
         if ([[user objectForKey:@"logged_in"] isKindOfClass:[NSNull class]])
         {
-            //push login
             return;
         }
 
@@ -205,7 +194,7 @@ NSMutableURLRequest *request;
         {
             NSDictionary * dictionary = @{@"MemberId": [user valueForKey:@"MemberId"]};
 
-            RTSpinKitView *spinner1 = [[RTSpinKitView alloc] initWithStyle:RTSpinKitViewStyleCircleFlip];
+            RTSpinKitView *spinner1 = [[RTSpinKitView alloc] initWithStyle:RTSpinKitViewStyleArcAlt];
             spinner1.color = [UIColor clearColor];
             self.hud = [[MBProgressHUD alloc] initWithView:self.navigationController.view];
             [self.navigationController.view addSubview:self.hud];
@@ -1283,7 +1272,7 @@ void addressBookChanged(ABAddressBookRef addressBook, CFDictionaryRef info, void
     [glyph_download setFont:[UIFont fontWithName:@"FontAwesome" size:19]];
     [glyph_download setFrame:CGRectMake(18, 10, 22, 26)];
     [glyph_download setText:[NSString fontAwesomeIconStringForIconIdentifier:@"fa-cloud-download"]];
-    [glyph_download setTextColor:kNoochBlue];
+    [glyph_download setTextColor:kPayoBlue];
     [head_container addSubview:glyph_download];
 
     NSString * pictureURL = [ARPowerHookManager getValueForHookById:@"NV_IMG"];
@@ -1525,7 +1514,7 @@ void addressBookChanged(ABAddressBookRef addressBook, CFDictionaryRef info, void
                 [glyph_fav setText:[NSString fontAwesomeIconStringForIconIdentifier:@"fa-star"]];
                 [glyph_fav setTextAlignment:NSTextAlignmentCenter];
                 [glyph_fav setFrame:CGRectMake(62, 140, 16, 17)];
-                [glyph_fav setTextColor:kNoochBlue];
+                [glyph_fav setTextColor:kPayoBlue];
                 [view addSubview:glyph_fav];
             }
             else if (favorite[@"image"])
@@ -1820,7 +1809,7 @@ void addressBookChanged(ABAddressBookRef addressBook, CFDictionaryRef info, void
                               handler:^(SIAlertView *alert) {
                                   [self contact_support];
                               }];
-        [[SIAlertView appearance] setButtonColor:kNoochBlue];
+        [[SIAlertView appearance] setButtonColor:kPayoBlue];
         
         alertView.transitionStyle = SIAlertViewTransitionStyleDropDown;
         alertView.buttonsListStyle = SIAlertViewButtonsListStyleNormal;
@@ -1837,7 +1826,7 @@ void addressBookChanged(ABAddressBookRef addressBook, CFDictionaryRef info, void
                                  type:SIAlertViewButtonTypeCancel
                               handler:nil];
 
-        [[SIAlertView appearance] setButtonColor:kNoochBlue];
+        [[SIAlertView appearance] setButtonColor:kPayoBlue];
         
         alertView.transitionStyle = SIAlertViewTransitionStyleDropDown;
         alertView.buttonsListStyle = SIAlertViewButtonsListStyleNormal;
@@ -1858,7 +1847,7 @@ void addressBookChanged(ABAddressBookRef addressBook, CFDictionaryRef info, void
                                   [self go_profileFromHome];
                               }];
 
-        [[SIAlertView appearance] setButtonColor:kNoochBlue];
+        [[SIAlertView appearance] setButtonColor:kPayoBlue];
 
         alertView.transitionStyle = SIAlertViewTransitionStyleDropDown;
         alertView.buttonsListStyle = SIAlertViewButtonsListStyleNormal;
@@ -1878,7 +1867,7 @@ void addressBookChanged(ABAddressBookRef addressBook, CFDictionaryRef info, void
                                   shouldFocusOnAddress = YES;
                                   [self go_profileFromHome];
                               }];
-        [[SIAlertView appearance] setButtonColor:kNoochBlue];
+        [[SIAlertView appearance] setButtonColor:kPayoBlue];
 
         alertView.transitionStyle = SIAlertViewTransitionStyleDropDown;
         alertView.buttonsListStyle = SIAlertViewButtonsListStyleNormal;
@@ -1888,7 +1877,7 @@ void addressBookChanged(ABAddressBookRef addressBook, CFDictionaryRef info, void
     }
 
     // 5. HAS USER SUBMITTED DOB AND SSN LAST 4?
-    if (isXtraIdVerOn && ![[assist shared] isUsersIdInfoSubmitted])
+    if (![[assist shared] isUsersIdInfoSubmitted])
     {
         // Body text if both DoB and SSN are not submitted yet
         NSString * alertBody = @"Please take 30 seconds to verify your identity by entering your:\n\n• Date of birth, and\n• Just the LAST 4 digits of your SSN\n\nFederal regulations require us to verify each user's identity. We will only ask for this info once and all data is stored with encryption on secure servers.\n\xF0\x9F\x94\x92";
@@ -1932,7 +1921,7 @@ void addressBookChanged(ABAddressBookRef addressBook, CFDictionaryRef info, void
                                   [nav_ctrl pushViewController:addBankWebView animated:YES];
                                   [self.slidingViewController resetTopView];
                               }];
-        [[SIAlertView appearance] setButtonColor:kNoochBlue];
+        [[SIAlertView appearance] setButtonColor:kPayoBlue];
         
         alertView.transitionStyle = SIAlertViewTransitionStyleDropDown;
         alertView.buttonsListStyle = SIAlertViewButtonsListStyleNormal;

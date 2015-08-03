@@ -49,13 +49,13 @@
     [logoicon setStyleId:@"requireImmediatelyLogo"];
     [self.view addSubview:logoicon];
 
-    UILabel *title = [[UILabel alloc] initWithFrame:CGRectMake(10, 108, 300, 40)];
+    UILabel *title = [[UILabel alloc] initWithFrame:CGRectMake(10, 120, 300, 40)];
     [title setText:NSLocalizedString(@"ReEnterPIN_instruct", @"'Enter Your PIN' Instruction Text")];
     [title setStyleClass:@"header_signupflow"];
     [title setStyleClass:@"animate_pulse"];
     [self.view addSubview:title];
 
-    self.prompt = [[UILabel alloc] initWithFrame:CGRectMake(20, 132, 280, 50)];
+    self.prompt = [[UILabel alloc] initWithFrame:CGRectMake(20, 140, 280, 50)];
     [self.prompt setNumberOfLines:1];
     [self.prompt setText:@""];
     [self.prompt setStyleClass:@"pin_entry_feedback"];
@@ -64,19 +64,19 @@
     [self.pin setKeyboardType:UIKeyboardTypeNumberPad];
     self.pin.inputAccessoryView = [[UIView alloc] init];
     [self.pin setDelegate:self];
-    [self.pin setFrame:CGRectMake(800, 800, 20, 20)];
+    [self.pin setFrame:CGRectMake(600, 800, 20, 20)];
     [self.view addSubview:self.pin];
     [self.pin becomeFirstResponder];
 
-    self.first_num = [[UIView alloc] initWithFrame:CGRectMake(44,180,30,30)];
-    self.second_num = [[UIView alloc] initWithFrame:CGRectMake(106,180,30,30)];
-    self.third_num = [[UIView alloc] initWithFrame:CGRectMake(171,180,30,30)];
-    self.fourth_num = [[UIView alloc] initWithFrame:CGRectMake(235,180,30,30)];
+    self.first_num = [[UIView alloc] initWithFrame:CGRectMake(44,185,30,30)];
+    self.second_num = [[UIView alloc] initWithFrame:CGRectMake(106,185,30,30)];
+    self.third_num = [[UIView alloc] initWithFrame:CGRectMake(171,185,30,30)];
+    self.fourth_num = [[UIView alloc] initWithFrame:CGRectMake(235,185,30,30)];
 
     self.first_num.layer.cornerRadius = self.second_num.layer.cornerRadius = self.third_num.layer.cornerRadius = self.fourth_num.layer.cornerRadius = 15;
     self.first_num.backgroundColor = self.second_num.backgroundColor = self.third_num.backgroundColor = self.fourth_num.backgroundColor = [UIColor clearColor];
     self.first_num.layer.borderWidth = self.second_num.layer.borderWidth = self.third_num.layer.borderWidth = self.fourth_num.layer.borderWidth = 3;
-    self.first_num.layer.borderColor = self.second_num.layer.borderColor = self.third_num.layer.borderColor = self.fourth_num.layer.borderColor = kNoochGreen.CGColor;
+    self.first_num.layer.borderColor = self.second_num.layer.borderColor = self.third_num.layer.borderColor = self.fourth_num.layer.borderColor = kPayoGreen.CGColor;
 
     [self.first_num setStyleClass:@"animate_bubble_slow"];
     [self.second_num setStyleClass:@"animate_bubble_slow"];
@@ -91,7 +91,7 @@
 
 - (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string
 {
-    self.first_num.layer.borderColor = self.second_num.layer.borderColor = self.third_num.layer.borderColor = self.fourth_num.layer.borderColor = kNoochGreen.CGColor;
+    self.first_num.layer.borderColor = self.second_num.layer.borderColor = self.third_num.layer.borderColor = self.fourth_num.layer.borderColor = kPayoGreen.CGColor;
     [self.prompt removeFromSuperview];
     short len = [textField.text length] + [string length];
 
@@ -120,7 +120,7 @@
     {
         UIColor *which;
 
-        which = kNoochGreen;
+        which = kPayoGreen;
         switch (len) {
             case 5:
                 return NO;

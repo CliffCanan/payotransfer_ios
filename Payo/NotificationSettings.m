@@ -42,7 +42,7 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-	// Do any additional setup after loading the view.
+
     self.navigationController.navigationBar.topItem.title = @"";
 
     [self.navigationItem setTitle:NSLocalizedString(@"NotifSettings_ScrnTitle", @"Notification Settings screen title")];
@@ -84,7 +84,7 @@
     self.btn_glyphEmail_1.frame = CGRectMake(180, 0, 50, 36);
     [self.btn_glyphEmail_1 setStyleClass:@"font-awesome"];
     [self.btn_glyphEmail_1 setTitle:[NSString fontAwesomeIconStringForIconIdentifier:@"fa-envelope-o"] forState:UIControlStateNormal];
-    [self.btn_glyphEmail_1 setTitleColor:kNoochBlue forState:UIControlStateHighlighted];
+    [self.btn_glyphEmail_1 setTitleColor:kPayoBlue forState:UIControlStateHighlighted];
     [self.btn_glyphEmail_1 addTarget:self action:@selector(toggle_section:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:self.btn_glyphEmail_1];
 
@@ -92,7 +92,7 @@
     self.btn_glyphPush_1.frame = CGRectMake(260, 0, 50, 39);
     [self.btn_glyphPush_1 setStyleClass:@"fontAwesome_bigger"];
     [self.btn_glyphPush_1 setTitle:[NSString fontAwesomeIconStringForIconIdentifier:@"fa-mobile"] forState:UIControlStateNormal];
-    [self.btn_glyphPush_1 setTitleColor:kNoochGreen forState:UIControlStateHighlighted];
+    [self.btn_glyphPush_1 setTitleColor:kPayoGreen forState:UIControlStateHighlighted];
     [self.btn_glyphPush_1 addTarget:self action:@selector(toggle_section:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:self.btn_glyphPush_1];
 
@@ -100,7 +100,7 @@
     self.btn_glyphEmail_2.frame = CGRectMake(180, 177, 50, 36);
     [self.btn_glyphEmail_2 setStyleClass:@"font-awesome"];
     [self.btn_glyphEmail_2 setTitle:[NSString fontAwesomeIconStringForIconIdentifier:@"fa-envelope-o"] forState:UIControlStateNormal];
-    [self.btn_glyphEmail_2 setTitleColor:kNoochBlue forState:UIControlStateHighlighted];
+    [self.btn_glyphEmail_2 setTitleColor:kPayoBlue forState:UIControlStateHighlighted];
     [self.btn_glyphEmail_2 addTarget:self action:@selector(toggle_section:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:self.btn_glyphEmail_2];
 
@@ -108,19 +108,19 @@
     self.btn_glyphPush_2.frame = CGRectMake(260, 177, 50, 39);
     [self.btn_glyphPush_2 setStyleClass:@"fontAwesome_bigger"];
     [self.btn_glyphPush_2 setTitle:[NSString fontAwesomeIconStringForIconIdentifier:@"fa-mobile"] forState:UIControlStateNormal];
-    [self.btn_glyphPush_2 setTitleColor:kNoochGreen forState:UIControlStateHighlighted];
+    [self.btn_glyphPush_2 setTitleColor:kPayoGreen forState:UIControlStateHighlighted];
     [self.btn_glyphPush_2 addTarget:self action:@selector(toggle_section:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:self.btn_glyphPush_2];*/
 
-    self.email_sent = [[UISwitch alloc] initWithFrame:CGRectMake(180, 87, 40, 30)];
+    self.email_sent = [[UISwitch alloc] initWithFrame:CGRectMake(180, 43, 40, 30)];
     self.email_sent.transform = CGAffineTransformMakeScale(0.9, 0.9);
-    [self.email_sent setOnTintColor:kNoochBlue];
+    [self.email_sent setOnTintColor:kPayoBlue];
     [self.email_sent addTarget:self action:@selector(changeSwitch:) forControlEvents:UIControlEventValueChanged];
     self.email_sent.tag = 103;
 
-    self.email_unclaimed = [[UISwitch alloc] initWithFrame:CGRectMake(180, 137, 40, 30)];
+    self.email_unclaimed = [[UISwitch alloc] initWithFrame:CGRectMake(180, 93, 40, 30)];
     self.email_unclaimed.transform = CGAffineTransformMakeScale(0.9, 0.9);
-    [self.email_unclaimed setOnTintColor:kNoochBlue];
+    [self.email_unclaimed setOnTintColor:kPayoBlue];
     [self.email_unclaimed addTarget:self action:@selector(changeSwitch:) forControlEvents:UIControlEventValueChanged];
     self.email_unclaimed.tag = 104;
 
@@ -224,14 +224,14 @@
 #pragma mark - UITableViewDataSource
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
-    return 2;
+    return 1;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     if (tableView == self.transfers_table)
     {
-        return 3;
+        return 2;
     }
 
     return 0;
@@ -248,10 +248,9 @@
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle
                                       reuseIdentifier:CellIdentifier];
         
-        [cell.textLabel setTextColor:kNoochBlue];
+        [cell.textLabel setTextColor:kPayoBlue];
         cell.indentationLevel = 1;
         cell.indentationWidth = 10;
-        [cell.textLabel setFont:kNoochFontMed];
     }
 
     [cell.textLabel setStyleClass:@"table_view_cell_textlabel_2"];
@@ -259,12 +258,9 @@
     if (tableView == self.transfers_table)
     {
         if (indexPath.row == 0) {
-            cell.textLabel.text = NSLocalizedString(@"NotifSettings_Row1", @"Notification Settings row lbl - 'Transfer Received'");
-        }
-        else if (indexPath.row == 1) {
             cell.textLabel.text = NSLocalizedString(@"NotifSettings_Row2", @"Notification Settings row lbl - 'Transfer Sent'");
         }
-        else if (indexPath.row == 2) {
+        else if (indexPath.row == 1) {
             cell.textLabel.text = NSLocalizedString(@"NotifSettings_Row3", @"Notification Settings row lbl - 'Transfer Unclaimed'");
         }
     }
@@ -331,8 +327,8 @@
                       JSONObjectWithData:[result dataUsingEncoding:NSUTF8StringEncoding]
                       options:kNilOptions
                       error:&error];
-        NSLog(@"%@",dictSettings);
 
+        NSLog(@"%@",dictSettings);
     }
 }
 

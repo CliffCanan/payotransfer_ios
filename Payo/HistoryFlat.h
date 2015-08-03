@@ -19,7 +19,7 @@ BOOL isHistFilter;
 NSString *listType;
 
 @interface HistoryFlat : GAITrackedViewController<UITableViewDataSource,UITableViewDelegate,
-serveD,FPPopoverControllerDelegate,UISearchBarDelegate,SWTableViewCellDelegate,MBProgressHUDDelegate,CLLocationManagerDelegate,MFMailComposeViewControllerDelegate>
+serveD,FPPopoverControllerDelegate,UISearchBarDelegate,SWTableViewCellDelegate,MBProgressHUDDelegate,MFMailComposeViewControllerDelegate>
 {
     NSArray *histArrayCommon;
     NSMutableArray *histArray;
@@ -28,7 +28,7 @@ serveD,FPPopoverControllerDelegate,UISearchBarDelegate,SWTableViewCellDelegate,M
     BOOL ishistLoading;
     BOOL isEnd, isStart;
     BOOL locUpdateSuccessfully;
-    BOOL isFilter, isSearch, isLocalSearch, isMapOpen;
+    BOOL isFilter, isSearch, isLocalSearch;
     int totalDisplayedTransfers_completed,index;
     float firstX,firstY;
     float lat_hist,lon_hist;
@@ -36,7 +36,6 @@ serveD,FPPopoverControllerDelegate,UISearchBarDelegate,SWTableViewCellDelegate,M
 
     FPPopoverController * fp;
     NSString * SearchString;
-    UIView * mapArea;
     UIButton * exportHistory;
     NSString * subTypestr;
     NSDate * ServerDate;

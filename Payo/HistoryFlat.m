@@ -25,15 +25,11 @@
 }
 @property(nonatomic,strong) UISearchBar * search;
 @property(nonatomic,strong) UITableView * list;
-@property(nonatomic,strong) UIButton * glyph_map;
 @property(nonatomic,strong) NSDictionary *responseDict;
 @property(nonatomic,strong) UILabel * glyph_emptyTable;
 @property(nonatomic, strong) UILabel * glyph_emptyLoc;
-@property(nonatomic, strong) UILabel * emptyLocBody;
-@property(nonatomic, strong) UILabel * emptyLocHdr;
 @property(nonatomic, strong) UILabel * emptyText;
 @property(nonatomic, strong) UIImageView * emptyPic;
-@property(nonatomic, strong) NSMutableArray * markers;
 @property(nonatomic,strong) UIView * tableShadow;
 
 @end
@@ -77,7 +73,16 @@
         histTempCompleted = [[NSMutableArray alloc]init];
     }
 
-    self.list = [[UITableView alloc] initWithFrame:CGRectMake(0, 80, 320, [UIScreen mainScreen].bounds.size.height-80)];
+    self.search = [[UISearchBar alloc] initWithFrame:CGRectMake(0, 5, 320, 40)];
+    [self.search setStyleId:@"history_search"];
+    [self.search setDelegate:self];
+    self.search.searchBarStyle = UISearchBarStyleMinimal;
+    [self.search setPlaceholder:NSLocalizedString(@"History_SearchPlaceholder", @"History screen search bar placeholder text")];
+    [self.search setImage:[UIImage imageNamed:@"search_blue"] forSearchBarIcon:UISearchBarIconSearch state:UIControlStateNormal];
+    [self.search setTintColor:kPayoBlue];
+
+    [self.view addSubview:self.search];
+    self.list = [[UITableView alloc] initWithFrame:CGRectMake(0, 50, 320, [UIScreen mainScreen].bounds.size.height - 50)];
     [self.list setStyleId:@"history"];
     [self.list setDataSource:self];
     [self.list setDelegate:self];
@@ -85,7 +90,7 @@
     [self.view addSubview:self.list];
 
     self.tableShadow = [[UIView alloc] initWithFrame:self.list.frame];
-    UIBezierPath *path = [UIBezierPath bezierPathWithRect:self.tableShadow.bounds];
+    UIBezierPath * path = [UIBezierPath bezierPathWithRect:self.tableShadow.bounds];
     self.tableShadow.layer.masksToBounds = NO;
     self.tableShadow.layer.shadowColor = Rgb2UIColor(32, 33, 34, 0.4).CGColor;
     self.tableShadow.layer.shadowOpacity = 1;
@@ -96,21 +101,6 @@
     [self.view addSubview:self.tableShadow];
     [self.view bringSubviewToFront:self.list];
 
-
-    UIView * whiteFillerSpace = [[UIView alloc] initWithFrame:CGRectMake(0, 7, 320, 72)];
-    [whiteFillerSpace setBackgroundColor:Rgb2UIColor(250, 250, 250, .25)];
-    //[self.view addSubview:whiteFillerSpace];
-    //[self.view bringSubviewToFront:whiteFillerSpace];
-
-    self.search = [[UISearchBar alloc] initWithFrame:CGRectMake(0, 40, 320, 40)];
-    [self.search setStyleId:@"history_search"];
-    [self.search setDelegate:self];
-    self.search.searchBarStyle = UISearchBarStyleMinimal;
-    [self.search setPlaceholder:NSLocalizedString(@"History_SearchPlaceholder", @"History screen search bar placeholder text")];
-    [self.search setImage:[UIImage imageNamed:@"search_blue"] forSearchBarIcon:UISearchBarIconSearch state:UIControlStateNormal];
-    [self.search setTintColor:kNoochBlue];
-
-    [self.view addSubview:self.search];
     [self.view bringSubviewToFront:self.search];
 
     UIButton *filter = [UIButton buttonWithType:UIButtonTypeRoundedRect];
@@ -121,36 +111,24 @@
     [filter addTarget:self action:@selector(FilterHistory:) forControlEvents:UIControlEventTouchUpInside];
     UIBarButtonItem *filt = [[UIBarButtonItem alloc] initWithCustomView:filter];
 
+    [self.navigationItem setRightBarButtonItem:filt animated:YES];
+
+    SDImageCache * imageCache = [SDImageCache sharedImageCache];
+    [imageCache clearMemory];
+    [imageCache clearDisk];
+    [imageCache cleanDisk];
+
     listType = @"ALL";
     index = 1;
     isStart = YES;
     isLocalSearch = NO;
+    subTypestr = @"";
+    [self loadHist:@"ALL" index:index len:20 subType:subTypestr];
 
-        subTypestr = @"";
+    // Row count for scrolling
+    countRows = 0;
 
-        UIButton * glyph_map = [UIButton buttonWithType:UIButtonTypeRoundedRect];
-        [glyph_map setStyleId:@"glyph_map"];
-        [glyph_map setTitleShadowColor:Rgb2UIColor(19, 32, 38, 0.22) forState:UIControlStateNormal];
-        glyph_map.titleLabel.shadowOffset = CGSizeMake(0.0, -1.0);
-        [glyph_map setTitle:[NSString fontAwesomeIconStringForIconIdentifier:@"fa-map-marker"] forState:UIControlStateNormal];
-        [glyph_map addTarget:self action:@selector(toggleMapByNavBtn) forControlEvents:UIControlEventTouchUpInside];
-
-        UIBarButtonItem *map = [[UIBarButtonItem alloc] initWithCustomView:glyph_map];
-
-        NSArray *topRightBtns = @[map,filt];
-        [self.navigationItem setRightBarButtonItems:topRightBtns animated:YES];
-
-        SDImageCache * imageCache = [SDImageCache sharedImageCache];
-        [imageCache clearMemory];
-        [imageCache clearDisk];
-        [imageCache cleanDisk];
-
-        [self loadHist:@"ALL" index:index len:20 subType:subTypestr];
-
-        // Row count for scrolling
-        countRows = 0;
-
-    //Export History
+    // Export History
     exportHistory = [UIButton buttonWithType:UIButtonTypeCustom];
     [exportHistory setTitle:@"     Export History" forState:UIControlStateNormal];
     [exportHistory setTitleShadowColor:Rgb2UIColor(19, 32, 38, 0.22) forState:UIControlStateNormal];
@@ -178,43 +156,6 @@
     [self.view addSubview:exportHistory];
     [self.view bringSubviewToFront:exportHistory];
 
-    UISwipeGestureRecognizer * recognizer = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(sideright:)];
-    [recognizer setDirection:(UISwipeGestureRecognizerDirectionRight)];
-    [self.view addGestureRecognizer:recognizer];
-    
-    UISwipeGestureRecognizer * recognizer2 = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(toggleMapByNavBtn)];
-    [recognizer2 setDirection:(UISwipeGestureRecognizerDirectionLeft)];
-    [self.view addGestureRecognizer:recognizer2];
-    
-    mapArea = [[UIView alloc]initWithFrame:CGRectMake(0, 84, 320, self.view.frame.size.height - 84)];
-
-    // Google map
-    //if ([[assist shared] checkIfLocAllowed])
-    //{
-        [mapArea setBackgroundColor:[UIColor clearColor]];
-        camera = [GMSCameraPosition cameraWithLatitude:39.952360
-                                             longitude:-75.163602
-                                                  zoom:8
-                                               bearing:0
-                                          viewingAngle:30];
-
-        mapView_ = [GMSMapView mapWithFrame:CGRectMake(43, 0, 277, mapArea.frame.size.height + 5) camera:camera];
-    if ([[assist shared] checkIfLocAllowed])
-    {
-        mapView_.myLocationEnabled = YES;
-    } else {
-        mapView_.myLocationEnabled = NO;
-    }
-        mapView_.delegate = self;
-        [mapView_ setMinZoom:3 maxZoom:17];
-        [mapArea addSubview:mapView_];
-    /*}
-    else
-    {
-        [self displayEmptyMapArea];
-    }*/
-
-    [self.view addSubview:mapArea];
     [self.view bringSubviewToFront:self.tableShadow];
     [self.view bringSubviewToFront:self.list];
 
@@ -242,17 +183,6 @@
 {
     [super viewDidDisappear:animated];
     [self.hud hide:YES];
-
-    if (isMapOpen)
-    {
-        [UIView beginAnimations:nil context:nil];
-        [UIView setAnimationDelegate:self];
-        [UIView setAnimationDuration:0.3];
-
-        self.list.frame = CGRectMake(-276, 84, 320, self.view.frame.size.height);
-        mapArea.frame = CGRectMake(0, 84, 320, self.view.frame.size.height);
-        [UIView commitAnimations];
-    }
 }
 
 #pragma mark - Navigation Handlers
@@ -262,529 +192,9 @@
     [self.slidingViewController anchorTopViewTo:ECRight];
 }
 
--(void)sideright:(id)sender
-{
-    [UIView beginAnimations:nil context:nil];
-    [UIView setAnimationDelegate:self];
-    [UIView setAnimationDuration:0.5];
-    self.list.frame=CGRectMake(0, 84, 320, self.view.frame.size.height);
-    [self.view bringSubviewToFront:self.list];
-    mapArea.frame=CGRectMake(0, 84,320,self.view.frame.size.height);
-    isMapOpen = NO;
-    [UIView commitAnimations];
-    [self.view bringSubviewToFront:exportHistory];
-}
-
-#pragma mark - Map Area Related Methods
--(void)displayEmptyMapArea
-{
-    //NSLog(@"displayEmptyMapArea FIRED");
-    [mapArea setBackgroundColor:[Helpers hexColor:@"efeff4"]];
-    
-    NSShadow * shadow_white = [[NSShadow alloc] init];
-    shadow_white.shadowColor = [UIColor whiteColor];
-    shadow_white.shadowOffset = CGSizeMake(0, 1.0);
-    NSDictionary * shadowWhite = @{NSShadowAttributeName: shadow_white};
-    
-    NSShadow * shadow_Dark = [[NSShadow alloc] init];
-    shadow_Dark.shadowColor = Rgb2UIColor(88, 90, 92, .85);
-    shadow_Dark.shadowOffset = CGSizeMake(0, -2.5);
-    NSDictionary * shadowDark = @{NSShadowAttributeName: shadow_Dark};
-    
-    self.glyph_emptyLoc = [[UILabel alloc] initWithFrame:CGRectMake(44, 35, 276, 72)];
-    [self.glyph_emptyLoc setFont:[UIFont fontWithName:@"FontAwesome" size:68]];
-    self.glyph_emptyLoc.attributedText = [[NSAttributedString alloc] initWithString:[NSString fontAwesomeIconStringForIconIdentifier:@"fa-map-marker"] attributes:shadowDark];
-    [self.glyph_emptyLoc setTextAlignment:NSTextAlignmentCenter];
-    [self.glyph_emptyLoc setTextColor: kNoochGrayLight];
-    [mapArea addSubview:self.glyph_emptyLoc];
-    
-    self.emptyLocHdr = [[UILabel alloc] initWithFrame:CGRectMake(44, 112, 276, 38)];
-    [self.emptyLocHdr setFont:[UIFont fontWithName:@"Roboto-regular" size: 22]];
-    self.emptyLocHdr.attributedText = [[NSAttributedString alloc] initWithString:NSLocalizedString(@"History_EmptyTableTitleHdr", @"History screen no results to show header text") attributes:shadowWhite];
-    [self.emptyLocHdr setTextColor:kNoochGrayLight];
-    [self.emptyLocHdr setTextAlignment:NSTextAlignmentCenter];
-    [mapArea addSubview: self.emptyLocHdr];
-    
-    self.emptyLocBody = [[UILabel alloc] initWithFrame:CGRectMake(46, 151, 270, 80)];
-    [self.emptyLocBody setFont:[UIFont fontWithName:@"Roboto-light" size: 17]];
-    if ([[assist shared] checkIfLocAllowed])
-    {
-        self.emptyLocBody.attributedText = [[NSAttributedString alloc] initWithString:NSLocalizedString(@"History_EmptyMapViewTitleBody", @"History screen no results to show on map view body text")attributes:shadowWhite];
-    }
-    else
-    {
-        if ([CLLocationManager authorizationStatus] != kCLAuthorizationStatusNotDetermined)
-        {
-            self.emptyLocBody.attributedText = [[NSAttributedString alloc] initWithString:NSLocalizedString(@"History_NoLocationAccess", @"History screen no location access text") attributes:shadowWhite];
-        }
-    }
-    [self.emptyLocBody setTextColor:kNoochGrayLight];
-    [self.emptyLocBody setTextAlignment:NSTextAlignmentCenter];
-    [self.emptyLocBody setNumberOfLines:0];
-    [mapArea addSubview: self.emptyLocBody];
-}
-
--(void)toggleMapByNavBtn
-{
-    if (!isMapOpen)
-    {
-        if (![[assist shared] checkIfLocAllowed])
-        {
-            if ([CLLocationManager authorizationStatus] == kCLAuthorizationStatusNotDetermined)
-            {
-                //location
-                locationManager = [[CLLocationManager alloc] init];
-                
-                locationManager.delegate = self;
-                locationManager.distanceFilter = kCLDistanceFilterNone; // whenever we move
-                locationManager.desiredAccuracy = kCLLocationAccuracyHundredMeters; // 100 m
-
-                if ([locationManager respondsToSelector:@selector(requestWhenInUseAuthorization)]) { // iOS8+
-                    // Sending a message to avoid compile time error
-                    
-                    [[UIApplication sharedApplication] sendAction:@selector(requestWhenInUseAuthorization)
-                                                               to:locationManager
-                                                             from:self
-                                                         forEvent:nil];
-                }
-                [locationManager startUpdatingLocation];
-            }
-            else
-            {
-                UIAlertView * alert = [[UIAlertView alloc]initWithTitle:NSLocalizedString(@"History_NeedLocAlrtTitle", @"History screen need location access Alert Title")
-                                                                message:NSLocalizedString(@"History_NeedLocAlrtBody", @"History screen need location access Body Text")
-                                                               delegate:Nil
-                                                      cancelButtonTitle:@"OK"
-                                                      otherButtonTitles:Nil, nil];
-                [alert show];
-            }
-        }
-        else
-        {
-            locationManager = [[CLLocationManager alloc] init];
-
-            locationManager.delegate = self;
-            locationManager.distanceFilter = kCLDistanceFilterNone; // whenever we move
-            locationManager.desiredAccuracy = kCLLocationAccuracyHundredMeters; // 100 m
-
-            [locationManager startUpdatingLocation];
-        }
-    }
-
-    [UIView beginAnimations:nil context:nil];
-    [UIView setAnimationDelegate:self];
-    [UIView setAnimationDuration:0.4];
-    if (!isMapOpen)
-    {
-        if ([self.view.subviews containsObject:emptyText_localSearch])
-        {
-            [emptyText_localSearch setAlpha:0];
-            [self.glyph_emptyTable setAlpha:0];
-        }
-
-        self.tableShadow.frame = CGRectMake(-276, 84, 320, self.view.frame.size.height);
-        self.list.frame = CGRectMake(-276, 84, 320, self.view.frame.size.height);
-        mapArea.frame = CGRectMake(0, 84, 320, self.view.frame.size.height);
-        isMapOpen = YES;
-        [self mapPoints];
-    }
-    else
-    {
-        self.tableShadow.frame = CGRectMake(0, 84, 320, self.view.frame.size.height);
-        self.list.frame = CGRectMake(0, 84, 320, self.view.frame.size.height);
-        [self.view bringSubviewToFront:self.list];
-        mapArea.frame = CGRectMake(0, 84, 320, self.view.frame.size.height);
-        isMapOpen = NO;
-    }
-    [UIView commitAnimations];
-    [self.view bringSubviewToFront:exportHistory];
-
-    [ARTrackingManager trackEvent:@"History_tggleMapSlide"];
-}
-
-- (BOOL)mapView:(GMSMapView *)mapView didTapMarker:(GMSMarker *)marker
-{
-    CGPoint point = [mapView.projection pointForCoordinate:marker.position];
-    point.y -= 46;
-    GMSCameraUpdate * cameraNew =
-    [GMSCameraUpdate setTarget:[mapView.projection coordinateForPoint:point]];
-    [mapView animateWithCameraUpdate:cameraNew];
-
-    mapView.selectedMarker = marker;
-
-    marker.zIndex += 30;
-    //[self.view bringSubviewToFront:marker];
-    return YES;
-}
-
-- (void)mapView:(GMSMapView *)mapView didTapInfoWindowOfMarker:(GMSMarker *)marker
-{
-    NSDictionary * dictRecord = [histArrayCommon objectAtIndex:[[marker title]intValue]];
-    TransactionDetails * details = [[TransactionDetails alloc] initWithData:dictRecord];
-    [self.navigationController pushViewController:details animated:YES];
-}
-
-- (UIView *)mapView:(GMSMapView *)mapView markerInfoWindow:(GMSMarker *)marker
-{
-    short markerNum = [[marker title] intValue];
-    short custViewWidth = 234;
-
-    UIView * customViewShell = [[UIView alloc] initWithFrame:CGRectMake(0, 0, custViewWidth + 13, 250)];
-    customViewShell.clipsToBounds = NO;
-
-    UIView * customView = [[UIView alloc] initWithFrame:CGRectMake(6, 3, custViewWidth, 240)];
-    customView.layer.borderWidth = 2.0f;
-    customView.layer.cornerRadius = 12;
-    customView.clipsToBounds = NO;
-    customView.backgroundColor = Rgb2UIColor(31,32,32,.9);
-    [customView setStyleId:@"historyMap_CustView_shadow"];
 
 
-    UIImageView * imgV = [[UIImageView alloc] initWithFrame:CGRectMake((custViewWidth/2) - 41, 10, 82, 82)];
-    imgV.layer.cornerRadius = 41;
-    imgV.layer.borderColor = [UIColor whiteColor].CGColor;
-    imgV.layer.borderWidth = 2;
-    imgV.clipsToBounds = YES;
-
-    NSString * urlImage = [[histArrayCommon objectAtIndex: markerNum] valueForKey:@"Photo"];
-    [imgV sd_setImageWithURL:[NSURL URLWithString:urlImage] placeholderImage:[UIImage imageNamed:@"profile_picture.png"]];
-
-    NSString * TransactionType = @"";
-
-    UILabel * lblTitle = [[UILabel alloc]initWithFrame:CGRectMake(2, 99, custViewWidth - 4, 16)];
-    [lblTitle setStyleClass:@"historyMap_marker_title"];
-
-    UILabel * lblName=[[UILabel alloc]initWithFrame:CGRectMake(2, 117, custViewWidth - 4, 20)];
-    [lblName setStyleClass:@"historyMap_marker_name"];
-
-    UILabel * lblAmt = [[UILabel alloc]initWithFrame:CGRectMake(2, 141, custViewWidth - 4, 27)];
-    lblAmt.text = [NSString stringWithFormat:@"$%.02f",[[[histArrayCommon objectAtIndex: markerNum] valueForKey:@"Amount"] floatValue]];
-    lblAmt.textColor = kNoochGreen;
-    [lblAmt setStyleClass:@"historyMap_marker_amnt"];
-
-    UILabel *lblloc = [[UILabel alloc]initWithFrame:CGRectMake(2, 194, custViewWidth - 4, 16)];
-    lblloc.textColor = [UIColor whiteColor];
-    [lblloc setStyleClass:@"historyMap_marker_dateIntro"];
-
-    // Set the Name Label (of the other party)
-    if (  [[histArrayCommon objectAtIndex: markerNum] valueForKey:@"InvitationSentTo"] != NULL &&
-        ![[[histArrayCommon objectAtIndex: markerNum] valueForKey:@"InvitationSentTo"] isKindOfClass:[NSNull class]] )
-    {
-        [imgV setImage:[UIImage imageNamed:@"profile_picture.png"]];
-
-        NSString * invitationSentToStng = [NSString stringWithFormat:@"%@", [[histArrayCommon objectAtIndex: markerNum] valueForKey:@"InvitationSentTo"]];
-
-        BOOL containsLetters = NSNotFound != [invitationSentToStng rangeOfCharacterFromSet:NSCharacterSet.letterCharacterSet].location;
-        BOOL containsPunctuation = NSNotFound != [invitationSentToStng rangeOfCharacterFromSet:NSCharacterSet.punctuationCharacterSet].location;
-        BOOL containsNumbers = NSNotFound != [invitationSentToStng rangeOfCharacterFromSet:NSCharacterSet.decimalDigitCharacterSet].location;
-        BOOL containsSymbols = NSNotFound != [invitationSentToStng rangeOfCharacterFromSet:NSCharacterSet.symbolCharacterSet].location;
-        
-        // Check if it's a phone number
-        if (containsNumbers && !containsLetters && !containsPunctuation && !containsSymbols)
-        {
-            NSMutableString * mu = [NSMutableString stringWithString: invitationSentToStng];
-            [mu insertString:@"(" atIndex:0];
-            [mu insertString:@")" atIndex:4];
-            [mu insertString:@" " atIndex:5];
-            [mu insertString:@"-" atIndex:9];
-
-            NSString * phoneWithSymbolsAddedBack = [NSString stringWithString:mu];
-
-            [lblName setText:phoneWithSymbolsAddedBack];
-        }
-        else
-        {
-            [lblName setText:[NSString stringWithFormat:@"%@ ", invitationSentToStng]];
-        }
-    }
-    else
-    {
-        lblName.text = [NSString stringWithFormat:@"%@ %@",
-                        [[[histArrayCommon objectAtIndex: markerNum] valueForKey:@"FirstName"] capitalizedString],
-                        [[[histArrayCommon objectAtIndex: markerNum] valueForKey:@"LastName"] capitalizedString] ];
-    }
-
-    // Set Memo if one exists and add to Custom View
-    if (  [[histArrayCommon objectAtIndex: markerNum] valueForKey:@"Memo"] != NULL &&
-        ![[[histArrayCommon objectAtIndex: markerNum] valueForKey:@"Memo"] isKindOfClass:[NSNull class]] )
-    {
-        UILabel *lblmemo = [[UILabel alloc]initWithFrame:CGRectMake(2, 163, custViewWidth - 4, 30)];
-        [lblmemo setStyleClass:@"historyMap_marker_memo"];
-        lblmemo.textColor = [UIColor lightGrayColor];
-        lblmemo.numberOfLines = 2;
-        lblmemo.text = [NSString stringWithFormat:@"\"%@\"",[[histArrayCommon objectAtIndex: markerNum] valueForKey:@"Memo"]];
-
-        if ([[[histArrayCommon objectAtIndex: markerNum] valueForKey:@"Memo"] length] == 0)
-        {
-            lblmemo.text = @"";
-        }
-
-        [customView addSubview:lblmemo];
-    }
-
-    NSString *statusstr;
-
-    if ([[[histArrayCommon objectAtIndex: markerNum] valueForKey:@"TransactionType"] isEqualToString:@"Transfer"])
-    {
-        if ([[user valueForKey:@"MemberId"] isEqualToString:[[histArrayCommon objectAtIndex: markerNum] valueForKey:@"MemberId"]])
-        {
-            customView.layer.borderColor = [kNoochRed CGColor];
-            TransactionType = NSLocalizedString(@"History_SentToTxt", @"History screen 'Sent To' Text");
-        }
-        else
-        {
-            customView.layer.borderColor = [kNoochGreen CGColor];
-            TransactionType = NSLocalizedString(@"History_PaymentFromTxt", @"History screen 'Payment From' text");
-        }
-    }
-    else if ([[[histArrayCommon objectAtIndex: markerNum] valueForKey:@"TransactionType"] isEqualToString:@"Request"])
-    {
-        customView.layer.borderColor = [kNoochBlue CGColor];
-        if ([[[histArrayCommon objectAtIndex: markerNum] valueForKey:@"TransactionStatus"] isEqualToString:@"Cancelled"])
-        {
-            statusstr = NSLocalizedString(@"History_CancelledTxt", @"History screen 'Cancelled' Text");
-            [lblloc setStyleClass:@"red_text"];
-        }
-        else if ([[[histArrayCommon objectAtIndex: markerNum] valueForKey:@"TransactionStatus"] isEqualToString:@"Rejected"])
-        {
-            statusstr = NSLocalizedString(@"History_RejectedTxt", @"History screen 'Rejected' Text");
-            [lblloc setStyleClass:@"red_text"];
-        }
-        else
-        {
-            statusstr = NSLocalizedString(@"History_PendingTxt", @"History screen 'Pending' Text");
-            [lblloc setStyleClass:@"green_text"];
-        }
-
-        if ([[user valueForKey:@"MemberId"] isEqualToString:[[histArrayCommon objectAtIndex: markerNum] valueForKey:@"RecepientId"]])
-        {
-            TransactionType = NSLocalizedString(@"History_RequestSentToTxt", @"History screen 'Request Sent To' Text");
-        }
-        else
-        {
-            TransactionType = NSLocalizedString(@"History_RequestFromTxt", @"History screen 'Request From' Text");
-        }
-    }
-    else if ([[[histArrayCommon objectAtIndex: markerNum] valueForKey:@"TransactionType"] isEqualToString:@"Invite"])
-    {
-        customView.layer.borderColor = [[UIColor whiteColor] CGColor];
-        TransactionType = NSLocalizedString(@"History_SentToTxt", @"History screen 'Sent To' Text");
-        [imgV setImage:[UIImage imageNamed:@"profile_picture.png"]];
-        statusstr = NSLocalizedString(@"History_InvitedOnTxt", @"History screen 'Invited On' Text");
-        [lblloc setStyleClass:@"green_text"];
-    }
-    else if ([[[histArrayCommon objectAtIndex:markerNum] valueForKey:@"TransactionType"] isEqualToString:@"Disputed"])
-    {
-        customView.layer.borderColor = [kNoochGrayDark CGColor];
-        TransactionType = @"Disputed ";
-        [lblloc setStyleClass:@"orange_text"];
-    }
-    lblTitle.text = [NSString stringWithFormat:@"%@",TransactionType];
-
-    if ([[[histArrayCommon objectAtIndex: markerNum] valueForKey:@"TransactionType"] isEqualToString:@"Donation"] ||
-        [[[histArrayCommon objectAtIndex: markerNum] valueForKey:@"TransactionType"] isEqualToString:@"Sent"]     ||
-        [[[histArrayCommon objectAtIndex: markerNum] valueForKey:@"TransactionType"] isEqualToString:@"Received"] ||
-        [[[histArrayCommon objectAtIndex: markerNum] valueForKey:@"TransactionType"] isEqualToString:@"Transfer"] )
-    {
-        statusstr = NSLocalizedString(@"History_CompletedOnTxt", @"History screen 'Completed On' Text");
-        [lblloc setStyleClass:@"green_text"];
-    }
-    
-    //Set the AM and PM symbols
-    NSDateFormatter * dateFormatter = [[NSDateFormatter alloc] init];
-    [dateFormatter setAMSymbol:@"AM"];
-    [dateFormatter setPMSymbol:@"PM"];
-    dateFormatter.dateFormat = @"MM/dd/yyyy hh:mm:ss a";
-    
-    NSDate * yourDate = [dateFormatter dateFromString:[[histArrayCommon objectAtIndex: markerNum] valueForKey:@"TransactionDate"]];
-    dateFormatter.dateFormat = @"dd-MMMM-yyyy";
-    [dateFormatter setTimeZone:[NSTimeZone localTimeZone]];
-
-    NSArray * arrdate = [[dateFormatter stringFromDate:yourDate] componentsSeparatedByString:@"-"];
-
-    if ([[[histArrayCommon objectAtIndex: markerNum] valueForKey:@"TransactionType"] isEqualToString:@"Request"])
-    {
-        [lblloc setText:[NSString stringWithFormat:@"%@",statusstr]];
-        
-        UILabel *datelbl = [[UILabel alloc] initWithFrame:CGRectMake(2, 207, custViewWidth - 4, 22)];
-        [datelbl setTextColor:[UIColor lightGrayColor]];
-        [customView addSubview:datelbl];
-        [datelbl setStyleClass:@"historyMap_marker_date"];
-        datelbl.text = [NSString stringWithFormat:@"Sent on: %@ %@, %@",[arrdate objectAtIndex:1],[arrdate objectAtIndex:0],[arrdate objectAtIndex:2]];
-    }
-    else
-    {
-        [lblloc setText:[NSString stringWithFormat:@"%@ %@ %@, %@",statusstr,[arrdate objectAtIndex:1],[arrdate objectAtIndex:0],[arrdate objectAtIndex:2]]];
-    }
-
-    [customView addSubview:imgV];
-    [customView addSubview:lblTitle];
-    [customView addSubview:lblName];
-    [customView addSubview:lblAmt];
-    [customView addSubview:lblloc];
-    [customViewShell addSubview:customView];
-
-    return customViewShell;
-}
-
--(void)mapPoints
-{
-    [mapView_ clear];
-
-
-    if ([histShowArrayCompleted count] == 0)
-    {
-        return;
-    }
-    histArrayCommon = [histShowArrayCompleted copy];
-
-    [mapView_ setAlpha:1];
-    [mapArea bringSubviewToFront:mapView_];
-    _markers = [[NSMutableArray alloc] init];
-    [_markers removeAllObjects];
-
-    for (int i = 0; i < histArrayCommon.count; i++)
-    {
-        NSDictionary *tempDict = [histArrayCommon objectAtIndex:i];
-
-        markerOBJ = [[GMSMarker alloc] init];
-
-        // If transaction has a location...
-        if ([[tempDict objectForKey:@"Latitude"] floatValue] != 0 && [[tempDict objectForKey:@"Longitude"] floatValue] != 0)
-        {
-            if ([[[histArrayCommon objectAtIndex:i] valueForKey:@"TransactionType"]isEqualToString:@"Reward"])
-            {
-                markerOBJ.icon=[UIImage imageNamed:@"n_Icon.png"];
-                markerOBJ.position = CLLocationCoordinate2DMake(39.9526f, -75.1634f);
-            }
-            else
-            {
-                markerOBJ.position = CLLocationCoordinate2DMake([[tempDict objectForKey:@"Latitude"] floatValue], [[tempDict objectForKey:@"Longitude"] floatValue]);
-            }
-            markerOBJ.infoWindowAnchor = CGPointMake(0.5, -0.05);
-            markerOBJ.appearAnimation = kGMSMarkerAnimationPop;
-            markerOBJ.zIndex = 10 + i;
-            markerOBJ.map = mapView_;
-            markerOBJ.title = [NSString stringWithFormat:@"%d",i];
-
-            [_markers addObject:markerOBJ];
-
-            if ([[[histArrayCommon objectAtIndex:i] valueForKey:@"TransactionType"]isEqualToString:@"Transfer"])
-            {
-                if ([[user valueForKey:@"MemberId"] isEqualToString:[[histArrayCommon objectAtIndex:i] valueForKey:@"RecepientId"]])
-                {
-                    markerOBJ.icon = [GMSMarker markerImageWithColor:kNoochGreen];
-                    markerOBJ.rotation = 11;
-                }
-                else
-                {
-                    markerOBJ.icon = [GMSMarker markerImageWithColor:kNoochRed];
-                    markerOBJ.rotation = -11;
-                }
-            }
-            else if ([[[histArrayCommon objectAtIndex:i] valueForKey:@"TransactionType"] isEqualToString:@"Request"])
-            {
-                markerOBJ.icon = [GMSMarker markerImageWithColor:kNoochBlue];
-                markerOBJ.rotation = -6;
-            }
-            else if ([[[histArrayCommon objectAtIndex:i] valueForKey:@"TransactionType"] isEqualToString:@"Disputed"])
-            {
-                markerOBJ.icon = [GMSMarker markerImageWithColor:kNoochGrayDark];
-                markerOBJ.rotation = 5;
-            }
-            else if ([[[histArrayCommon objectAtIndex:i] valueForKey:@"TransactionType"] isEqualToString:@"Invite"])
-            {
-                markerOBJ.icon = [GMSMarker markerImageWithColor:[UIColor whiteColor]];
-                markerOBJ.rotation = -4;
-            }
-            else
-            {
-                //NSLog(@"Transaction Type is: %@", [[histArrayCommon objectAtIndex:i] valueForKey:@"TransactionType"]);
-                markerOBJ.rotation = 1;
-                markerOBJ.icon=[UIImage imageNamed:@"n_Icon.png"];
-            }
-        }
-    }
-}
-
-- (void)focusMapToShowAllMarkers
-{
-    if (locUpdateSuccessfully == true)
-    {
-        //NSLog(@"locationUser is: %f,%f", lat_hist,lon_hist);
-    }
-    else
-    {
-        CLLocationDegrees latitude = 39.9515;
-        CLLocationDegrees longitude = -75.1636;
-        
-        CLLocationCoordinate2D defaultLocation = CLLocationCoordinate2DMake(latitude, longitude);
-        locationUser = defaultLocation;
-    }
-
-    GMSCoordinateBounds *bounds = [[GMSCoordinateBounds alloc] initWithCoordinate:locationUser coordinate:locationUser];
-
-    for (GMSMarker *marker in _markers)
-    {
-        if (marker.position.latitude != 0 &&
-            marker.position.longitude != 0)
-        {
-            bounds = [bounds includingCoordinate:marker.position];
-        }
-    }
-
-    [CATransaction begin];
-    [CATransaction setValue:[NSNumber numberWithFloat: 1.0f]
-                     forKey:kCATransactionAnimationDuration];
-    [CATransaction setValue:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut]
-                     forKey:kCATransactionAnimationTimingFunction];
-    // change the camera, set the zoom, whatever. Just make sure to call an animateTo* method.
-    [mapView_ animateWithCameraUpdate:[GMSCameraUpdate fitBounds:bounds withPadding:35]];
-    [mapView_ animateToViewingAngle:30];
-    [mapView_ animateToBearing:1];
-    [CATransaction commit];
-}
-
-# pragma mark - LocationManager Delegate Methods
-- (void)locationManager:(CLLocationManager *)manager
-     didUpdateLocations:(NSArray *)locations
-{
-    [locationManager stopUpdatingLocation];
-    
-    locationUser = manager.location.coordinate;
-    lat_hist = [[[NSString alloc] initWithFormat:@"%f",locationUser.latitude] floatValue];
-    lon_hist = [[[NSString alloc] initWithFormat:@"%f",locationUser.longitude] floatValue];
-    
-    //NSLog(@"Hist -DidUpdateLocation --> locationUser is: %f,%f", lat_hist,lon_hist);
-    locUpdateSuccessfully = true;
-    [self performSelector:@selector(focusMapToShowAllMarkers) withObject:nil afterDelay:0.4];
-
-    [[assist shared] setlocationAllowed:YES];
-    
-    serve * serveOBJ = [serve new];
-    [serveOBJ UpDateLatLongOfUser:[[NSString alloc] initWithFormat:@"%f",locationUser.latitude]
-                              lng:[[NSString alloc] initWithFormat:@"%f",locationUser.longitude]];
-
-    [ARProfileManager setLocationValue:locationUser forVariable:@"lastKnownLocation"];
-}
-
-- (void)locationManager:(CLLocationManager *)manager
-       didFailWithError:(NSError *)error
-{
-    [[assist shared] setlocationAllowed:NO];
-
-    if ([error code] == kCLErrorDenied) {
-        NSLog(@"History --> Location Mgr Error: %@", error);
-    }
-    else {
-        NSLog(@"History --> Location Mgr Error: %@",error);
-    }
-
-    locUpdateSuccessfully = false;
-    [self performSelector:@selector(focusMapToShowAllMarkers) withObject:nil afterDelay:0.4];
-}
-
--(void)move:(id)sender
+/*-(void)move:(id)sender
 {
     [self.view bringSubviewToFront:mapArea];
     CGPoint translatedPoint = [(UIPanGestureRecognizer*)sender translationInView:self.view];
@@ -812,7 +222,7 @@
     [UIView setAnimationDelegate:self];
     [[sender view] setCenter:CGPointMake(finalX, finalY)];
     [UIView commitAnimations];
-}
+}*/
 
 -(void)FilterHistory:(id)sender
 {
@@ -826,7 +236,7 @@
     fp.border = NO;
     fp.tint = FPPopoverDefaultTint;
     fp.arrowDirection = FPPopoverArrowDirectionUp;
-    fp.contentSize = CGSizeMake(160, 303);
+    fp.contentSize = CGSizeMake(165, 256);
     [fp presentPopoverFromPoint:CGPointMake(258, 50)];
 }
 
@@ -836,51 +246,7 @@
     [[NSNotificationCenter defaultCenter] removeObserver:self name:@"dismissPopOver" object:nil];
     isSearch = NO;
 
-    if (isMapOpen)
-    {
-        [UIView animateKeyframesWithDuration:0.35
-                                       delay:0
-                                     options:UIViewKeyframeAnimationOptionCalculationModeCubic
-                                  animations:^{
-                                      [UIView addKeyframeWithRelativeStartTime:0 relativeDuration:1.0 animations:^{
-                                          self.tableShadow.frame = CGRectMake(0, 84, 320, self.view.frame.size.height);
-                                          self.list.frame = CGRectMake(0, 84, 320, self.view.frame.size.height);
-                                          [self.view bringSubviewToFront:self.list];
-                                          mapArea.frame = CGRectMake(0, 84, 320, self.view.frame.size.height);
-                                      }];
-                                  } completion: ^(BOOL finished) {
-                                      isMapOpen = NO;
-
-                                      if (![listType isEqualToString:@"CANCEL"] && isFilterSelected)
-                                      {
-                                          [self.search setShowsCancelButton:NO];
-                                          [self.search setText:@""];
-                                          [self.search resignFirstResponder];
-                                          
-                                          [histShowArrayCompleted removeAllObjects];
-
-                                          isLocalSearch = NO;
-                                          isFilter = YES;
-                                          index = 1;
-                                          isFilterSelected = NO;
-                                          
-                                          //Release memory cache
-                                          SDImageCache *imageCache = [SDImageCache sharedImageCache];
-                                          [imageCache clearMemory];
-                                          [imageCache clearDisk];
-                                          [imageCache cleanDisk];
-                                          countRows = 0;
-
-                                          [self loadHist:listType index:index len:20 subType:subTypestr];
-                                      }
-                                      else {
-                                          isFilter = NO;
-                                      }
-                                  }
-         ];
-    }
-
-    else if (![listType isEqualToString:@"CANCEL"] && isFilterSelected)
+    if (![listType isEqualToString:@"CANCEL"] && isFilterSelected)
     {
         [self.search setShowsCancelButton:NO];
         [self.search setText:@""];
@@ -931,42 +297,6 @@
     [serveOBJ histMore:filter sPos:ind len:len subType:subTypestr];
 }
 
-#pragma mark - transaction type switching
-- (void) completed_or_pending:(id)sender
-{
-    listType = @"ALL";
-
-    if (isMapOpen) {
-        [self toggleMapByNavBtn];
-    }
-
-    UIButton *filter = [UIButton buttonWithType:UIButtonTypeRoundedRect];
-    [filter setStyleClass:@"label_filter"];
-    [filter setTitle:[NSString fontAwesomeIconStringForIconIdentifier:@"fa-filter"] forState:UIControlStateNormal];
-    [filter setTitleShadowColor:Rgb2UIColor(19, 32, 38, 0.22) forState:UIControlStateNormal];
-    filter.titleLabel.shadowOffset = CGSizeMake(0.0, -1.0);
-    [filter addTarget:self action:@selector(FilterHistory:) forControlEvents:UIControlEventTouchUpInside];
-    UIBarButtonItem *filt = [[UIBarButtonItem alloc] initWithCustomView:filter];
-    
-    UIButton *glyph_map = [UIButton buttonWithType:UIButtonTypeRoundedRect];
-    [glyph_map setStyleId:@"glyph_map"];
-    [glyph_map setTitle:[NSString fontAwesomeIconStringForIconIdentifier:@"fa-map-marker"] forState:UIControlStateNormal];
-    [glyph_map setTitleShadowColor:Rgb2UIColor(19, 32, 38, 0.22) forState:UIControlStateNormal];
-    glyph_map.titleLabel.shadowOffset = CGSizeMake(0.0, -1.0);
-    [glyph_map addTarget:self action:@selector(toggleMapByNavBtn) forControlEvents:UIControlEventTouchUpInside];
-    
-    UIBarButtonItem *map = [[UIBarButtonItem alloc] initWithCustomView:glyph_map];
-    
-    NSArray *topRightBtns = @[map,filt];
-    [self.navigationItem setRightBarButtonItems:topRightBtns animated:YES];
-    
-    subTypestr = @"";
-    [histShowArrayCompleted removeAllObjects];
-
-    countRows = 0;
-    [self loadHist:listType index:1 len:22 subType:subTypestr];
-}
-
 #pragma mark - UITableViewDataSource
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
@@ -977,13 +307,6 @@
 {
      return @"";
 }
-
-/*- (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
-{
-    UIView *headerView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, tableView.bounds.size.width, 30)];
-    [headerView setBackgroundColor:[Helpers hexColor:@"f8f8f8"]];
-    return headerView;
-}*/
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section2
 {
@@ -1113,7 +436,7 @@
                 else if ( [[dictRecord valueForKey:@"TransactionStatus"]isEqualToString:@"Success"] ||
                          ![[dictRecord valueForKey:@"TransactionStatus"]isEqualToString:@"Reward"]) {
                     [statusIndicator setText:[NSString fontAwesomeIconStringForIconIdentifier:@"fa-check"]];
-                    [statusIndicator setTextColor:kNoochGreen];
+                    [statusIndicator setTextColor:kPayoGreen];
                 }
     
                 NSString * username = [NSString stringWithFormat:@"%@",[user valueForKey:@"UserName"]];
@@ -1140,7 +463,7 @@
                         // Received Transfer
                         [amount setStyleClass:@"history_transferamount_pos"];
                         [transferTypeLabel setText:NSLocalizedString(@"History_TransferFromTxt", @"History screen 'Transfer From' Text")];
-                        [transferTypeLabel setBackgroundColor:kNoochGreen];
+                        [transferTypeLabel setBackgroundColor:kPayoGreen];
                         [name setText:[NSString stringWithFormat:@"%@ ",[[dictRecord valueForKey:@"Name"] capitalizedString]]];
                         [pic sd_setImageWithURL:[NSURL URLWithString:[dictRecord objectForKey:@"Photo"]]
                             placeholderImage:[UIImage imageNamed:@"profile_picture.png"]];
@@ -1197,7 +520,7 @@
                         [pic sd_setImageWithURL:[NSURL URLWithString:[dictRecord objectForKey:@"Photo"]]
                             placeholderImage:[UIImage imageNamed:@"profile_picture.png"]];
                     }
-					[transferTypeLabel setBackgroundColor:kNoochBlue];
+					[transferTypeLabel setBackgroundColor:kPayoBlue];
                 
                 }
                 else if ([[dictRecord valueForKey:@"TransactionType"]isEqualToString:@"Invite"] &&
@@ -1291,21 +614,21 @@
                          [[dictRecord valueForKey:@"TransactionType"]isEqualToString:@"Request"] )
                 {
                     [updated_balance setText:NSLocalizedString(@"History_PaidTxt", @"History screen 'Paid' Text")];
-                    [updated_balance setTextColor:kNoochGreen];
+                    [updated_balance setTextColor:kPayoGreen];
                     [cell.contentView addSubview:updated_balance];
                 }
                 else if ([[dictRecord valueForKey:@"TransactionStatus"]isEqualToString:@"Success"] &&
                          [[dictRecord valueForKey:@"TransactionType"]isEqualToString:@"Invite"] )
                 {
                     [updated_balance setText:NSLocalizedString(@"History_AcceptedTxt", @"History screen 'Accepted' Text")];
-                    [updated_balance setTextColor:kNoochGreen];
+                    [updated_balance setTextColor:kPayoGreen];
                     [cell.contentView addSubview:updated_balance];
                 }
                 else if ([[dictRecord valueForKey:@"TransactionType"]isEqualToString:@"Disputed"] &&
                          [[dictRecord valueForKey:@"DisputeStatus"]isEqualToString:@"Resolved"])
                 {
                     [updated_balance setText:NSLocalizedString(@"History_ResolvedTxt", @"History screen 'Resolved' Text")];
-                    [updated_balance setTextColor:kNoochGreen];
+                    [updated_balance setTextColor:kPayoGreen];
                     [cell.contentView addSubview:updated_balance];
                 }
 
@@ -1450,28 +773,21 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    if (isMapOpen)
-    {
-        [self toggleMapByNavBtn];
-    }
-    else
-    {
-        [tableView deselectRowAtIndexPath:indexPath animated:YES];
+    [tableView deselectRowAtIndexPath:indexPath animated:YES];
 
-        if (isLocalSearch)
-        {
-            NSDictionary *dictRecord = [histTempCompleted objectAtIndex:indexPath.row];
-            TransactionDetails *details = [[TransactionDetails alloc] initWithData:dictRecord];
-            [self.navigationController pushViewController:details animated:YES];
-            return;
-        }
-        if ([histShowArrayCompleted count] > indexPath.row)
-        {
-            NSDictionary * dictRecord = [histShowArrayCompleted objectAtIndex:indexPath.row];
-            //NSLog(@"Selected Entry is: %@", dictRecord);
-            TransactionDetails *details = [[TransactionDetails alloc] initWithData:dictRecord];
-            [self.navigationController pushViewController:details animated:YES];
-        }
+    if (isLocalSearch)
+    {
+        NSDictionary *dictRecord = [histTempCompleted objectAtIndex:indexPath.row];
+        TransactionDetails *details = [[TransactionDetails alloc] initWithData:dictRecord];
+        [self.navigationController pushViewController:details animated:YES];
+        return;
+    }
+    if ([histShowArrayCompleted count] > indexPath.row)
+    {
+        NSDictionary * dictRecord = [histShowArrayCompleted objectAtIndex:indexPath.row];
+        //NSLog(@"Selected Entry is: %@", dictRecord);
+        TransactionDetails *details = [[TransactionDetails alloc] initWithData:dictRecord];
+        [self.navigationController pushViewController:details animated:YES];
     }
 }
 
@@ -1694,21 +1010,6 @@
 {
     [searchBar becomeFirstResponder];
     [searchBar setShowsCancelButton:YES];
-
-    if (isMapOpen)
-    {
-        [UIView beginAnimations:nil context:nil];
-        [UIView setAnimationDelegate:self];
-        [UIView setAnimationDuration:0.35];
-
-        self.tableShadow.frame = CGRectMake(0, 84, 320, self.view.frame.size.height);
-        self.list.frame = CGRectMake(0, 84, 320, self.view.frame.size.height);
-        [self.view bringSubviewToFront:self.list];
-        mapArea.frame = CGRectMake(0, 84, 320, self.view.frame.size.height);
-        isMapOpen = NO;
-        
-        [UIView commitAnimations];
-    }
 }
 
 -(BOOL)searchBar:(UISearchBar *)searchBar shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text{
@@ -1827,8 +1128,7 @@
             for (NSDictionary * dict in histArray)
             {
                 if ( [[dict valueForKey:@"TransactionStatus"]isEqualToString:@"Success"]   ||
-                     [[dict valueForKey:@"TransactionStatus"]isEqualToString:@"Cancelled"] ||
-                     [[dict valueForKey:@"TransactionStatus"]isEqualToString:@"Rejected"]  ||
+                    //[[dict valueForKey:@"TransactionStatus"]isEqualToString:@"Cancelled"] ||
                      ( [[dict valueForKey:@"TransactionType"]isEqualToString:@"Disputed"] &&
                        [[dict valueForKey:@"DisputeStatus"]isEqualToString:@"Resolved"]) )
                 {
@@ -1852,22 +1152,12 @@
                                           }
                  ];
             }
-
-            if (![[assist shared] checkIfLocAllowed])
-            {
-                [self performSelector:@selector(focusMapToShowAllMarkers) withObject:nil afterDelay:0.4];
-            }
         }
         else if ([histArray count] == 0)
         {
             isEnd = YES;
-            [mapView_ setAlpha:0];
-            [self displayEmptyMapArea];
         }
 
-        if (isMapOpen) {
-            [self mapPoints];
-        }
         serve * serveOBJ = [serve new];
         [serveOBJ setDelegate:self];
         [serveOBJ setTagName:@"time"];
@@ -1974,10 +1264,6 @@
         else
         {
             isEnd = YES;
-        }
-        if (isMapOpen)
-        {
-            [self mapPoints];
         }
     }
 

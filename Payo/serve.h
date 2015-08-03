@@ -2,7 +2,7 @@
 //  serve.h
 //  Nooch
 //
-//  Created by Preston Hults on 2/6/13.
+//  Created by Cliff Canan on 7/30/15.
 //  Copyright (c) 2015 Nooch. All rights reserved.
 //
 
@@ -46,7 +46,6 @@
 -(void)getEncrypt:(NSString *)input;
 -(void)getDetails:(NSString*)username;
 -(void)getInvitedMemberList:(NSString*)memId;
--(void)getLocationBasedSearch:(NSString *)radius;
 -(void)GetTransactionDetail:(NSString*)transactionId;
 -(void)getMemIdFromuUsername:(NSString*)username;
 -(void)getMemIdFromPhoneNumber:(NSString*)phoneNumber;

@@ -73,7 +73,7 @@
     [glyph_login setFont:[UIFont fontWithName:@"FontAwesome" size:20]];
     [glyph_login setFrame:CGRectMake(0, 38, 300, 25)];
     [glyph_login setText:[NSString fontAwesomeIconStringForIconIdentifier:@"fa-arrow-circle-right"]];
-    [glyph_login setTextColor:kNoochGreen];
+    [glyph_login setTextColor:kPayoGreen];
     [glyph_login setTextAlignment:NSTextAlignmentCenter];
     [self.login addSubview:glyph_login];
 
@@ -169,7 +169,7 @@
 
     UILabel * name = [[UILabel alloc] initWithFrame:CGRectMake(20, 252, 60, 20)];
     [name setBackgroundColor:[UIColor clearColor]];
-    [name setTextColor:kNoochBlue];
+    [name setTextColor:kPayoBlue];
     [name setText:NSLocalizedString(@"Register_NameLbl", @"Register Screen ' Full Name' Text")];
     [name setStyleClass:@"table_view_cell_textlabel_1"];
     [self.view addSubview:name];
@@ -206,7 +206,7 @@
 
     UILabel * email = [[UILabel alloc] initWithFrame:CGRectMake(20, 293, 60, 20)];
     [email setBackgroundColor:[UIColor clearColor]];
-    [email setTextColor:kNoochBlue];
+    [email setTextColor:kPayoBlue];
     [email setText:NSLocalizedString(@"Register_EmailLbl", @"Register Screen ' Email' Text")];
     [email setStyleClass:@"table_view_cell_textlabel_1"];
     [self.view addSubview:email];
@@ -234,7 +234,7 @@
 
     UILabel * password = [[UILabel alloc] initWithFrame:CGRectMake(20, 334, 80, 20)];
     [password setBackgroundColor:[UIColor clearColor]];
-    [password setTextColor:kNoochBlue];
+    [password setTextColor:kPayoBlue];
     [password setText:NSLocalizedString(@"Register_PwLbl", @"Register Screen ' Password' Text")];
     [password setStyleClass:@"table_view_cell_textlabel_1"];
     [self.view addSubview:password];
@@ -285,7 +285,7 @@
     [checkbox_box setFont:[UIFont fontWithName:@"FontAwesome" size:19]];
     [checkbox_box setTextAlignment:NSTextAlignmentCenter];
     [checkbox_box setText:[NSString fontAwesomeIconStringForIconIdentifier:@"fa-square-o"]];
-    [checkbox_box setTextColor:kNoochGreen];
+    [checkbox_box setTextColor:kPayoGreen];
     [self.view addSubview:checkbox_box];
 
     UIButton * checkbox_dot = [UIButton buttonWithType:UIButtonTypeRoundedRect];
@@ -305,15 +305,15 @@
     [self.view addSubview:termsText1];
 
     UIButton * termsText2 = [UIButton buttonWithType:UIButtonTypeCustom];
-    [termsText2 setFrame:CGRectMake(122, 382, 150, 26)];
+    [termsText2 setFrame:CGRectMake(119, 382, 150, 26)];
     [termsText2 setBackgroundColor:[UIColor clearColor]];
-    [termsText2 setTitle:NSLocalizedString(@"Register_AgreeTxt2", @"Register Screen 'Nooch's Terms of Service.' Text") forState:UIControlStateNormal];
+    [termsText2 setTitle:NSLocalizedString(@"Register_AgreeTxt2", @"Register Screen 'Payo's Terms of Service.' Text") forState:UIControlStateNormal];
     [termsText2 setStyleClass:@"termsCheckText"];
     [termsText2 addTarget:self action:@selector(open_terms_webview) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:termsText2];
 
     UIView * underline = [UIView new];
-    underline.frame = CGRectMake(0, 18, 146, 1);
+    underline.frame = CGRectMake(5, 19, 138, 1);
     [underline setBackgroundColor:kNoochGrayDark];
     [underline setAlpha:0.6];
     [termsText2 addSubview:underline];
@@ -521,7 +521,7 @@
 
             isloginWithFB = YES;
 
-            RTSpinKitView * spinner1 = [[RTSpinKitView alloc] initWithStyle:RTSpinKitViewStyleThreeBounce];
+            RTSpinKitView * spinner1 = [[RTSpinKitView alloc] initWithStyle:RTSpinKitViewStyleArcAlt];
             spinner1.color = [UIColor whiteColor];
             self.hud = [[MBProgressHUD alloc] initWithView:self.navigationController.view];
             [self.navigationController.view addSubview:self.hud];
@@ -702,7 +702,7 @@
     }
     else
     {
-        RTSpinKitView *spinner1 = [[RTSpinKitView alloc] initWithStyle:RTSpinKitViewStyleThreeBounce];
+        RTSpinKitView *spinner1 = [[RTSpinKitView alloc] initWithStyle:RTSpinKitViewStyleArcAlt];
         spinner1.color = [UIColor whiteColor];
         self.hud = [[MBProgressHUD alloc] initWithView:self.navigationController.view];
         [self.navigationController.view addSubview:self.hud];
@@ -1140,7 +1140,7 @@
         {
             [self.emailValidator setHidden:NO];
             [self.emailValidator setText:[NSString fontAwesomeIconStringForIconIdentifier:@"fa-check-circle"]];
-            [self.emailValidator setTextColor:kNoochGreen];
+            [self.emailValidator setTextColor:kPayoGreen];
         }
     }
     else
@@ -1211,20 +1211,20 @@
         //NSLog(@"Score is: %f",score);
         if (pwLength && score > 4)
         {
-            [self.pwValidator1 setBackgroundColor:kNoochGreen];
-            [self.pwValidator2 setBackgroundColor:kNoochGreen];
-            [self.pwValidator3 setBackgroundColor:kNoochGreen];
-            [self.pwValidator4 setBackgroundColor:kNoochGreen];
+            [self.pwValidator1 setBackgroundColor:kPayoGreen];
+            [self.pwValidator2 setBackgroundColor:kPayoGreen];
+            [self.pwValidator3 setBackgroundColor:kPayoGreen];
+            [self.pwValidator4 setBackgroundColor:kPayoGreen];
             [self.pwValidator setText:NSLocalizedString(@"Rgstr_ExtrStrngTxt", @"Register screen 'Extremely Strong' PW Validator Text")];
-            [self.pwValidator setTextColor:kNoochGreen];
+            [self.pwValidator setTextColor:kPayoGreen];
         }
         else if (pwLength && score > 2.9)
         {
-            [self.pwValidator1 setBackgroundColor:kNoochGreen];
-            [self.pwValidator2 setBackgroundColor:kNoochGreen];
-            [self.pwValidator3 setBackgroundColor:kNoochGreen];
+            [self.pwValidator1 setBackgroundColor:kPayoGreen];
+            [self.pwValidator2 setBackgroundColor:kPayoGreen];
+            [self.pwValidator3 setBackgroundColor:kPayoGreen];
             [self.pwValidator4 setBackgroundColor:Rgb2UIColor(188, 190, 192, .5)];
-            [self.pwValidator setTextColor:kNoochGreen];
+            [self.pwValidator setTextColor:kPayoGreen];
             [self.pwValidator setText:NSLocalizedString(@"Rgstr_GoodTxt", @"Register screen 'Good' PW Validator Text")];
         }
         else if (pwLength && score > 1.5)
@@ -1348,7 +1348,7 @@
             {
                 [self.emailValidator setHidden:NO];
                 [self.emailValidator setText:[NSString fontAwesomeIconStringForIconIdentifier:@"fa-check-circle"]];
-                [self.emailValidator setTextColor:kNoochGreen];
+                [self.emailValidator setTextColor:kPayoGreen];
 
                 [self.password_field becomeFirstResponder];
             }

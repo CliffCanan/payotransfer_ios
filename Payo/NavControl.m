@@ -27,7 +27,6 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-	// Do any additional setup after loading the view.
 }
 
 -(void)viewWillAppear:(BOOL)animated
@@ -36,8 +35,7 @@
     [self.view setBackgroundColor:[UIColor whiteColor]];
     [[UIApplication sharedApplication] setStatusBarHidden:YES withAnimation:UIStatusBarAnimationNone];
 
-    //[[UINavigationBar appearance] setBackgroundColor:kNoochBlue];
-    [[UINavigationBar appearance] setBarTintColor:kNoochBlue];
+    [[UINavigationBar appearance] setBarTintColor:kPayoBlue];
 
     [[UINavigationBar appearance] setTintColor:[UIColor whiteColor]];
 
@@ -50,7 +48,7 @@
     [[UINavigationBar appearance] setTitleTextAttributes:titleAttributes];
 
     UIView *hax = [[UIView alloc] initWithFrame:CGRectMake(0, 43, 320, 1)];
-    [hax setBackgroundColor:kNoochBlue];
+    [hax setBackgroundColor:kPayoBlue];
     [self.navigationBar addSubview:hax];
 
     LeftMenu *left_menu = [LeftMenu new];

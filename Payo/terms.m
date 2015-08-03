@@ -36,7 +36,6 @@
 {
     [super viewDidLoad];
     self.title = NSLocalizedString(@"Terms_ScrnTitle", @"Terms 'User Agreement' Screen Title");
-    //[self.navigationController setNavigationBarHidden:NO];
 }
 
 - (void)dealloc {
@@ -72,7 +71,7 @@
     if (isfromRegister)
     {
         UIView * nav_view = [[UIView alloc]initWithFrame:CGRectMake(0, 0, 320, 64)];
-        nav_view.backgroundColor = kNoochBlue;
+        nav_view.backgroundColor = kPayoBlue;
         [self.view addSubview:nav_view];
         top = 62.0f;
 

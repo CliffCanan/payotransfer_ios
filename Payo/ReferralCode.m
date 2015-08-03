@@ -105,7 +105,7 @@
     self.code_field.layer.borderColor = kNoochGrayLight.CGColor;
     [self.code_field setAutocorrectionType:UITextAutocorrectionTypeNo];
     [self.code_field setAutocapitalizationType:UITextAutocapitalizationTypeAllCharacters];
-    self.code_field.layer.borderColor = kNoochBlue.CGColor;
+    self.code_field.layer.borderColor = kPayoBlue.CGColor;
     self.code_field.layer.cornerRadius = 12;
     [self.view addSubview:self.code_field];
 }
@@ -132,7 +132,7 @@
         return;
     }
 
-    RTSpinKitView *spinner1 = [[RTSpinKitView alloc] initWithStyle:RTSpinKitViewStyleWanderingCubes];
+    RTSpinKitView *spinner1 = [[RTSpinKitView alloc] initWithStyle:RTSpinKitViewStyleArcAlt];
     spinner1.color = [UIColor whiteColor];
     self.hud = [[MBProgressHUD alloc] initWithView:self.navigationController.view];
     [self.navigationController.view addSubview:self.hud];
@@ -165,7 +165,7 @@
 
     else
     {
-        RTSpinKitView *spinner1 = [[RTSpinKitView alloc] initWithStyle:RTSpinKitViewStyleWanderingCubes];
+        RTSpinKitView *spinner1 = [[RTSpinKitView alloc] initWithStyle:RTSpinKitViewStyleArcAlt];
         spinner1.color = [UIColor whiteColor];
         self.hud = [[MBProgressHUD alloc] initWithView:self.navigationController.view];
         [self.navigationController.view addSubview:self.hud];
@@ -219,7 +219,7 @@
         if ([[response objectForKey:@"validateInvitationCodeResult"] boolValue])
         {
             [self.hud hide:YES];
-            RTSpinKitView *spinner1 = [[RTSpinKitView alloc] initWithStyle:RTSpinKitViewStyleWanderingCubes];
+            RTSpinKitView *spinner1 = [[RTSpinKitView alloc] initWithStyle:RTSpinKitViewStyleArcAlt];
             spinner1.color = [UIColor whiteColor];
             self.hud = [[MBProgressHUD alloc] initWithView:self.navigationController.view];
             [self.navigationController.view addSubview:self.hud];

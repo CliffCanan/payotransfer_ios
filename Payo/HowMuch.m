@@ -74,8 +74,6 @@
     [self.navigationItem setLeftBarButtonItem:menu];
     [self.navigationItem setRightBarButtonItem:Nil];
 
-    [[assist shared] setTranferImage:nil];
-
     self.amnt = [@"" mutableCopy];
 
     self.decimals = YES;
@@ -353,7 +351,7 @@
     origin.size.width = 149;
     origin.origin.x = 162;
 
-    self.user_pic.layer.borderColor = kNoochGreen.CGColor;
+    self.user_pic.layer.borderColor = kPayoGreen.CGColor;
 
     [self.send addTarget:self action:@selector(confirm_send) forControlEvents:UIControlEventTouchUpInside];
     [self.send setTitle:NSLocalizedString(@"HowMuch_ConfirmSend", @"How Much confirm send payment text") forState:UIControlStateNormal];

@@ -11,7 +11,6 @@
 BOOL isFromHome;
 BOOL isFromStats;
 BOOL isFromArtisanDonationAlert;
-BOOL isUserByLocation;
 
 @interface HowMuch : GAITrackedViewController<UITextFieldDelegate, UINavigationControllerDelegate>
 {

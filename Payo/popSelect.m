@@ -2,7 +2,7 @@
 //  popSelect.m
 //  Nooch
 //
-//  Created by Preston Hults on 2/27/13.
+//  Created by Cliff Canan on 7/30/15.
 //  Copyright (c) 2015 Nooch. All rights reserved.
 //
 
@@ -26,9 +26,10 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-	// Do any additional setup after loading the view.
-    popList = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, 250, 290)];
-    [popList setRowHeight:44];
+
+    popList = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, 160, 216)];
+    [popList setRowHeight:54];
+    [popList setSeparatorColor:Rgb2UIColor(188, 190, 192, .5)];
     [popList setUserInteractionEnabled:YES];
     [popList setScrollEnabled:NO];
     [popList setDelegate:self];
@@ -46,7 +47,7 @@
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
-    return 6;
+    return 4;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -62,22 +63,21 @@
     for(UIView *subview in cell.contentView.subviews)
         [subview removeFromSuperview];
     
-    [cell.textLabel setFont:[UIFont fontWithName:@"Roboto-light" size:15]];
+    [cell.textLabel setFont:[UIFont fontWithName:@"Roboto" size:17]];
 
     if (isHistFilter)
     {
         [cell.textLabel setTextAlignment:NSTextAlignmentCenter];
         if (indexPath.row == 0) {
             cell.textLabel.text = NSLocalizedString(@"PopSelect_Row1", @"'All Transfers' Text");
-        } else if(indexPath.row == 1) {
+        }
+        else if(indexPath.row == 1) {
             cell.textLabel.text = NSLocalizedString(@"PopSelect_Row2", @"'Sent' Text");
-        } else if(indexPath.row == 2) {
-            cell.textLabel.text = NSLocalizedString(@"PopSelect_Row3", @"'Received' Text");
-        } else if(indexPath.row == 3) {
-            cell.textLabel.text = NSLocalizedString(@"PopSelect_Row4", @"'Requests' Text");
-        } else if(indexPath.row == 4) {
+        }
+        else if(indexPath.row == 2) {
             cell.textLabel.text = NSLocalizedString(@"PopSelect_Row5", @"'Disputes' Text");
-        } else if(indexPath.row == 5) {
+        }
+        else if(indexPath.row == 3) {
             cell.textLabel.text = NSLocalizedString(@"PopSelect_CancelRow", @"'Cancel' Text");
         }
         return cell;
@@ -93,19 +93,13 @@
         if (indexPath.row == 0) {
             listType = @"ALL";
         }
-        else if(indexPath.row == 1){
+        else if(indexPath.row == 1) {
             listType = @"SENT";
         }
-        else if(indexPath.row == 2){
-            listType = @"RECEIVED";
-        }
-        else if(indexPath.row == 3){
-            listType = @"REQUEST";
-        }
-        else if(indexPath.row == 4){
+        else if(indexPath.row == 4) {
             listType = @"DISPUTED";
         }
-        else if(indexPath.row == 5){
+        else if(indexPath.row == 5) {
             listType = @"CANCEL";
         }
         isFilterSelected = YES;

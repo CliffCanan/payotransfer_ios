@@ -215,7 +215,7 @@
     //NSLog(@"isBankAttahed is %d",isBankAttached);
     if (isBankAttached)
     {
-        RTSpinKitView *spinner1 = [[RTSpinKitView alloc] initWithStyle:RTSpinKitViewStyleFadingCircleAlt];
+        RTSpinKitView *spinner1 = [[RTSpinKitView alloc] initWithStyle:RTSpinKitViewStyleArcAlt];
         spinner1.color = [UIColor whiteColor];
         self.hud = [[MBProgressHUD alloc] initWithView:self.navigationController.view];
         [self.navigationController.view addSubview:self.hud];
@@ -341,7 +341,7 @@
     }
 
     // 5. HAS USER SUBMITTED DOB AND SSN LAST 4?
-    if (isXtraIdVerOn && ![[assist shared] isUsersIdInfoSubmitted])
+    if (![[assist shared] isUsersIdInfoSubmitted])
     {
         // Body text if both DoB and SSN are not submitted yet
         NSString * alertBody = @"Please take 30 seconds to verify your identity by entering your:\n\n• Date of birth, and\n• Just the LAST 4 digits of your SSN\n\nFederal regulations require us to verify each user's identity. We will only ask for this info once and all data is stored with encryption on secure servers.\n\xF0\x9F\x94\x92";
@@ -532,7 +532,7 @@
     serveOBJ.tagName = @"RemoveBankAccount";
     [serveOBJ RemoveSynapseBankAccount];
 
-    RTSpinKitView *spinner1 = [[RTSpinKitView alloc] initWithStyle:RTSpinKitViewStyleThreeBounce];
+    RTSpinKitView *spinner1 = [[RTSpinKitView alloc] initWithStyle:RTSpinKitViewStyleArcAlt];
     spinner1.color = [UIColor whiteColor];
     self.hud = [[MBProgressHUD alloc] initWithView:self.navigationController.view];
     [self.navigationController.view addSubview:self.hud];
@@ -632,7 +632,7 @@
     [glyph_lock setFont:[UIFont fontWithName:@"FontAwesome" size:20]];
     [glyph_lock setFrame:CGRectMake(29, 10, 22, 29)];
     [glyph_lock setText:[NSString fontAwesomeIconStringForIconIdentifier:@"fa-lock"]];
-    [glyph_lock setTextColor:kNoochBlue];
+    [glyph_lock setTextColor:kPayoBlue];
     [head_container addSubview:glyph_lock];
 
 
@@ -1057,7 +1057,7 @@
             [glyph_lock setTextAlignment:NSTextAlignmentLeft];
             [glyph_lock setFont:[UIFont fontWithName:@"FontAwesome" size:15]];
             [glyph_lock setText:[NSString fontAwesomeIconStringForIconIdentifier:@"fa-lock"]];
-            [glyph_lock setTextColor:kNoochGreen];
+            [glyph_lock setTextColor:kPayoGreen];
             [linked_background addSubview:glyph_lock];
 
             bank_image = [[UIImageView alloc] initWithFrame:CGRectMake(11, 12, 49, 48)];

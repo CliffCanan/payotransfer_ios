@@ -2,7 +2,7 @@
 //  popup.m
 //  Nooch
 //
-//  Created by Preston Hults on 7/26/13.
+//  Created by Cliff Canan on 7/30/15.
 //  Copyright (c) 2015 Nooch. All rights reserved.
 //
 

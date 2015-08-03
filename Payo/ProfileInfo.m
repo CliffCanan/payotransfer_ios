@@ -119,7 +119,7 @@ UIImageView *picture;
 
     isPhotoUpdate = NO;
 
-    RTSpinKitView *spinner1 = [[RTSpinKitView alloc] initWithStyle:RTSpinKitViewStyleThreeBounce];
+    RTSpinKitView *spinner1 = [[RTSpinKitView alloc] initWithStyle:RTSpinKitViewStyleArcAlt];
     spinner1.color = [UIColor whiteColor];
     self.hud = [[MBProgressHUD alloc] initWithView:self.navigationController.view];
     [self.navigationController.view addSubview:self.hud];
@@ -225,7 +225,7 @@ UIImageView *picture;
         [bankLinkedTxt setFont:[UIFont fontWithName:@"Roboto-regular" size:13]];
         bankLinkedTxt.text = NSLocalizedString(@"Profile_BnkLnkd", @"Profile 'Bank Linked' text");
 
-        [glyph_bank setTextColor:kNoochGreen];
+        [glyph_bank setTextColor:kPayoGreen];
         [glyph_bank setAlpha:1];
     }
     else
@@ -1929,7 +1929,7 @@ UIImageView *picture;
             [self.emailGlyphIndicator setFont:[UIFont fontWithName:@"FontAwesome" size:16]];
             [self.emailGlyphIndicator setText:[NSString fontAwesomeIconStringForIconIdentifier:@"fa-check-circle"]];
             [self.emailGlyphIndicator setFrame:CGRectMake(39, 0, 20, rowHeight)];
-            [self.emailGlyphIndicator setTextColor:kNoochGreen];
+            [self.emailGlyphIndicator setTextColor:kPayoGreen];
 
             [self.list beginUpdates];
             [self.list endUpdates];
@@ -2317,7 +2317,7 @@ UIImageView *picture;
             [self.emailGlyphIndicator setFont:[UIFont fontWithName:@"FontAwesome" size:16]];
             [self.emailGlyphIndicator setText:[NSString fontAwesomeIconStringForIconIdentifier:@"fa-check-circle"]];
             [self.emailGlyphIndicator setFrame:CGRectMake(39, 0, 20, rowHeight - 1)];
-            [self.emailGlyphIndicator setTextColor:kNoochGreen];
+            [self.emailGlyphIndicator setTextColor:kPayoGreen];
             
             if (emailVerifyRowIsShowing)
             {
@@ -2349,7 +2349,7 @@ UIImageView *picture;
             [self.phoneGlyphIndicator setFont:[UIFont fontWithName:@"FontAwesome" size:16]];
             [self.phoneGlyphIndicator setText:[NSString fontAwesomeIconStringForIconIdentifier:@"fa-check-circle"]];
             [self.phoneGlyphIndicator setFrame:CGRectMake(33, 0, 20, rowHeight - 1)];
-            [self.phoneGlyphIndicator setTextColor:kNoochGreen];
+            [self.phoneGlyphIndicator setTextColor:kPayoGreen];
             
             if (smsVerifyRowIsShowing)
             {
@@ -2432,7 +2432,7 @@ UIImageView *picture;
 
             [self.ssnGlyphIndicator setFont:[UIFont fontWithName:@"FontAwesome" size:16]];
             [self.ssnGlyphIndicator setText:[NSString fontAwesomeIconStringForIconIdentifier:@"fa-check-circle"]];
-            [self.ssnGlyphIndicator setTextColor:kNoochGreen];
+            [self.ssnGlyphIndicator setTextColor:kPayoGreen];
 
             [self.ssn_NotAdded_YellowBg removeFromSuperview];
         }

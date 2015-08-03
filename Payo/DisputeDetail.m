@@ -279,7 +279,7 @@
         [cell.contentView addSubview:self.txtStatus];
         
         if ([self.txtStatus.text rangeOfString:@"Resolved"].location != NSNotFound) {
-            [self.txtStatus setTextColor:kNoochGreen];
+            [self.txtStatus setTextColor:kPayoGreen];
         }
         else {
               [self.txtStatus setTextColor:kNoochRed];

@@ -2,7 +2,7 @@
 //  AppDelegate.m
 //  Nooch
 //
-//  Created by Preston Hults on 9/7/12.
+//  Created by Cliff Canan on 7/30/15.
 //  Copyright (c) 2015 Nooch. All rights reserved.
 //
 
@@ -153,7 +153,7 @@ bool modal;
     [ARPowerHookManager registerHookWithId:@"reqCodeSetting" friendlyName:@"Require Invite Code" defaultValue:@"no"];
     [ARPowerHookManager registerHookWithId:@"refCode" friendlyName:@"Referral Code" defaultValue:@"NOCODE"];
     [ARPowerHookManager registerHookWithId:@"homeBtnClr" friendlyName:@"Home Button Color" defaultValue:@"blue"];
-    [ARPowerHookManager registerHookWithId:@"settingsCogIconPos" friendlyName:@"Settings Cog Icon Position" defaultValue:@"bottomBar"];
+    [ARPowerHookManager registerHookWithId:@"settingsCogIconPos" friendlyName:@"Settings Cog Icon Position" defaultValue:@"topBar"];
     [ARPowerHookManager registerHookWithId:@"UseTouchID" friendlyName:@"Enable TouchID as an option" defaultValue:@"no"];
 
     [ARPowerHookManager registerHookWithId:@"versionNum" friendlyName:@"Most Recent Version Number" defaultValue:@"0.1"];
@@ -172,9 +172,7 @@ bool modal;
     [ARPowerHookManager registerHookWithId:@"synps_OnOff" friendlyName:@"Synapse On or Off" defaultValue:@"off"];
     [ARPowerHookManager registerHookWithId:@"synps_baseUrl" friendlyName:@"Synapse Base URL" defaultValue:@"https://www.noochme.com/noochweb/trans/Add-Bank.aspx"];
 
-    [ARPowerHookManager registerHookWithId:@"knox_xtraTime" friendlyName:@"Extra No. of days for Knox processing" defaultValue:@"1"];
-
-    [ARPowerHookManager registerHookWithId:@"requireSSN_DOB" friendlyName:@"Should SSN & DoB be required - Y or N" defaultValue:@"yes"];
+    [ARPowerHookManager registerHookWithId:@"bank_xtraTime" friendlyName:@"Extra # of days for bank ACH processing" defaultValue:@"2"];
 
     [ARPowerHookManager registerHookWithId:@"RefCmpgn_YorN" friendlyName:@"Referral Campaign Alert - Should Display Y or N" defaultValue:@"no"];
 

@@ -43,7 +43,7 @@
     [self.view addSubview:title];
 
     UILabel * success_header = [[UILabel alloc] initWithFrame:CGRectMake(20, 152, 280, 21)];
-    [success_header setTextColor:kNoochBlue];
+    [success_header setTextColor:kPayoBlue];
     [success_header setBackgroundColor:[UIColor clearColor]];
     [success_header setText:NSLocalizedString(@"Welcom_AcntCrtdSccssTxt", @"'Account Created Successfully' Header Text")];
     [success_header setTextAlignment:NSTextAlignmentCenter];
@@ -234,7 +234,7 @@
         [glyph_lock setFont:[UIFont fontWithName:@"FontAwesome" size:20]];
         [glyph_lock setFrame:CGRectMake(29, 11, 22, 29)];
         [glyph_lock setText:[NSString fontAwesomeIconStringForIconIdentifier:@"fa-lock"]];
-        [glyph_lock setTextColor:kNoochBlue];
+        [glyph_lock setTextColor:kPayoBlue];
         [head_container addSubview:glyph_lock];
 
         UIImageView * imageShow = [[UIImageView alloc]initWithFrame:CGRectMake(1, 50, 300, 380)];

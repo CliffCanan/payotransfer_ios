@@ -205,7 +205,7 @@
     }];
 
     self.pic.layer.borderWidth = 2;
-    self.pic.layer.borderColor = kNoochGreen.CGColor;
+    self.pic.layer.borderColor = kPayoGreen.CGColor;
 
     NSShadow * shadow = [[NSShadow alloc] init];
     shadow.shadowColor = Rgb2UIColor(19, 32, 38, .2);
@@ -303,7 +303,7 @@
 
 -(void)submit_pic
 {
-    RTSpinKitView *spinner1 = [[RTSpinKitView alloc] initWithStyle:RTSpinKitViewStyleThreeBounce];
+    RTSpinKitView *spinner1 = [[RTSpinKitView alloc] initWithStyle:RTSpinKitViewStyleArcAlt];
     spinner1.color = [UIColor whiteColor];
     self.hud = [[MBProgressHUD alloc] initWithView:self.navigationController.view];
     [self.navigationController.view addSubview:self.hud];

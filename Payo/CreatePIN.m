@@ -74,7 +74,7 @@
     }
     else
     {
-        UIColor *which = kNoochGreen;
+        UIColor *which = kPayoGreen;
         switch (len)
         {
             case 5:
@@ -161,7 +161,7 @@
     [glyph_back setTextAlignment:NSTextAlignmentCenter];
     [glyph_back setFrame:CGRectMake(0, 14, 44, 44)];
     [glyph_back setText:[NSString fontAwesomeIconStringForIconIdentifier:@"fa-arrow-circle-o-left"]];
-    [glyph_back setTextColor:kNoochBlue];
+    [glyph_back setTextColor:kPayoBlue];
     [btnback addSubview:glyph_back];
 
     [self.view addSubview:btnback];
@@ -229,7 +229,7 @@
 
     self.first_num.backgroundColor = self.second_num.backgroundColor = self.third_num.backgroundColor = self.fourth_num.backgroundColor = [UIColor clearColor];
     self.first_num.layer.borderWidth = self.second_num.layer.borderWidth = self.third_num.layer.borderWidth = self.fourth_num.layer.borderWidth = 3;
-    self.first_num.layer.borderColor = self.second_num.layer.borderColor = self.third_num.layer.borderColor = self.fourth_num.layer.borderColor = kNoochGreen.CGColor;
+    self.first_num.layer.borderColor = self.second_num.layer.borderColor = self.third_num.layer.borderColor = self.fourth_num.layer.borderColor = kPayoGreen.CGColor;
 
     [self.view addSubview:self.prompt];
     [self.view addSubview:self.first_num];

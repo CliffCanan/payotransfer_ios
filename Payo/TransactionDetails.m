@@ -44,7 +44,7 @@
     [self.slidingViewController.panGesture setEnabled:YES];
     [self.view addGestureRecognizer:self.slidingViewController.panGesture];
 
-    RTSpinKitView *spinner1 = [[RTSpinKitView alloc] initWithStyle:RTSpinKitViewStyleThreeBounce];
+    RTSpinKitView *spinner1 = [[RTSpinKitView alloc] initWithStyle:RTSpinKitViewStyleArcAlt];
     spinner1.color = [UIColor whiteColor];
     self.hud = [[MBProgressHUD alloc] initWithView:self.navigationController.view];
     [self.navigationController.view addSubview:self.hud];
@@ -170,12 +170,7 @@
     [fb setTitle:@"" forState:UIControlStateNormal];
     [fb setStyleCSS:@"background-image : url(fb-icon-90x90.png)"];
     [fb addTarget:self action:@selector(post) forControlEvents:UIControlEventTouchUpInside];
-    if ([[self.trans objectForKey:@"TransactionType"] isEqualToString:@"Donation"]) {
-        [fb setStyleId:@"details_fb_donate"];
-    }
-    else {
-        [fb setStyleId:@"details_fb"];
-    }
+    [fb setStyleId:@"details_fb"];
 
     UILabel *fb_text = [UILabel new];
     [fb_text setFrame:fb.frame];
@@ -185,12 +180,7 @@
     [twit setTitle:@"" forState:UIControlStateNormal];
     [twit setStyleCSS:@"background-image : url(twitter-icon.png)"];
     [twit addTarget:self action:@selector(post_to_twitter) forControlEvents:UIControlEventTouchUpInside];
-    if ([[self.trans objectForKey:@"TransactionType"] isEqualToString:@"Donation"]) {
-        [twit setStyleId:@"details_twit_donate"];
-    }
-    else {
-        [twit setStyleId:@"details_twit"];
-    }
+    [twit setStyleId:@"details_twit"];
 
     UILabel * twit_text = [UILabel new];
     [twit_text setFrame:twit.frame];
@@ -200,11 +190,7 @@
     [disp setTitle:@"" forState:UIControlStateNormal];
     [disp setStyleCSS:@"background-image : url(dispute-icon.png)"];
     [disp addTarget:self action:@selector(dispute) forControlEvents:UIControlEventTouchUpInside];
-    if ([[self.trans objectForKey:@"TransactionType"] isEqualToString:@"Donation"]) {
-        [disp setStyleId:@"details_disp_donate"];
-    }
-    else
-        [disp setStyleId:@"details_disp"];
+    [disp setStyleId:@"details_disp"];
 
     UILabel * disp_text = [UILabel new];
     [disp_text setFrame:disp.frame];
@@ -247,7 +233,6 @@
         }
         else
         {
-            [fb setStyleId:@"details_twit_donate"];
             [fb_text setFrame:fb.frame];
             [twit setStyleId:@"details_disp"];
             [twit_text setFrame:twit.frame];
@@ -780,7 +765,7 @@
 
     else if (alertView.tag == 1 && buttonIndex == 1)  // DISPUTE
     {
-        RTSpinKitView *spinner1 = [[RTSpinKitView alloc] initWithStyle:RTSpinKitViewStylePulse];
+        RTSpinKitView *spinner1 = [[RTSpinKitView alloc] initWithStyle:RTSpinKitViewStyleArcAlt];
         spinner1.color = [UIColor whiteColor];
         self.hud = [[MBProgressHUD alloc] initWithView:self.navigationController.view];
         [self.navigationController.view addSubview:self.hud];
@@ -1044,9 +1029,9 @@
                 [detailbutton setTitle:NSLocalizedString(@"TransDeets_SeeDetTxt3", @"'See Details' Status Text (3rd)") forState:UIControlStateSelected];
                 detailbutton.frame = CGRectMake(97, 195, 120, 20);
                 detailbutton.titleLabel.font=[UIFont fontWithName:@"Roboto-Regular" size:15];
-                detailbutton.titleLabel.textColor=kNoochBlue;
-                [detailbutton setTitleColor:kNoochBlue forState:UIControlStateSelected];
-                [detailbutton setTitleColor:kNoochBlue forState:UIControlStateNormal];
+                detailbutton.titleLabel.textColor=kPayoBlue;
+                [detailbutton setTitleColor:kPayoBlue forState:UIControlStateSelected];
+                [detailbutton setTitleColor:kPayoBlue forState:UIControlStateNormal];
                 [self.view addSubview:detailbutton];
 
 				UIImageView * arrow_direction = [[UIImageView alloc]initWithFrame:CGRectMake(detailbutton.frame.origin.x+detailbutton.frame.size.width - 15, 198, 12, 15)];
@@ -1054,7 +1039,7 @@
                 [self.view addSubview:arrow_direction];
 
                 UIView * line = [[UIView alloc]initWithFrame:CGRectMake(118, 213, 78, 1)];
-                line.backgroundColor=kNoochBlue;
+                line.backgroundColor=kPayoBlue;
                 [self.view addSubview:line];
             }
 

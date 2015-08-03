@@ -17,21 +17,18 @@
 BOOL isphoneBook, isFromBankWebView;
 int screenLoadedTimes;
 
-@interface SelectRecipient : GAITrackedViewController<UITableViewDelegate,UITableViewDataSource,serveD,UISearchBarDelegate,ABPeoplePickerNavigationControllerDelegate,CLLocationManagerDelegate,UIActionSheetDelegate,MBProgressHUDDelegate>
+@interface SelectRecipient : GAITrackedViewController<UITableViewDelegate,UITableViewDataSource,serveD,UISearchBarDelegate,ABPeoplePickerNavigationControllerDelegate,UIActionSheetDelegate,MBProgressHUDDelegate>
 {
-    NSMutableDictionary*facebook_info;
-    UIView*loader;
-    NSString*searchString;
     BOOL searching, navIsUp, isRecentList;
     BOOL emailEntry, shouldAnimate, phoneNumEntry;
+
+    NSArray * emailAddresses;
     NSMutableArray * arrSearchedRecords;
-    UISearchBar * search;
-    UIActivityIndicatorView * spinner;
     NSString * emailphoneBook, * phoneBookPhoneNum , * firstNamePhoneBook, * lastNamePhoneBook;
-    UIImageView *arrow;
-    UILabel *em;
-    NSArray *emailAddresses;
-    CLLocationManager*locationManager;
-    float locationUpdateDelay;
+    NSString * searchString;
+
+    UIImageView * arrow;
+    UILabel * em;
+    UISearchBar * search;
 }
 @end

@@ -46,10 +46,9 @@
     UIBarButtonItem * menu = [[UIBarButtonItem alloc] initWithCustomView:back_button];
     [self.navigationItem setLeftBarButtonItem:menu];
 
-    isUserByLocation = NO;
     isphoneBook = NO;
 
-    search = [[UISearchBar alloc] initWithFrame:CGRectMake(0, 40, 320, 40)];
+    search = [[UISearchBar alloc] initWithFrame:CGRectMake(0, 6, 320, 40)];
     search.searchBarStyle = UISearchBarStyleMinimal;
     search.placeholder = NSLocalizedString(@"SelectRecip_SearchPlaceholder", @"Select Recipient Search Bar Placeholder");
     [search setDelegate:self];
@@ -72,7 +71,7 @@
 
     [self.view addSubview:search];
 
-    self.contacts = [[UITableView alloc] initWithFrame:CGRectMake(0, 82, 320, [[UIScreen mainScreen] bounds].size.height - 147)];
+    self.contacts = [[UITableView alloc] initWithFrame:CGRectMake(0, 52, 320, [[UIScreen mainScreen] bounds].size.height - 147)];
     [self.contacts setDataSource:self];
     [self.contacts setDelegate:self];
     [self.contacts setSectionHeaderHeight:28];
@@ -106,7 +105,6 @@
     [search setHidden:NO];
     self.screenName = @"SelectRecipient Screen";
     self.artisanNameTag = @"Select Recipient Screen";
-
 
     [self.navigationItem setTitle:NSLocalizedString(@"SelectRecipientScrnTitle", @"Select Recipient Screen Title")];
     [self.navigationItem setHidesBackButton:YES];
@@ -152,23 +150,20 @@
         [self searchBarTextDidBeginEditing:search];
     }
 
-
     if (!emailEntry && !phoneNumEntry)
     {
         [ARTrackingManager trackEvent:@"SelectRecip_viewWillAppear1"];
 
         if ([self.recents count] == 0)
         {
-            //[self.contacts setHidden:YES];
             [self.view addSubview: self.noContact_img];
         }
 
         [self.glyphEmail setAlpha: 0];
 
-        [search setTintColor:kNoochBlue];
+        [search setTintColor:kPayoBlue];
 
         isphoneBook = NO;
-        isUserByLocation = NO;
         isRecentList = YES;
         searching = NO;
 
@@ -291,19 +286,17 @@
 
 -(void)lowerNavBar
 {
-    NSLog(@"LOWER NAV BAR FIRED!");
-    //[nav_ctrl setNavigationBarHidden:NO animated:YES];
     [self.navigationController setNavigationBarHidden:NO animated:YES];
-    [UIView animateKeyframesWithDuration:0.3
+    [UIView animateKeyframesWithDuration:0.2
                                    delay:0
                                  options:0 << 16
                               animations:^{
                                   [UIView addKeyframeWithRelativeStartTime:0 relativeDuration:1 animations:^{
                                       [self.view setBackgroundColor:[UIColor whiteColor]];
-                                      [self.contacts setFrame:CGRectMake(0, 82, 320, [[UIScreen mainScreen] bounds].size.height - 147)];
+                                      [self.contacts setFrame:CGRectMake(0, 52, 320, [[UIScreen mainScreen] bounds].size.height - 117)];
 
                                       search.placeholder = @"Search by Name or Enter an Email";
-                                      [search setFrame:CGRectMake(0, 40, 320, 40)];
+                                      [search setFrame:CGRectMake(0, 6, 320, 40)];
                                       [search setImage:[UIImage imageNamed:@"search_blue"] forSearchBarIcon:UISearchBarIconSearch state:UIControlStateNormal];
                                   }];
                               } completion: nil
@@ -478,63 +471,6 @@
     CFRelease(addressBook);
 }
 
--(void)recent_or_location:(UISegmentedControl *)sender
-{
-    [search resignFirstResponder];
-    [search setText:@""];
-    searching = NO;
-    
-    if (sender.selectedSegmentIndex == 0)
-    {
-        if (![self.view.subviews containsObject:self.hud])
-        {
-            RTSpinKitView * spinner1 = [[RTSpinKitView alloc] initWithStyle:RTSpinKitViewStyleArcAlt];
-            spinner1.color = [UIColor whiteColor];
-            self.hud.customView = spinner1;
-            self.hud.labelText = NSLocalizedString(@"SelectRecip_RecentLoading2", @"Select Recipient Recent List Loading Text 2");
-            self.hud.detailsLabelText = nil;
-            [self.hud show:YES];
-        }
-
-        serve *recents = [serve new];
-        [recents setTagName:@"recents"];
-        [recents setDelegate:self];
-        [recents getRecents];
-    }
-    else
-    {
-        if ([self.view.subviews containsObject:self.noContact_img])
-        {
-            [UIView animateKeyframesWithDuration:.3
-                                           delay:0
-                                         options:1 << 16
-                                      animations:^{
-                                          [UIView addKeyframeWithRelativeStartTime:0 relativeDuration:1 animations:^{
-                                              [self.noContact_img setAlpha:0];
-                                          }];
-                                      } completion: ^(BOOL finished){
-                                          [self.noContact_img removeFromSuperview];
-                                      }
-             ];
-        }
-
-        [UIView animateKeyframesWithDuration:.3
-                                       delay:0
-                                     options:1 << 16
-                                  animations:^{
-                                      [UIView addKeyframeWithRelativeStartTime:0 relativeDuration:1 animations:^{
-                                          CGRect frame = self.contacts.frame;
-                                          frame.origin.y = 44;
-                                          frame.size.height = [[UIScreen mainScreen] bounds].size.height - 108;
-                                          [self.contacts setFrame:frame];
-                                      }];
-                                  } completion: ^(BOOL finished){
-                                      
-                                  }
-         ];
-    }
-}
-
 -(void)phonebook:(id)sender
 {
     _addressBookController = [[ABPeoplePickerNavigationController alloc] init];
@@ -693,7 +629,7 @@
     [_addressBookController dismissViewControllerAnimated:YES completion:nil];
 }
 
-#pragma mark - searching
+#pragma mark - Searching
 -(void)searchBarCancelButtonClicked:(UISearchBar *)searchBar
 {
     [self lowerNavBar];
@@ -730,32 +666,30 @@
 
 -(void)searchBarTextDidBeginEditing:(UISearchBar *)searchBar
 {
-
     [self.navigationController setNavigationBarHidden:YES animated:YES];
     navIsUp = YES;
 
     [search setTintColor:[UIColor whiteColor]]; // For the 'Cancel' text
 
-    [UIView animateKeyframesWithDuration:0.38
+    [UIView animateKeyframesWithDuration:0.22
                                    delay:0
                                  options:0 << 16
                               animations:^{
-                                  [UIView addKeyframeWithRelativeStartTime:0 relativeDuration:.2 animations:^{
+                                  [UIView addKeyframeWithRelativeStartTime:0 relativeDuration:.8 animations:^{
                                       [self.contacts setFrame:CGRectMake(0, 70, 320, [[UIScreen mainScreen] bounds].size.height - 56)];
                                   }];
-                                  [UIView addKeyframeWithRelativeStartTime:0 relativeDuration:.6 animations:^{
+                                  [UIView addKeyframeWithRelativeStartTime:0 relativeDuration:.9 animations:^{
                                       if ([self.view.subviews containsObject:self.noContact_img])
                                       {
                                           [self.noContact_img setAlpha:0];
                                       }
-                                      [self.view setBackgroundColor:kNoochBlue];
+                                      [self.view setBackgroundColor:kPayoBlue];
                                       [self.contacts setAlpha:1];
 
                                       [search setImage:[UIImage imageNamed:@"search_white"] forSearchBarIcon:UISearchBarIconSearch state:UIControlStateNormal];
                                   }];
                                   [UIView addKeyframeWithRelativeStartTime:0 relativeDuration:1 animations:^{
                                       [searchBar setFrame:CGRectMake(0, 24, 320, 40)];
-
                                       searchBar.placeholder = @"";
                                   }];
                               } completion: ^(BOOL finished){
@@ -953,7 +887,6 @@
 
     for (NSString * key in [[assist shared] assos].allKeys)
     {
-        //NSLog(@"Key is: %@",key);
         NSMutableDictionary * dict = [[assist shared] assos][key];
 
         NSComparisonResult result;
@@ -1101,13 +1034,13 @@
 {
     [self.hud hide:YES];
 
-    UIAlertView *alert = [[UIAlertView alloc]
-                          initWithTitle:NSLocalizedString(@"SelectRecip_ConnectionErrorAlertTitle", @"Select Recipient Connection Error Alert Title")//@"Connection Error"
+  /*UIAlertView *alert = [[UIAlertView alloc]
+                          initWithTitle:NSLocalizedString(@"SelectRecip_ConnectionErrorAlertTitle", @"Select Recipient Connection Error Alert Title")
                           message:NSLocalizedString(@"SelectRecip_ConnectionErrorAlertBody", @"Select Recipient Connection Error Alert Body Text")
                           delegate:nil
                           cancelButtonTitle:@"OK"
                           otherButtonTitles:nil];
-    [alert show];
+    [alert show];*/
 }
 
 #pragma mark - server Delegation
@@ -1227,8 +1160,8 @@
                                           }];
                                           [UIView addKeyframeWithRelativeStartTime:.2 relativeDuration:.8 animations:^{
                                               CGRect frame = self.contacts.frame;
-                                              frame.origin.y = 82;
-                                              frame.size.height = [[UIScreen mainScreen] bounds].size.height - 147;
+                                              frame.origin.y = 52;
+                                              frame.size.height = [[UIScreen mainScreen] bounds].size.height - 117;
                                               [self.contacts setFrame:frame];
                                           }];
                                           [UIView addKeyframeWithRelativeStartTime:0 relativeDuration:1 animations:^{
@@ -1414,8 +1347,8 @@
                                   }];
                                   [UIView addKeyframeWithRelativeStartTime:.2 relativeDuration:.8 animations:^{
                                       CGRect frame = self.contacts.frame;
-                                      frame.origin.y = 82;
-                                      frame.size.height = [[UIScreen mainScreen] bounds].size.height - 147;
+                                      frame.origin.y = 52;
+                                      frame.size.height = [[UIScreen mainScreen] bounds].size.height - 117;
                                       [self.contacts setFrame:frame];
                                       
                                       [self.noContact_img setAlpha:1];
@@ -1683,13 +1616,12 @@
         {
             [pic setStyleClass:@"animate_bubble"];
         }
-        //[cell.contentView addSubview:self.glyphEmail];
 
         UILabel * send_to_label = [UILabel new];
         [send_to_label setFont:[UIFont fontWithName:@"Roboto-light" size:19]];
         [send_to_label setFrame:CGRectMake(60, 2, 200, 25)];
         [send_to_label setText:NSLocalizedString(@"SelectRecip_SendToTxt", @"Select Recipient Send To Text")];
-        [send_to_label setTextColor:kNoochBlue];
+        [send_to_label setTextColor:kPayoBlue];
         [send_to_label setTextAlignment:NSTextAlignmentCenter];
         [cell.contentView addSubview:send_to_label];
 
@@ -1716,7 +1648,7 @@
     {
         if ([search.text length] == 14)
         {
-            RTSpinKitView * spinner2 = [[RTSpinKitView alloc] initWithStyle:RTSpinKitViewStyleThreeBounce];
+            RTSpinKitView * spinner2 = [[RTSpinKitView alloc] initWithStyle:RTSpinKitViewStyleArcAlt];
             spinner2.color = [UIColor whiteColor];
             self.hud.customView = spinner2;
             self.hud.labelText = NSLocalizedString(@"SelectRecip_HUD_CheckingPhoneNum", @"Select Recipient HUD Checking That Phone Text");
@@ -1749,7 +1681,7 @@
         {
             if ([self checkEmailForShadyDomainSelectRecip] == true)
             {
-                RTSpinKitView * spinner2 = [[RTSpinKitView alloc] initWithStyle:RTSpinKitViewStyleThreeBounce];
+                RTSpinKitView * spinner2 = [[RTSpinKitView alloc] initWithStyle:RTSpinKitViewStyleArcAlt];
                 spinner2.color = [UIColor whiteColor];
                 self.hud.customView = spinner2;
                 self.hud.labelText = @"Checking that email address...";
@@ -1761,27 +1693,7 @@
         }
         else
         {
-            /*if ([UIAlertController class]) // for iOS 8
-            {
-                UIAlertController * alert = [UIAlertController
-                                             alertControllerWithTitle:NSLocalizedString(@"SelectRecip_PlsCheckEmailAlertTitle", @"Select Recipient Please Check That Email Alert Title")
-                                             message:[NSString stringWithFormat:@"\xF0\x9F\x93\xA7\n%@", NSLocalizedString(@"SelectRecip_PlsCheckEmailAlertBody", @"Select Recipient Please Check That Email Alert Body Text")]
-                                             preferredStyle:UIAlertControllerStyleAlert];
-                
-                UIAlertAction * ok = [UIAlertAction
-                                      actionWithTitle:@"OK"
-                                      style:UIAlertActionStyleDefault
-                                      handler:^(UIAlertAction * action)
-                                      {
-                                          [alert dismissViewControllerAnimated:YES completion:nil];
-                                      }];
-                [alert addAction:ok];
-                
-                [self presentViewController:alert animated:NO completion:nil];
-            }
-            else  // for iOS 7 and prior
-            {
-              */UIAlertView * av = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"SelectRecip_PlsCheckEmailAlertTitle2", @"Select Recipient Please Check That Email Alert Title")
+            UIAlertView * av = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"SelectRecip_PlsCheckEmailAlertTitle2", @"Select Recipient Please Check That Email Alert Title")
                                                               message:[NSString stringWithFormat:@"\xF0\x9F\x93\xA7\n%@", NSLocalizedString(@"SelectRecip_PlsCheckEmailAlertBody2", @"Select Recipient Please Check That Email Alert Body Text")]
                                                              delegate:nil
                                                     cancelButtonTitle:@"OK"

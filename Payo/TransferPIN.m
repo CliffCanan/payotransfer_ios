@@ -327,11 +327,11 @@
 
     if ([self.type isEqualToString:@"send"])
     {
-        self.first_num.layer.borderColor = self.second_num.layer.borderColor = self.third_num.layer.borderColor = self.fourth_num.layer.borderColor = kNoochGreen.CGColor;        
+        self.first_num.layer.borderColor = self.second_num.layer.borderColor = self.third_num.layer.borderColor = self.fourth_num.layer.borderColor = kPayoGreen.CGColor;        
     }
     else
     {
-        self.first_num.layer.borderColor = self.second_num.layer.borderColor = self.third_num.layer.borderColor = self.fourth_num.layer.borderColor = kNoochBlue.CGColor;    
+        self.first_num.layer.borderColor = self.second_num.layer.borderColor = self.third_num.layer.borderColor = self.fourth_num.layer.borderColor = kPayoBlue.CGColor;    
     }
 
     [self.view addSubview:total];
@@ -453,7 +453,7 @@ NSString * calculateArrivalDate()
     NSLog(@"Time of Day (Hour) is: %d", timeOfDay);
 
     NSDateComponents *offsetComponents = [[NSDateComponents alloc] init];
-    short knoxXtraDays = [[ARPowerHookManager getValueForHookById:@"knox_xtraTime"] intValue];
+    short knoxXtraDays = [[ARPowerHookManager getValueForHookById:@"bank_xtraTime"] intValue];
 
     if ([dateString isEqualToString:@"Mon"] ||
         [dateString isEqualToString:@"Tue"] ||
@@ -698,11 +698,11 @@ NSString * calculateArrivalDate()
 {
     if ([self.type isEqualToString:@"send"])
     {
-        self.first_num.layer.borderColor = self.second_num.layer.borderColor = self.third_num.layer.borderColor = self.fourth_num.layer.borderColor = kNoochGreen.CGColor;
+        self.first_num.layer.borderColor = self.second_num.layer.borderColor = self.third_num.layer.borderColor = self.fourth_num.layer.borderColor = kPayoGreen.CGColor;
     }
     else if ([self.type isEqualToString:@"requestRespond"])
     {
-        self.first_num.layer.borderColor = self.second_num.layer.borderColor = self.third_num.layer.borderColor = self.fourth_num.layer.borderColor = kNoochBlue.CGColor;
+        self.first_num.layer.borderColor = self.second_num.layer.borderColor = self.third_num.layer.borderColor = self.fourth_num.layer.borderColor = kPayoBlue.CGColor;
     }
 
     short len = [textField.text length] + [string length];
@@ -732,7 +732,7 @@ NSString * calculateArrivalDate()
     {
         UIColor * color;
         if ([self.type isEqualToString:@"send"] || [self.type isEqualToString:@"requestRespond"]) {
-            color = kNoochGreen;
+            color = kPayoGreen;
         }
 
         switch (len) {
@@ -806,7 +806,7 @@ NSString * calculateArrivalDate()
                 textLoading = NSLocalizedString(@"EnterPIN_HUDlblRequest", @"Enter PIN Screen HUD label text for sending a request");
             }
 
-            RTSpinKitView *spinner1 = [[RTSpinKitView alloc] initWithStyle:RTSpinKitViewStyleThreeBounce];
+            RTSpinKitView *spinner1 = [[RTSpinKitView alloc] initWithStyle:RTSpinKitViewStyleArcAlt];
             spinner1.color = [UIColor whiteColor];
             self.hud = [[MBProgressHUD alloc] initWithView:self.navigationController.view];
             [self.navigationController.view addSubview:self.hud];
@@ -1113,74 +1113,6 @@ NSString * calculateArrivalDate()
         }
     }
 
-    else if ([self.type isEqualToString:@"requestRespond"])
-    {
-        if ([tagName isEqualToString:@"ValidatePinNumber"])
-        {
-            transactionInputTransfer = [[NSMutableDictionary alloc]init];
-            [transactionInputTransfer setValue:[dictResult valueForKey:@"Status"] forKey:@"PinNumber"];
-            [transactionInputTransfer setValue:[user stringForKey:@"MemberId"] forKey:@"MemberId"];
-            [transactionInputTransfer setValue:[self.receiver objectForKey:@"TransactionId"] forKey:@"TransactionId"];
-
-            NSDate *date = [NSDate date];
-            NSDateFormatter *dateFormat = [[NSDateFormatter alloc] init];
-            [dateFormat setDateFormat:@"yyyy-MM-dd HH:mm:ss.SS"];
-            NSString *TransactionDate = [dateFormat stringFromDate:date];
-
-            if ([[self.receiver objectForKey:@"response"] isEqualToString:@"accept"])
-            {
-                [transactionInputTransfer setValue:@"Success" forKey:@"Status"];
-            } 
-            else if ([[self.receiver objectForKey:@"response"] isEqualToString:@"deny"])
-            {
-                [transactionInputTransfer setValue:@"Cancelled" forKey:@"Status"];
-            }
-
-            NSString *uid = [user objectForKey:@"DeviceToken"];
-
-            [transactionInputTransfer setValue:TransactionDate forKey:@"TransactionDate"];
-            [transactionInputTransfer setValue:@"RequestRespond" forKey:@"TransactionType"];
-            [transactionInputTransfer setValue:@"false" forKey:@"IsPrePaidTransaction"];
-            [transactionInputTransfer setValue:uid forKey:@"DeviceId"];
-            [transactionInputTransfer setValue:[NSString stringWithFormat:@"%f",lat] forKey:@"Latitude"];
-            [transactionInputTransfer setValue:[NSString stringWithFormat:@"%f",lon] forKey:@"Longitude"];
-            [transactionInputTransfer setValue:addressLine1 forKey:@"AddressLine1"];
-            [transactionInputTransfer setValue:@"" forKey:@"AddressLine2"];
-            [transactionInputTransfer setValue:city forKey:@"City"];
-            [transactionInputTransfer setValue:state forKey:@"State"];
-            [transactionInputTransfer setValue:country forKey:@"Country"];
-            [transactionInputTransfer setValue:@"" forKey:@"Zipcode"];
-            [transactionInputTransfer setValue:self.memo forKey:@"Memo"];
-
-            transactionTransfer = [[NSMutableDictionary alloc] initWithObjectsAndKeys:transactionInputTransfer, @"handleRequestInput",[user valueForKey:@"OAuthToken"],@"accessToken", nil];
-        }
-
-        NSLog(@"TransactionTransfer Object is: %@", transactionTransfer);
-
-        postTransfer = [NSJSONSerialization dataWithJSONObject:transactionTransfer
-                                                       options:NSJSONWritingPrettyPrinted error:&error];;
-        postLengthTransfer = [NSString stringWithFormat:@"%lu", (unsigned long)[postTransfer length]];
-
-        self.respData = [NSMutableData data];
-        urlStrTranfer = [[NSString alloc] initWithString:MyUrl];
-        urlStrTranfer = [urlStrTranfer stringByAppendingFormat:@"/%@", @"HandleRequestMoney"];
-        urlTransfer = [NSURL URLWithString:urlStrTranfer];
-
-        requestTransfer = [[NSMutableURLRequest alloc] initWithURL:urlTransfer];
-        [requestTransfer setHTTPMethod:@"POST"];
-        [requestTransfer setValue:postLengthTransfer forHTTPHeaderField:@"Content-Length"];
-        [requestTransfer setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
-        [requestTransfer setHTTPBody:postTransfer];
-        NSLog(@"requestTransfer is: %@", requestTransfer);
-        requestTransfer.timeoutInterval=12000;
-        NSURLConnection *connection = [[NSURLConnection alloc] initWithRequest:requestTransfer delegate:self];
-        NSLog(@"NSURLConnection is: %@", connection);
-        if (connection) {
-            self.respData = [NSMutableData data];
-        }
-        return;
-    }
-
     if (self.receiver[@"Photo"] != NULL && ![self.receiver[@"Photo"] isKindOfClass:[NSNull class]])
     {
         [transactionInputTransfer setObject:self.receiver[@"Photo"]forKey:@"Photo"];
@@ -1241,8 +1173,6 @@ NSString * calculateArrivalDate()
 
         //NSLog(@"sendNonNoochUser_Email_SynapseResult is: %@",sendNonNoochUser_Email_SynapseResult);
         //NSLog(@"sendNonNoochUser_Phone_SynapseResult is: %@",sendNonNoochUser_Phone_SynapseResult);
-        //NSLog(@"requestNonNoochUser_Email_SynapseResult is: %@",requestNonNoochUser_Email_SynapseResult);
-        //NSLog(@"requestNonNoochUser_Phone_SynapseResult is: %@",requestNonNoochUser_Phone_SynapseResult);
 
         if ([sendNonNoochUser_Email_SynapseResult rangeOfString:@"successfully"].length != 0 ||
             [sendNonNoochUser_Phone_SynapseResult rangeOfString:@"successfully"].length != 0)
@@ -1331,10 +1261,6 @@ NSString * calculateArrivalDate()
 
     if ([sendMoneyToExistingUserSynapseResult rangeOfString:@"cash was sent successfully"].length != 0)
     {
-        [[assist shared] setTranferImage:nil];
-        UIImage * imgempty = [UIImage imageNamed:@""];
-        [[assist shared] setTranferImage:imgempty];
-
         int randNum = arc4random() % 15;
 
         NSString * alertTitleFromArtisan = [ARPowerHookManager getValueForHookById:@"transSuccessAlertTitle"];
@@ -1467,9 +1393,7 @@ NSString * calculateArrivalDate()
 
     else if ([sendMoneyToExistingUserSynapseResult rangeOfString:@"not have any active bank account"].length != 0 ||
              [sendMoneyToExistingUserSynapseResult rangeOfString:@"not linked to any bank account"].length != 0 ||
-             [sendMoneyToExistingUserSynapseResult rangeOfString:@"Recepient does not have any verified bank account"].length != 0 ||
-             [payRequestResult rangeOfString:@"not have any active bank account"].length != 0 ||
-             [payRequestResult rangeOfString:@"not linked to any bank account"].length != 0)
+             [sendMoneyToExistingUserSynapseResult rangeOfString:@"Recepient does not have any verified bank account"].length != 0)
     {
         UIAlertView *av = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"EnterPIN_TrnsfrFaildAlrtTitle", @"Enter PIN Screen transfer failed Alert Title")
                                                      message:[NSString stringWithFormat:@"\xF0\x9F\x98\xA9\n%@", NSLocalizedString(@"EnterPIN_TrnsfrFaildAlrtBody", @"Enter PIN Screen transfer failed Alert Body Text")]
@@ -1495,7 +1419,6 @@ NSString * calculateArrivalDate()
         [av show];
         return;
     }
-
 
     // Per Transaction Limit Exceeded
     else if ([sendMoneyToExistingUserSynapseResult rangeOfString:@"send money to the same user"].length != 0)
@@ -1526,31 +1449,6 @@ NSString * calculateArrivalDate()
         return;
     }
 
-
-    // Paying a Request From An Existing User
-    else if ([payRequestResult rangeOfString:@"successfully"].length != 0)
-    {
-        [[assist shared] setTranferImage:nil];
-        UIImage * imgempty = [UIImage imageNamed:@""];
-        [[assist shared] setTranferImage:imgempty];
-
-        NSString * arrivalDateAlone = calculateArrivalDate();
-        NSString * arrivalDateForAlert = [NSString stringWithFormat:@"This payment will arrive by:\n%@", arrivalDateAlone];
-
-        UIAlertView * av = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"EnterPIN_RequestFulfilledAlertTitle", @"Enter PIN Screen request fulfilled successfully Alert Title")
-                                                      message:[NSString stringWithFormat:@"\xF0\x9F\x91\x8D\nYou successfully fulfilled %@'s request for $%.02f.\n\n%@",[receiverFirst capitalizedString],self.amnt,arrivalDateForAlert]
-                                                     delegate:self
-                                            cancelButtonTitle:nil
-                                            otherButtonTitles:@"OK",nil];
-        [av setTag:1];
-        [av show];
-    }
-
-    else if ([payRequestResult rangeOfString:@"No such request exists"].length != 0)
-    {
-        [self errorAlerts:@"610"];
-    }
-
     else if ([payRequestResult rangeOfString:@"Internal error"].length != 0)
     {
         [self errorAlerts:@"620"];
@@ -1558,7 +1456,6 @@ NSString * calculateArrivalDate()
 
     // PIN-related errors common to all methods
     else if ([sendMoneyToExistingUserSynapseResult isEqualToString:@"PIN number you have entered is incorrect."] ||
-             [payRequestResult isEqualToString:@"PIN number you have entered is incorrect."] ||
              [[dictResultTransfer valueForKey:@"Result"] isEqualToString:@"PIN number you have entered is incorrect."])
     {
         AudioServicesPlaySystemSound(kSystemSoundID_Vibrate);
@@ -1580,8 +1477,7 @@ NSString * calculateArrivalDate()
         return;
     }
 
-    else if ([sendMoneyToExistingUserSynapseResult rangeOfString:@"PIN number you entered again is incorrect"].length != 0 ||
-             [payRequestResult rangeOfString:@"PIN number you entered again is incorrect"].length != 0)
+    else if ([sendMoneyToExistingUserSynapseResult rangeOfString:@"PIN number you entered again is incorrect"].length != 0)
     {
         AudioServicesPlaySystemSound(kSystemSoundID_Vibrate);
         self.prompt.text = NSLocalizedString(@"EnterPIN_IncorrectPin2x", @"Enter PIN Screen PIN entered incorrectly twice text");
@@ -1608,8 +1504,7 @@ NSString * calculateArrivalDate()
         return;
     }
 
-    else if ([sendMoneyToExistingUserSynapseResult rangeOfString:@"Your account has been suspended for 24 hours from now"].length != 0 ||
-             [payRequestResult rangeOfString:@"Your account has been suspended for 24 hours from now"].length != 0)
+    else if ([sendMoneyToExistingUserSynapseResult rangeOfString:@"Your account has been suspended for 24 hours from now"].length != 0)
     {
         [[assist shared]setSusPended:YES];
         self.prompt.text = NSLocalizedString(@"EnterPIN_InstructAccntSusp", @"Enter PIN Screen account suspended Instruction Text");
@@ -1659,13 +1554,6 @@ NSString * calculateArrivalDate()
         if (![[dictResultTransfer objectForKey:@"trnsactionId"] isKindOfClass:[NSNull class]])
         {
             transactionId = [dictResultTransfer valueForKey:@"trnsactionId"];
-        }
-    }
-    else if([self.type isEqualToString:@"request"])
-    {
-        if (![[dictResultTransfer objectForKey:@"requestId"] isKindOfClass:[NSNull class]])
-        {
-            transactionId = [dictResultTransfer valueForKey:@"requestId"];
         }
     }
     //NSLog(@"Transaction ID: %@",transactionId);
@@ -1729,17 +1617,9 @@ NSString * calculateArrivalDate()
                     [input setObject:[self.receiver objectForKey:@"phone"] forKey:@"InvitationSentTo"];
                 }
 
-                if ([self.type isEqualToString:@"request"])
-                {
-                    [input setObject:@"InviteRequest" forKey:@"TransactionType"];
-                    [input setObject:dictResultTransfer[@"requestId"] forKey:@"TransactionId"];
-                }
-                else
-                {
-                    [input setObject:@"Invite" forKey:@"TransactionType"];
-                    [input setObject:dictResultTransfer[@"trnsactionId"] forKey:@"TransactionId"];
-                    [input setObject:@"Pending" forKey:@"TransactionStatus"];
-                }
+                [input setObject:@"Invite" forKey:@"TransactionType"];
+                [input setObject:dictResultTransfer[@"trnsactionId"] forKey:@"TransactionId"];
+                [input setObject:@"Pending" forKey:@"TransactionStatus"];
             }
             NSLog(@"Input: %@",input);
 

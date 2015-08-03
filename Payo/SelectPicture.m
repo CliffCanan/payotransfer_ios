@@ -134,7 +134,7 @@
     }];
 
     self.pic.layer.borderWidth = 3;
-    self.pic.layer.borderColor = kNoochBlue.CGColor;
+    self.pic.layer.borderColor = kPayoBlue.CGColor;
 
     [self.message setText:NSLocalizedString(@"SelPic_InstrctTxt", @"Select Picture screen Instruction Text after selecting a pic")];
 
@@ -198,7 +198,7 @@
     [glyph_back setTextAlignment:NSTextAlignmentCenter];
     [glyph_back setFrame:CGRectMake(0, 14, 44, 44)];
     [glyph_back setText:[NSString fontAwesomeIconStringForIconIdentifier:@"fa-arrow-circle-o-left"]];
-    [glyph_back setTextColor:kNoochBlue];
+    [glyph_back setTextColor:kPayoBlue];
     [btnback addSubview:glyph_back];
 
     [self.view addSubview:btnback];
@@ -265,7 +265,7 @@
     if ([self.user objectForKey:@"image"])
     {
         self.pic.layer.borderWidth = 3;
-        self.pic.layer.borderColor = kNoochBlue.CGColor;
+        self.pic.layer.borderColor = kPayoBlue.CGColor;
         [self.pic setImage:[UIImage imageWithData:[self.user objectForKey:@"image"]]];
         [[assist shared]setTranferImage:[UIImage imageWithData:[self.user objectForKey:@"image"]]];
 
@@ -448,7 +448,7 @@
             }];
 
             self.pic.layer.borderWidth = 4;
-            self.pic.layer.borderColor = kNoochBlue.CGColor;
+            self.pic.layer.borderColor = kPayoBlue.CGColor;
             
             [self.message setText:NSLocalizedString(@"SelPic_InstrctTxt3", @"Select Picture screen Instruction Text after selecting a pic (3rd)")];
             [self.choose_pic setTitle:NSLocalizedString(@"SelPic_ChngPicBtn3", @"Select Picture screen '  Change Picture' Btn Text") forState:UIControlStateNormal];

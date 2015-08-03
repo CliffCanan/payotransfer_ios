@@ -21,7 +21,6 @@
 
 @interface LeftMenu ()
 @property(nonatomic,strong) UITableView *menu;
-@property(nonatomic) NSIndexPath *selected;
 @property(nonatomic,strong) UILabel *name;
 @property(nonatomic,strong) UILabel *lastName;
 @property(nonatomic,strong) UILabel *glyph_noBank;
@@ -41,13 +40,11 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-	// Do any additional setup after loading the view.
 
-    self.selected = 0,0;
-    [self.view setBackgroundColor:kNoochMenu];
+    [self.view setBackgroundColor:[Helpers hexColor:@"58595b"]];
 
     self.menu = [[UITableView alloc] initWithFrame:CGRectMake(0, 90, 320, [[UIScreen mainScreen] bounds].size.height-145)];
-    [self.menu setBackgroundColor:kNoochMenu]; [self.menu setDelegate:self]; [self.menu setDataSource:self]; [self.menu setSeparatorColor:kNoochGrayLight];
+    [self.menu setBackgroundColor:[Helpers hexColor:@"58595b"]]; [self.menu setDelegate:self]; [self.menu setDataSource:self]; [self.menu setSeparatorColor:kNoochGrayLight];
     [self.menu setRowHeight:45];
     [self.view addSubview:self.menu];
 
@@ -247,15 +244,15 @@
     NSDictionary * textAttributes = @{NSShadowAttributeName: shadow };
     
     if (section == 0) {
-        title.attributedText = [[NSAttributedString alloc] initWithString:NSLocalizedString(@"LSidebar_Hdr_Account", @"Left Sidebar Section Header - 'Account'")//@"ACCOUNT"
-            attributes:textAttributes];
+        title.attributedText = [[NSAttributedString alloc] initWithString:NSLocalizedString(@"LSidebar_Hdr_Account", @"Left Sidebar Section Header - 'Account'")
+                                                               attributes:textAttributes];
     }
     else if(section == 1) {
-        title.attributedText = [[NSAttributedString alloc] initWithString:NSLocalizedString(@"LSidebar_Hdr_Social", @"Left Sidebar Section Header - 'Social'")//@"SOCIAL"
+        title.attributedText = [[NSAttributedString alloc] initWithString:NSLocalizedString(@"LSidebar_Hdr_Social", @"Left Sidebar Section Header - 'Social'")
             attributes:textAttributes];
     }
     else if(section == 2) {
-        title.attributedText = [[NSAttributedString alloc] initWithString:NSLocalizedString(@"LSidebar_Hdr_About", @"Left Sidebar Section Header - 'About'")//@"ABOUT"
+        title.attributedText = [[NSAttributedString alloc] initWithString:NSLocalizedString(@"LSidebar_Hdr_About", @"Left Sidebar Section Header - 'About'")
             attributes:textAttributes];
     }
     else {
@@ -272,12 +269,7 @@
 {
     if (section == 0)
     {
-        if (shouldDisplayAptsSection) {
-            return 4;
-        }
-        else {
-            return 3;
-        }
+        return 3;
     }
     else if (section == 1)
     {
@@ -315,7 +307,7 @@
     cell.indentationLevel = 1;
     cell.indentationWidth = 30;
     cell.textLabel.textColor = [UIColor whiteColor];
-    [cell setBackgroundColor:kNoochMenu];
+    [cell setBackgroundColor:[Helpers hexColor:@"58595b"]];
     cell.textLabel.font = [UIFont fontWithName:@"Roboto-Light" size:18];
 
     arrow = [UIButton buttonWithType:UIButtonTypeCustom];
@@ -330,7 +322,7 @@
     [iv setStyleClass:@"lside_menu_icons"];
 
     NSShadow * shadow = [[NSShadow alloc] init];
-    shadow.shadowColor = kLeftMenuShadow;
+    shadow.shadowColor = [Helpers hexColor:@"202122"];
     shadow.shadowOffset = CGSizeMake(0, 1);
     NSDictionary * textAttributes = @{NSShadowAttributeName: shadow };
     
@@ -352,15 +344,7 @@
         {
             cell.textLabel.attributedText = [[NSAttributedString alloc] initWithString:@"Settings"
                                                                             attributes:textAttributes];
-            iv.attributedText = [[NSAttributedString alloc] initWithString:[NSString fontAwesomeIconStringForIconIdentifier:@"fa-line-chart"] attributes:textAttributes];
-            [iv setStyleClass:@"lside_menu_icons_sm"];
-        }
-        else if (shouldDisplayAptsSection && indexPath.row == 3)
-        {
-            cell.textLabel.attributedText = [[NSAttributedString alloc] initWithString:NSLocalizedString(@"LSidebar_Rent", @"Left Sidebar Row Title - 'Pay Rent'")//@"Pay Rent"
-                                                                            attributes:textAttributes];
-            iv.attributedText = [[NSAttributedString alloc] initWithString:[NSString fontAwesomeIconStringForIconIdentifier:@"fa-building-o"] attributes:textAttributes];
-            [iv setStyleClass:@"lside_menu_icons_sm"];
+            iv.attributedText = [[NSAttributedString alloc] initWithString:[NSString fontAwesomeIconStringForIconIdentifier:@"fa-cog"] attributes:textAttributes];
         }
     }
 
@@ -368,47 +352,49 @@
     {
         if (indexPath.row == 0)
         {
-            cell.textLabel.attributedText = [[NSAttributedString alloc] initWithString:NSLocalizedString(@"LSidebar_Refer", @"Left Sidebar Row Title - 'Refer a Friend'")//@"Refer a Friend"
+            cell.textLabel.attributedText = [[NSAttributedString alloc] initWithString:NSLocalizedString(@"LSidebar_Refer", @"Left Sidebar Row Title - 'Refer a Friend'")
                                                                             attributes:textAttributes];
             iv.attributedText = [[NSAttributedString alloc] initWithString:[NSString fontAwesomeIconStringForIconIdentifier:@"fa-users"] attributes:textAttributes];
             [iv setStyleClass:@"lside_menu_icons_sm"];
         }
         else if (indexPath.row == 1)
         {
-            cell.textLabel.attributedText = [[NSAttributedString alloc] initWithString:NSLocalizedString(@"LSidebar_Rate", @"Left Sidebar Row Title - 'Rate Nooch'")//@"Rate Nooch"
+            cell.textLabel.attributedText = [[NSAttributedString alloc] initWithString:NSLocalizedString(@"LSidebar_Rate", @"Left Sidebar Row Title - 'Rate Payo'")
                                                                             attributes:textAttributes];
             iv.attributedText = [[NSAttributedString alloc] initWithString:[NSString fontAwesomeIconStringForIconIdentifier:@"fa-thumbs-up"] attributes:textAttributes];
         }
     }
+
     else if (indexPath.section == 2)
     {
         if (indexPath.row == 0)
         {
-            cell.textLabel.attributedText = [[NSAttributedString alloc] initWithString:NSLocalizedString(@"LSidebar_HowItWrks", @"Left Sidebar Row Title - 'How Nooch Works'")//@"How Nooch Works"
+            cell.textLabel.attributedText = [[NSAttributedString alloc] initWithString:NSLocalizedString(@"LSidebar_HowItWrks", @"Left Sidebar Row Title - 'How Nooch Works'")
                                                                             attributes:textAttributes];
             iv.attributedText = [[NSAttributedString alloc] initWithString:[NSString fontAwesomeIconStringForIconIdentifier:@"fa-question"] attributes:textAttributes];
         }
         else if (indexPath.row == 1)
         {
-            cell.textLabel.attributedText = [[NSAttributedString alloc] initWithString:NSLocalizedString(@"LSidebar_Support", @"Left Sidebar Row Title - 'Support'")//@"Support"
+            cell.textLabel.attributedText = [[NSAttributedString alloc] initWithString:NSLocalizedString(@"LSidebar_Support", @"Left Sidebar Row Title - 'Support'")
                                                                             attributes:textAttributes];
             iv.attributedText = [[NSAttributedString alloc] initWithString:[NSString fontAwesomeIconStringForIconIdentifier:@"fa-envelope"] attributes:textAttributes];
             [iv setStyleClass:@"lside_menu_icons_sm"];
         }
         else if (indexPath.row == 2)
         {
-            cell.textLabel.attributedText = [[NSAttributedString alloc] initWithString:NSLocalizedString(@"LSidebar_Limits", @"Left Sidebar Row Title - 'Limits & Fees'")//@"Limits & Fees"
+            cell.textLabel.attributedText = [[NSAttributedString alloc] initWithString:NSLocalizedString(@"LSidebar_Limits", @"Left Sidebar Row Title - 'Limits & Fees'")
                                                                             attributes:textAttributes];
             iv.attributedText = [[NSAttributedString alloc] initWithString:[NSString fontAwesomeIconStringForIconIdentifier:@"fa-usd"] attributes:textAttributes];
         }
         else if (indexPath.row == 3)
         {
-            cell.textLabel.attributedText = [[NSAttributedString alloc] initWithString:NSLocalizedString(@"LSidebar_Legal", @"Left Sidebar Row Title - 'Legal Info'")//@"Legal Info"
+            cell.textLabel.attributedText = [[NSAttributedString alloc] initWithString:NSLocalizedString(@"LSidebar_Legal", @"Left Sidebar Row Title - 'Legal Info'")
                                                                             attributes:textAttributes];
             iv.attributedText = [[NSAttributedString alloc] initWithString:[NSString fontAwesomeIconStringForIconIdentifier:@"fa-gavel"] attributes:textAttributes];
         }
     }
     [cell.contentView addSubview:iv];
+
     return cell;
 }
 

@@ -37,7 +37,7 @@
     self.artisanNameTag = @"Reset Password Screen";
 
     UIView * navBar = [[UIView alloc]initWithFrame:CGRectMake(0, 0, 320, 62)];
-    [navBar setBackgroundColor:[UIColor colorWithRed:63.0f/255.0f green:171.0f/255.0f blue:225.0f/255.0f alpha:1.0f]];
+    [navBar setBackgroundColor:kPayoBlue];
     [self.view addSubview:navBar];
 
     UIButton * back = [UIButton buttonWithType:UIButtonTypeCustom];
@@ -46,7 +46,6 @@
     [back setTitleShadowColor:Rgb2UIColor(19, 32, 38, 0.2) forState:UIControlStateNormal];
     back.titleLabel.shadowOffset = CGSizeMake(0.0, -1.0);
     [back addTarget:self action:@selector(goBack) forControlEvents:UIControlEventTouchUpInside];
-    //[back setFrame:CGRectMake(0,5, 70, 30)];
     [navBar addSubview:back];
     
     NSShadow * shadow = [[NSShadow alloc] init];
@@ -165,18 +164,6 @@
     [self.pwValidator setTextColor:kNoochRed];
     [self.pwValidator setHidden:YES];
     [self.view addSubview:self.pwValidator];
-
-    NSString * disAptsFromArtisanStrg = [ARPowerHookManager getValueForHookById:@"DispApts"];
-
-    if ([[disAptsFromArtisanStrg lowercaseString] isEqualToString:@"no"]) {
-        shouldDisplayAptsSection = false;
-    }
-    else if ([[disAptsFromArtisanStrg lowercaseString]isEqualToString:@"yes"]) {
-        shouldDisplayAptsSection = true;
-    }
-    else {
-        shouldDisplayAptsSection = false;
-    }
 }
 
 -(void)goBack
@@ -417,19 +404,16 @@
     
     if (indexPath.row == 0)
     {
-        //@"Current Password"
         cell.textLabel.text = NSLocalizedString(@"ResetPw_CurrentPwLbl", @"Reset PW 'Current Password' label text");
         [cell.contentView addSubview:self.old];
     }
     else if (indexPath.row == 1)
     {
-        //@"New Password"
         cell.textLabel.text = NSLocalizedString(@"ResetPw_NewPwLbl", @"Reset PW 'New Password' label text");
         [cell.contentView addSubview:self.pass];
     }
     else if (indexPath.row == 2)
     {
-        //@"Confirm Password"
         cell.textLabel.text = NSLocalizedString(@"ResetPw_ConfirmPwLbl", @"Reset PW 'Confirm Password' label text");
         [cell.contentView addSubview:self.confirm];
     }
@@ -542,20 +526,20 @@
         //NSLog(@"Score is: %f",score);
         if (pwLength && score > 3.9)
         {
-            [self.pwValidator1 setBackgroundColor:kNoochGreen];
-            [self.pwValidator2 setBackgroundColor:kNoochGreen];
-            [self.pwValidator3 setBackgroundColor:kNoochGreen];
-            [self.pwValidator4 setBackgroundColor:kNoochGreen];
+            [self.pwValidator1 setBackgroundColor:kPayoGreen];
+            [self.pwValidator2 setBackgroundColor:kPayoGreen];
+            [self.pwValidator3 setBackgroundColor:kPayoGreen];
+            [self.pwValidator4 setBackgroundColor:kPayoGreen];
             [self.pwValidator setText:@"Extremely Strong"];
-            [self.pwValidator setTextColor:kNoochGreen];
+            [self.pwValidator setTextColor:kPayoGreen];
         }
         else if (pwLength && score > 2.2)
         {
-            [self.pwValidator1 setBackgroundColor:kNoochGreen];
-            [self.pwValidator2 setBackgroundColor:kNoochGreen];
-            [self.pwValidator3 setBackgroundColor:kNoochGreen];
+            [self.pwValidator1 setBackgroundColor:kPayoGreen];
+            [self.pwValidator2 setBackgroundColor:kPayoGreen];
+            [self.pwValidator3 setBackgroundColor:kPayoGreen];
             [self.pwValidator4 setBackgroundColor:Rgb2UIColor(188, 190, 192, .5)];
-            [self.pwValidator setTextColor:kNoochGreen];
+            [self.pwValidator setTextColor:kPayoGreen];
             [self.pwValidator setText:@"Good"];
         }
         else if (pwLength && score > 1)

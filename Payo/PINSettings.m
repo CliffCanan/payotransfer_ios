@@ -232,7 +232,7 @@
 
             self.ri = [[UISwitch alloc] initWithFrame:CGRectMake(260, 10, 40, 30)];
             self.ri.transform = CGAffineTransformMakeScale(0.9, 0.9);
-            [self.ri setOnTintColor:kNoochGreen];
+            [self.ri setOnTintColor:kPayoGreen];
             [self.ri addTarget:self action:@selector(req) forControlEvents:UIControlEventValueChanged];
             if ([[user objectForKey:@"requiredImmediately"] boolValue])
             {
@@ -265,7 +265,7 @@
 
             self.touchId = [[UISwitch alloc] initWithFrame:CGRectMake(260, 10, 40, 30)];
             self.touchId.transform = CGAffineTransformMakeScale(0.9, 0.9);
-            [self.touchId setOnTintColor:kNoochGreen];
+            [self.touchId setOnTintColor:kPayoGreen];
             [self.touchId addTarget:self action:@selector(touchIdTapped) forControlEvents:UIControlEventValueChanged];
             if ([[user objectForKey:@"requiredTouchId"] boolValue])
             {
