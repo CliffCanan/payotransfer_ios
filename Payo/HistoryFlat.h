@@ -1,6 +1,6 @@
 //
 //  HistoryFlat.h
-//  Nooch
+// Payo
 //
 //  Created by Cliff Canan on 7/30/15.
 //  Copyright (c) 2015 Nooch. All rights reserved.
@@ -21,17 +21,15 @@ NSString *listType;
 @interface HistoryFlat : GAITrackedViewController<UITableViewDataSource,UITableViewDelegate,
 serveD,FPPopoverControllerDelegate,UISearchBarDelegate,SWTableViewCellDelegate,MBProgressHUDDelegate,MFMailComposeViewControllerDelegate>
 {
-    NSArray *histArrayCommon;
-    NSMutableArray *histArray;
-    NSMutableArray *histShowArrayCompleted;
+    NSArray * histArrayCommon;
+    NSMutableArray * histArray;
+    NSMutableArray * histShowArrayCompleted;
     NSMutableArray * histTempCompleted;
     BOOL ishistLoading;
     BOOL isEnd, isStart;
-    BOOL locUpdateSuccessfully;
     BOOL isFilter, isSearch, isLocalSearch;
     int totalDisplayedTransfers_completed,index;
     float firstX,firstY;
-    float lat_hist,lon_hist;
     short countRows;
 
     FPPopoverController * fp;
@@ -40,8 +38,6 @@ serveD,FPPopoverControllerDelegate,UISearchBarDelegate,SWTableViewCellDelegate,M
     NSString * subTypestr;
     NSDate * ServerDate;
     UILabel * emptyText_localSearch;
-    CLLocationManager * locationManager;
-    CLLocationCoordinate2D locationUser;
 }
 @property(nonatomic,strong) MBProgressHUD *hud;
 @end

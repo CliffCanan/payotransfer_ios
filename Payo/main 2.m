@@ -1,6 +1,6 @@
 //
 //  main.m
-//  Nooch
+// Payo
 //
 //  Created by administrator on 08/01/13.
 //  Copyright (c) 2015 Nooch Inc. All rights reserved.

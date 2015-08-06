@@ -1,6 +1,6 @@
 //
 //  addBank.h
-//  Nooch
+// Payo
 //
 //  Created by Cliff Canan on 3/13/14.
 //  Copyright (c) 2015 Nooch. All rights reserved.

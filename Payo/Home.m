@@ -1854,7 +1854,7 @@ void addressBookChanged(ABAddressBookRef addressBook, CFDictionaryRef info, void
         [alertView show];
         return NO;
     }
-    return YES;
+    //return YES;
     // 4. HAS USER COMPLETED & VERIFIED PROFILE INFO? (EMAIL, PHONE, ADDRESS)?
     if (![[assist shared] isProfileCompleteAndValidated] ||  // this line covers: being suspended, IsVerifiedPhone, and status = active
         ![[user objectForKey:@"ProfileComplete"] isEqualToString:@"YES"]) // this line covers that the address is not empty or null

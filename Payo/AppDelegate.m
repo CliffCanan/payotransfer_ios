@@ -1,6 +1,6 @@
 //
 //  AppDelegate.m
-//  Nooch
+// Payo
 //
 //  Created by Cliff Canan on 7/30/15.
 //  Copyright (c) 2015 Nooch. All rights reserved.
@@ -19,6 +19,8 @@
 #import "HistoryFlat.h"
 #import "SettingsOptions.h"
 #import "IdVerifyImageUpload.h"
+#import <Google/Analytics.h>
+@import GoogleMaps;
 
 @implementation AppDelegate
 
@@ -37,7 +39,9 @@ bool modal;
     [Appirater setTimeBeforeReminding:2];
     //[Appirater setDebug:YES];
 
-    [GMSServices provideAPIKey:@"AIzaSyDC-JeglFaO1kbXc2Z3ztCgh1AnwfIla-8"];
+    // Google Maps
+    [GMSServices provideAPIKey:@"AIzaSyA_Zl3SAjpYFl_ayER6VK-F-xISXgCE-CE"];
+
     inactiveDate = [NSDate date];
     [NSUserDefaults resetStandardUserDefaults];
     [self.window setUserInteractionEnabled:YES];
@@ -97,13 +101,15 @@ bool modal;
     }
 
     // GOOGLE ANALYTICS
-    [GAI sharedInstance].dispatchInterval = 20;
-    [GAI sharedInstance].trackUncaughtExceptions = YES;
-    // Optional: set Logger to VERBOSE for debug information.
-    [[[GAI sharedInstance] logger] setLogLevel:kGAILogLevelWarning];
-    [[GAI sharedInstance] trackerWithTrackingId:@"UA-36976317-2"];
-    //tracker_.allowIDFACollection = YES;
+    // Configure tracker from GoogleService-Info.plist.
+    NSError *configureError;
+    [[GGLContext sharedInstance] configureWithError:&configureError];
+    NSAssert(!configureError, @"Error configuring Google services: %@", configureError);
 
+    [GAI sharedInstance].dispatchInterval = 15;
+    [GAI sharedInstance].trackUncaughtExceptions = YES;
+    //[[[GAI sharedInstance] logger] setLogLevel:kGAILogLevelWarning];
+    //tracker_.allowIDFACollection = YES;
 
     // MOBILE APP TRACKING
     // Account Configuration info - must be set

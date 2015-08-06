@@ -1,13 +1,11 @@
 //  Decryption.m
-//  Nooch
+// Payo
 //  Copyright (c) 2015 Nooch Inc. All rights reserved.
 
 #import "Decryption.h"
 #import "Constant.h"
 #import "NSString+ASBase64.h"
-//#import "CJSONSerializer.h"
-//#import "CJSONDataSerializer.h"
-//#import "JSON.h"
+
 @implementation Decryption
 @synthesize Delegate, responseData, tag;
 NSMutableURLRequest *request1,*request2;
@@ -16,7 +14,7 @@ NSMutableURLRequest *request1,*request2;
 
 -(void)getDecryptedValue:(NSString *) methodName pwdString:(NSString *) sources {
     self.responseData =  [[[NSMutableData alloc] init] autorelease];
-    request1 = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@"@"/%@?data=%@", MyUrl, methodName, sources]]];
+    request1 = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@"@"/%@?data=%@", serverURL, methodName, sources]]];
   
     [[NSURLConnection alloc] initWithRequest:request1 delegate:self];
 }
@@ -25,7 +23,7 @@ NSMutableURLRequest *request1,*request2;
         self.responseData = [[[NSMutableData alloc] init] autorelease];
     NSURLRequest *requisicao = [NSURLRequest requestWithURL:
                                 [NSURL URLWithString:
-                                 [[NSString stringWithFormat:@"%@"@"/%@?data=%@", MyUrl, methodName, text] stringByAddingPercentEscapesUsingEncoding:
+                                 [[NSString stringWithFormat:@"%@"@"/%@?data=%@", serverURL, methodName, text] stringByAddingPercentEscapesUsingEncoding:
                                   NSUTF8StringEncoding]]];
         [[NSURLConnection alloc] initWithRequest:requisicao delegate:self];
 }

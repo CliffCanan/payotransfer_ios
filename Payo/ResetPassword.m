@@ -1,5 +1,5 @@
 //  ResetPassword.m
-//  Nooch
+// Payo
 //
 //  Copyright (c) 2015 Nooch Inc. All rights reserved.
 

@@ -1,5 +1,5 @@
 //  SelectRecipient.m
-//  Nooch
+// Payo
 //
 //  Created by Cliff Canan on 7/30/15.
 //  Copyright (c) 2015 Nooch. All rights reserved.
@@ -11,8 +11,11 @@
 #import <objc/runtime.h>
 #import <objc/message.h>
 #import "MBProgressHUD.h"
+
 #define IS_IPHONE_5 ( fabs( ( double )[ [ UIScreen mainScreen ] bounds ].size.height - ( double )568 ) < DBL_EPSILON )
+
 @interface SelectRecipient ()
+
 @property(nonatomic,strong) UITableView *contacts;
 @property(nonatomic,strong) NSMutableArray *recents;
 @property(nonatomic, strong) ABPeoplePickerNavigationController *addressBookController;
@@ -1033,14 +1036,6 @@
 -(void)Error:(NSError *)Error
 {
     [self.hud hide:YES];
-
-  /*UIAlertView *alert = [[UIAlertView alloc]
-                          initWithTitle:NSLocalizedString(@"SelectRecip_ConnectionErrorAlertTitle", @"Select Recipient Connection Error Alert Title")
-                          message:NSLocalizedString(@"SelectRecip_ConnectionErrorAlertBody", @"Select Recipient Connection Error Alert Body Text")
-                          delegate:nil
-                          cancelButtonTitle:@"OK"
-                          otherButtonTitles:nil];
-    [alert show];*/
 }
 
 #pragma mark - server Delegation

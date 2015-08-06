@@ -1,6 +1,6 @@
 //
 //  IdVerifyImageUpload.m
-//  Nooch
+// Payo
 //
 //  Created by Clifford Canan on 7/16/15.
 //  Copyright (c) 2015 Nooch. All rights reserved.

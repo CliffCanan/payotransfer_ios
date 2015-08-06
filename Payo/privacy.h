@@ -1,6 +1,6 @@
 //
 //  privacy.h
-//  Nooch
+// Payo
 //
 //  Created by administrator on 12/05/13.
 //  Copyright (c) 2015 Nooch Inc. All rights reserved.

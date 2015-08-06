@@ -1,6 +1,6 @@
 //
 //  self.m
-//  Nooch
+// Payo
 //
 //  Created by Cliff Canan on 7/30/15.
 //  Copyright (c) 2015 Nooch Inc. All rights reserved.
@@ -315,7 +315,7 @@ static assist * _sharedInstance = nil;
     histSafe=NO;
 
     responseData = [NSMutableData data];
-    urlForHis = [NSString stringWithFormat:@"%@"@"/%@?memberId=%@&listType=%@&%@=%@&%@=%@&accessToken=%@", MyUrl, @"GetTransactionsList", [usr objectForKey:@"MemberId"], type, @"pSize", [NSString stringWithFormat:@"%ld",(long)len], @"pIndex", [NSString stringWithFormat:@"%ld",(long)sPos],[user valueForKey:@"OAuthToken"]];
+    urlForHis = [NSString stringWithFormat:@"%@"@"/%@?memberId=%@&listType=%@&%@=%@&%@=%@&accessToken=%@", serverURL, @"GetTransactionsList", [usr objectForKey:@"MemberId"], type, @"pSize", [NSString stringWithFormat:@"%ld",(long)len], @"pIndex", [NSString stringWithFormat:@"%ld",(long)sPos],[user valueForKey:@"OAuthToken"]];
 
     requestForHis = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:urlForHis]];
     connectionForHis=[[NSURLConnection alloc] initWithRequest:requestForHis delegate:self];

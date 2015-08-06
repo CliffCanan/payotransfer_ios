@@ -1,14 +1,12 @@
 //
 //  AppDelegate.h
-//  Nooch
+// Payo
 //
 //  Created by Cliff Canan on 7/30/15.
 //  Copyright (c) 2015 Nooch Inc. All rights reserved.
 //
 
 #import <UIKit/UIKit.h>
-#import <GoogleMaps/GoogleMaps.h>
-#import "GAI.h"
 #import "Reachability.h"
 #import <FacebookSDK/FacebookSDK.h>
 #import <GameThrive/GameThrive.h>

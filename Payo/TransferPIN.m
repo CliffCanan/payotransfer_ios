@@ -1,5 +1,5 @@
 //  TransferPIN.m
-//  Nooch
+// Payo
 //
 //  Copyright (c) 2015 Nooch. All rights reserved.
 
@@ -907,7 +907,7 @@ NSString * calculateArrivalDate()
                                                                options:NSJSONWritingPrettyPrinted error:&error];;
                 postLengthTransfer = [NSString stringWithFormat:@"%lu", (unsigned long)[postTransfer length]];
                 self.respData = [NSMutableData data];
-                urlStrTranfer = [[NSString alloc] initWithString:MyUrl];
+                urlStrTranfer = [[NSString alloc] initWithString:serverURL];
 
                 if ([self.type isEqualToString:@"send"])
                 {
@@ -1084,7 +1084,7 @@ NSString * calculateArrivalDate()
                                                        options:NSJSONWritingPrettyPrinted error:&error];;
         postLengthTransfer = [NSString stringWithFormat:@"%lu", (unsigned long)[postTransfer length]];
         self.respData = [NSMutableData data];
-        urlStrTranfer = [[NSString alloc] initWithString:MyUrl];
+        urlStrTranfer = [[NSString alloc] initWithString:serverURL];
         if ([self.type isEqualToString:@"request"])
         {
             urlStrTranfer = [urlStrTranfer stringByAppendingFormat:@"/%@", @"RequestMoney"];

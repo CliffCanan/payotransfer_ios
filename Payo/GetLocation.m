@@ -1,6 +1,6 @@
 //
 //  GetLocation.m
-//  Nooch
+// Payo
 //
 //  Created by Vicky Mathneja on 02/01/14.
 //  Copyright (c) 2015 Nooch. All rights reserved.

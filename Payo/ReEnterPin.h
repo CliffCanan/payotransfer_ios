@@ -1,6 +1,6 @@
 //
 //  ReEnterPin.h
-//  Nooch
+// Payo
 //
 //  Created by Vicky Mathneja on 08/01/14.
 //  Copyright (c) 2015 Nooch Inc. All rights reserved.

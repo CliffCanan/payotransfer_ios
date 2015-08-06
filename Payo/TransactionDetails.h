@@ -1,13 +1,12 @@
 //
 //  TransactionDetails.h
-//  Nooch
+// Payo
 //
 //  Created by Cliff Canan on 7/30/15.
 //  Copyright (c) 2015 Nooch. All rights reserved.
 //
 
 #import <UIKit/UIKit.h>
-#import <GoogleMaps/GoogleMaps.h>
 #import "serve.h"
 #import "MBProgressHUD.h"
 #import <MessageUI/MessageUI.h>
@@ -15,7 +14,6 @@
 #import <Accounts/Accounts.h>
 
 @interface TransactionDetails : GAITrackedViewController<serveD,UIAlertViewDelegate,MFMailComposeViewControllerDelegate,MBProgressHUDDelegate,UIScrollViewDelegate>{
-    GMSMapView * mapView_;
     UIView * blankView;
     UILabel * amount;
     UIView * overlay,*mainView;

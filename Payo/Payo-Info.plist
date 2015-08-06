@@ -47,15 +47,15 @@
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSCameraUsageDescription</key>
-	<string>So you can add a profile picture and for attaching images to your transfers.</string>
+	<string>So you can add a profile picture.</string>
 	<key>NSContactsUsageDescription</key>
-	<string>Send or request money to a friend using an email address or phone number form your contacts.</string>
+	<string>Send money to a friend using an email address or phone number from your contacts.</string>
 	<key>NSLocationUsageDescription</key>
-	<string>Find nearby friends who use Nooch and see the location of your payment.</string>
+	<string>See the location of your payments.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>Find nearby friends who use Nooch and see the location of your payment.</string>
+	<string>See the location of your payments.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>So you can add a profile picture and also attach images to your transfers.</string>
+	<string>So you can add a profile picture.</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>Roboto-Italic.ttf</string>
@@ -75,7 +75,7 @@
 	<key>UIMainStoryboardFile~ipad</key>
 	<string>flat_storyboard</string>
 	<key>UIPrerenderedIcon</key>
-	<true/>
+	<false/>
 	<key>UIRequiredDeviceCapabilities</key>
 	<array>
 		<string>armv7</string>

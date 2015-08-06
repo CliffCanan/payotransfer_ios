@@ -1,6 +1,6 @@
 //
 //  tour.h
-//  Nooch
+// Payo
 //
 //  Created by Clifford Canan on 9/17/14.
 //  Copyright (c) 2015 Nooch. All rights reserved.

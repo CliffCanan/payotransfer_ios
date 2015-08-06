@@ -1,5 +1,5 @@
 //  TransactionDetails.m
-//  Nooch
+// Payo
 //
 //  Created by Cliff Canan on 7/30/15.
 //  Copyright (c) 2015 Nooch Inc. All rights reserved.
@@ -16,6 +16,7 @@
 #import "DisputeDetail.h"
 #import "SettingsOptions.h"
 #import <FacebookSDK/FacebookSDK.h>
+@import GoogleMaps;
 
 @interface TransactionDetails ()
 @property (nonatomic,strong) NSDictionary *trans;
@@ -23,7 +24,10 @@
 @property(nonatomic,strong) MBProgressHUD *hud;
 @end
 
-@implementation TransactionDetails
+@implementation TransactionDetails{
+    GMSMapView *mapView_;
+}
+
 @synthesize accountStore,twitterAllowed,twitterAccount;
 
 - (id)initWithData:(NSDictionary *)trans
@@ -580,18 +584,6 @@
             post_text = [NSString stringWithFormat:@"I just got paid by %@ on Nooch!",[self.trans objectForKey:@"Name"]];
         }
     }
-    else if ([[self.trans objectForKey:@"TransactionStatus"] isEqualToString:@"Pending"] &&
-             [[self.trans valueForKey:@"TransactionType"] isEqualToString:@"Request"])
-    {
-        if ([[user valueForKey:@"MemberId"] isEqualToString:[self.trans valueForKey:@"RecepientId"]])
-        {
-            post_text = [NSString stringWithFormat:@"Send me my money %@! Use Nooch and it's super fast (and free) so there are no excuses.", [self.trans objectForKey:@"Name"]];
-        }
-        else
-        {
-            post_text = [NSString stringWithFormat:@"I'm using Nooch to pay %@ - a free iOS app - check it out!",[self.trans objectForKey:@"Name"]];
-        }
-    }
 
     SLComposeViewController * controller = [SLComposeViewController composeViewControllerForServiceType:SLServiceTypeTwitter];
     [controller setInitialText: post_text];
@@ -634,29 +626,10 @@
 
     if ([[self.trans objectForKey:@"TransactionStatus"] isEqualToString:@"Success"])
     {
-        if ([[user valueForKey:@"MemberId"] isEqualToString:[self.trans valueForKey:@"MemberId"]])
-        {
-            post_text = [NSString stringWithFormat:@"I just Nooch'ed %@!",[self.trans objectForKey:@"Name"]];
-        }
-        else
-        {
-            post_text = [NSString stringWithFormat:@"I just got paid by %@ on Nooch!",[self.trans objectForKey:@"Name"]];
-        }
-    }
-    else if ([[self.trans objectForKey:@"TransactionStatus"] isEqualToString:@"Pending"] &&
-             [[self.trans valueForKey:@"TransactionType"] isEqualToString:@"Request"])
-    {
-        if ([[user valueForKey:@"MemberId"] isEqualToString:[self.trans valueForKey:@"RecepientId"]])
-        {
-            post_text = [NSString stringWithFormat:@"Send me my money %@! Use Nooch and it's super fast (and free) so there are no excuses.", [self.trans objectForKey:@"Name"]];
-        }
-        else
-        {
-            post_text = [NSString stringWithFormat:@"I'm using Nooch to pay %@ - a free iOS app - check it out!",[self.trans objectForKey:@"Name"]];
-        }
+        post_text = [NSString stringWithFormat:@"I just paid %@!",[self.trans objectForKey:@"Name"]];
     }
 
-    NSString * postTitle = @"Nooch makes money simple";
+    NSString * postTitle = @"Payo makes money simple";
     NSString * postLink = @"https://157054.measurementapi.com/serve?action=click&publisher_id=157054&site_id=91086";
     NSString * postImgUrl = @"https://www.nooch.com/wp-content/themes/newnooch/library/images/nooch-logo.svg";
 
@@ -1015,12 +988,13 @@
                 [status setStyleClass:@"green_text"];
             }
             
-            if ( ![[self.trans valueForKey:@"DisputeId"] isKindOfClass:[NSNull class]] && [self.trans valueForKey:@"DisputeId"]!=NULL )
+            if (![[self.trans valueForKey:@"DisputeId"] isKindOfClass:[NSNull class]] &&
+                  [self.trans valueForKey:@"DisputeId"] != NULL )
             {
                 statusstr = NSLocalizedString(@"TransDeets_DsptdsTxt", @"'Disputed:' Status Text");
                 [status setStyleClass:@"red_text"];
 
-				UIButton *detailbutton = [UIButton buttonWithType:UIButtonTypeCustom];
+				UIButton * detailbutton = [UIButton buttonWithType:UIButtonTypeCustom];
                 [detailbutton addTarget:self
                            action:@selector(DisputeDetailClicked:)
                  forControlEvents:UIControlEventTouchUpInside];
@@ -1045,7 +1019,7 @@
 
             [status setText:statusstr];
             [self.view addSubview:status];
-            
+
             if ([[self.trans valueForKey:@"DisputeId"] isKindOfClass:[NSNull class]] ||
                  [self.trans valueForKey:@"DisputeId"] == NULL )
             {
@@ -1105,8 +1079,6 @@
              [Result valueForKey:@"Status"] != NULL)
         {
             [user setObject:[Result valueForKey:@"Status"] forKey:@"Status"];
-            //[user setObject:[Result valueForKey:@"DateCreated"] forKey:@"DateCreated"];
-            //[user setObject:[Result valueForKey:@"PhotoUrl"] forKey:@"Photo"];
         }
     }
 }

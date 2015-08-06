@@ -1,6 +1,6 @@
 //
 //  terms.m
-//  Nooch
+// Payo
 //
 //  Created by administrator on 6/05/14.
 //  Copyright (c) 2015 Nooch Inc. All rights reserved.

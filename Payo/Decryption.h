@@ -1,6 +1,6 @@
 //
 //  Decryption.h
-//  Nooch
+// Payo
 //
 //  Created by Nooch on 7/28/11.
 //  Copyright (c) 2015 Nooch Inc. All rights reserved.

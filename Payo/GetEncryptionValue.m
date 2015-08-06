@@ -1,6 +1,6 @@
 //
 //  GetEncryptionValue.m
-//  Nooch
+// Payo
 //
 //  Created by Nooch on 09/08/11.
 //  Copyright (c) 2015 Nooch Inc. All rights reserved.
@@ -22,7 +22,7 @@ NSMutableURLRequest*requestEncryption;
     NSString *encodedString = [NSString encodeBase64String:stringtoEncry];
     
     responseData = [[NSMutableData alloc] init];
-    requestEncryption = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@"@"/%@?%@=%@", MyUrl,@"GetEncryptedData",@"data",encodedString]]];
+    requestEncryption = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@"@"/%@?%@=%@", serverURL,@"GetEncryptedData",@"data",encodedString]]];
     [requestEncryption setHTTPMethod:@"GET"];
     [requestEncryption setTimeoutInterval:500.0f];
     NSURLConnection *connection =[[NSURLConnection alloc] initWithRequest:requestEncryption delegate:self];
