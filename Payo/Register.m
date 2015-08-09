@@ -131,7 +131,7 @@
     [logo setStyleClass:@"animate_bubble_logo"];
     [self.view addSubview:logo];
 
-    UILabel * signup = [[UILabel alloc] initWithFrame:CGRectMake(10, 72, 300, 16)];
+    UILabel * signup = [[UILabel alloc] initWithFrame:CGRectMake(10, 76, 300, 16)];
     [signup setText:NSLocalizedString(@"Register_SgnUpWthTxt", @"Register Screen 'Sign Up With")];
     [signup setStyleClass:@"instruction_text"];
     [signup setStyleId:@"instruction_text_lg"];

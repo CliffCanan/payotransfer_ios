@@ -207,14 +207,6 @@
     [logo setStyleId:@"prelogin_logo"];
     [self.view addSubview:logo];
 
-    NSString * sloganFromArtisan = [ARPowerHookManager getValueForHookById:@"slogan"];
-    UILabel * slogan = [[UILabel alloc] initWithFrame:CGRectMake(75, 82, 170, 16)];
-    [slogan setBackgroundColor:[UIColor clearColor]];
-    [slogan setText:sloganFromArtisan];
-    [slogan setFont:[UIFont fontWithName:@"VarelaRound-Regular" size:15]];
-    [slogan setStyleClass:@"prelogin_slogan"];
-    [self.view addSubview:slogan];
-
     UILabel * welcome = [[UILabel alloc] initWithFrame:CGRectMake(0, 115, 320, 35)];
     [welcome setText:[NSString stringWithFormat:NSLocalizedString(@"SelPic_GreetingTxt", @"Select Picture screen 'Hey %@' Greeting Text"),[[self.user objectForKey:@"first_name" ] capitalizedString]]];
     [welcome setBackgroundColor:[UIColor clearColor]];

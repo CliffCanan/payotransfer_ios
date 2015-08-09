@@ -154,7 +154,6 @@ bool modal;
     NSSetUncaughtExceptionHandler(&exceptionHandler);
 
     // ARTISAN SDK
-    [ARPowerHookManager registerHookWithId:@"slogan" friendlyName:@"Slogan" defaultValue:@"Money Made Simple"];
     [ARPowerHookManager registerHookWithId:@"HUDcolor" friendlyName:@"HUD Color" defaultValue:@"black"];
     [ARPowerHookManager registerHookWithId:@"reqCodeSetting" friendlyName:@"Require Invite Code" defaultValue:@"no"];
     [ARPowerHookManager registerHookWithId:@"refCode" friendlyName:@"Referral Code" defaultValue:@"NOCODE"];

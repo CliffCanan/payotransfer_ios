@@ -170,14 +170,6 @@
     [logo setStyleId:@"prelogin_logo"];
     [self.view addSubview:logo];
 
-    UILabel * slogan = [[UILabel alloc] initWithFrame:CGRectMake(75, 82, 170, 16)];
-    [slogan setBackgroundColor:[UIColor clearColor]];
-    NSString * sloganFromArtisan = [ARPowerHookManager getValueForHookById:@"slogan"];
-    [slogan setText:sloganFromArtisan];
-    [slogan setFont:[UIFont fontWithName:@"VarelaRound-regular" size:15]];
-    [slogan setStyleClass:@"prelogin_slogan"];
-    [self.view addSubview:slogan];
-
     self.pin_check = @"";
     [self.view setBackgroundColor:[UIColor whiteColor]];
 

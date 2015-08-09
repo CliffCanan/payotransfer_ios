@@ -147,20 +147,8 @@
     [self.view setBackgroundColor:[UIColor whiteColor]];
 
     UIImageView * logo = [UIImageView new];
-    [logo setStyleId:@"prelogin_logo_loginScreen"];
+    [logo setStyleId:@"prelogin_logo"];
     [self.view addSubview:logo];
-
-    if ([[UIScreen mainScreen] bounds].size.height > 500)
-    {
-        NSString * sloganFromArtisan = [ARPowerHookManager getValueForHookById:@"slogan"];
-        UILabel * slogan = [[UILabel alloc] initWithFrame:CGRectMake(70, 72, 180, 16)];
-        [slogan setBackgroundColor:[UIColor clearColor]];
-        [slogan setText:sloganFromArtisan];
-        [slogan setFont:[UIFont fontWithName:@"VarelaRound-Regular" size:14]];
-        [slogan setStyleClass:@"prelogin_slogan"];
-        [slogan setStyleClass:@"prelogin_slogan_loginScreen"];
-        [self.view addSubview:slogan];
-    }
 
     NSShadow * shadowFB = [[NSShadow alloc] init];
     shadowFB.shadowColor = Rgb2UIColor(19, 32, 38, .2);

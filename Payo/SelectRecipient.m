@@ -1444,20 +1444,10 @@
     UIImageView * pic = [[UIImageView alloc] initWithFrame:CGRectMake(16, 6, 50, 50)];
     pic.clipsToBounds = YES;
 
-    UIImageView * npic = [UIImageView new];
-    npic.clipsToBounds = YES;
-
     [cell.contentView addSubview:pic];
-    [cell.contentView addSubview:npic];
 
     if (searching)
     {
-        // Nooch User
-        npic.hidden = NO;
-        [npic setFrame:CGRectMake(278, 19, 23, 27)];
-        [npic setImage:[UIImage imageNamed:@"n_icon_46x54.png"]];
-        [npic removeFromSuperview];
-
         NSDictionary *info = [arrSearchedRecords objectAtIndex:indexPath.row];
 
         [pic sd_setImageWithURL:[NSURL URLWithString:info[@"Photo"]]
@@ -1484,9 +1474,6 @@
         
         [cell.textLabel setStyleClass:@"select_recipient_name"];
 
-        if (info[@"MemberId"]) {
-            [cell.contentView addSubview:npic];
-        }
 
         if (( [[[assist shared] assos] objectForKey:info[@"UserName"]] && [[assist shared] assos][info[@"UserName"]][@"addressbook"]) ||
             ( [[[assist shared] assos] objectForKey:info[@"phoneNo"]] && [[assist shared] assos][info[@"phoneNo"]][@"addressbook"]))
@@ -1563,9 +1550,6 @@
 
     else if (isRecentList)
     {
-        [npic setFrame:CGRectMake(278, 19, 23, 27)];
-        [npic setImage:[UIImage imageNamed:@"n_icon_46x54.png"]];
-
         NSDictionary * info = [self.recents objectAtIndex:indexPath.row];
         [pic sd_setImageWithURL:[NSURL URLWithString:info[@"Photo"]]
             placeholderImage:[UIImage imageNamed:@"profile_picture.png"]];
@@ -1597,7 +1581,6 @@
     else if (emailEntry || phoneNumEntry)
     {
         [self.contacts setStyleId:@"select_recipientwithoutSeperator"];
-        [npic removeFromSuperview];
 
         cell.accessoryType = UITableViewCellAccessoryNone;
         cell.indentationWidth = 10;
