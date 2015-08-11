@@ -51,7 +51,6 @@
 		01C26DBB1843BB22005179B7 /* sms-icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 01C26DA01843BB22005179B7 /* sms-icon.png */; };
 		01C26DC21843BB22005179B7 /* twitter-icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 01C26DA71843BB22005179B7 /* twitter-icon.png */; };
 		01C26DFB1843E676005179B7 /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = 01C26DFA1843E676005179B7 /* Reachability.m */; };
-		01C49AEC18D8C83500BACE23 /* MBProgressHUD.m in Sources */ = {isa = PBXBuildFile; fileRef = 01C49AE518D8C83500BACE23 /* MBProgressHUD.m */; };
 		01C83E7B17F4D726009CABBF /* HowMuch.m in Sources */ = {isa = PBXBuildFile; fileRef = 01C83E7917F4D726009CABBF /* HowMuch.m */; };
 		01C83E8017F9FF9E009CABBF /* TransferPIN.m in Sources */ = {isa = PBXBuildFile; fileRef = 01C83E7E17F9FF9E009CABBF /* TransferPIN.m */; };
 		01C83E8417FB1606009CABBF /* NavControl.m in Sources */ = {isa = PBXBuildFile; fileRef = 01C83E8317FB1606009CABBF /* NavControl.m */; };
@@ -108,7 +107,6 @@
 		6B01F1B8179DA7AD00E34C49 /* ImageIO.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6B01F1B7179DA7AD00E34C49 /* ImageIO.framework */; };
 		6B01F1BA179DA7BC00E34C49 /* libc++.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 6B01F1B9179DA7BC00E34C49 /* libc++.dylib */; };
 		6B01F1BC179DA7CA00E34C49 /* libicucore.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 6B01F1BB179DA7CA00E34C49 /* libicucore.dylib */; };
-		6B0DFB2217A2DF2E007DA8B0 /* popup.m in Sources */ = {isa = PBXBuildFile; fileRef = 6B0DFB2117A2DF2E007DA8B0 /* popup.m */; };
 		6B30373015FA3FF300056DAD /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 6B30372E15FA3FF300056DAD /* InfoPlist.strings */; };
 		6B30373615FA3FF400056DAD /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 6B30373515FA3FF400056DAD /* AppDelegate.m */; };
 		6B3037AD15FA45BB00056DAD /* NSData+AESCrypt.m in Sources */ = {isa = PBXBuildFile; fileRef = 6B30376915FA442A00056DAD /* NSData+AESCrypt.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
@@ -197,7 +195,6 @@
 		848C98411A1473A200C1BAE4 /* fbConnect.m in Sources */ = {isa = PBXBuildFile; fileRef = 848C98401A1473A200C1BAE4 /* fbConnect.m */; };
 		849AF6BD19A3183000693385 /* close_button.png in Resources */ = {isa = PBXBuildFile; fileRef = 849AF6BC19A3183000693385 /* close_button.png */; };
 		84B65A73188542E9009A5205 /* NSString+ASBase64.m in Sources */ = {isa = PBXBuildFile; fileRef = 84B65A72188542E9009A5205 /* NSString+ASBase64.m */; };
-		84B79FFF19BEDEB50081A2AF /* iCarousel.m in Sources */ = {isa = PBXBuildFile; fileRef = 84B79FFE19BEDEB50081A2AF /* iCarousel.m */; };
 		84BACAF719FF7A50001F796D /* FBUserSettingsViewResources.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 84BACAF619FF7A50001F796D /* FBUserSettingsViewResources.bundle */; };
 		84C3EF1B187D101E004687F6 /* ReEnterPin.m in Sources */ = {isa = PBXBuildFile; fileRef = 84C3EF1A187D101E004687F6 /* ReEnterPin.m */; };
 		962ACBC84BB2D83DBD984DAB /* libPods-Payo.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 648705D7446F11855B984A74 /* libPods-Payo.a */; };
@@ -287,8 +284,6 @@
 		01C26DF91843E676005179B7 /* Reachability.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Reachability.h; sourceTree = "<group>"; };
 		01C26DFA1843E676005179B7 /* Reachability.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Reachability.m; sourceTree = "<group>"; };
 		01C49AE218D8C83500BACE23 /* addBank.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = addBank.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
-		01C49AE418D8C83500BACE23 /* MBProgressHUD.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MBProgressHUD.h; sourceTree = "<group>"; };
-		01C49AE518D8C83500BACE23 /* MBProgressHUD.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MBProgressHUD.m; sourceTree = "<group>"; };
 		01C83E7817F4D726009CABBF /* HowMuch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HowMuch.h; sourceTree = "<group>"; };
 		01C83E7917F4D726009CABBF /* HowMuch.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HowMuch.m; sourceTree = "<group>"; };
 		01C83E7D17F9FF9D009CABBF /* TransferPIN.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TransferPIN.h; sourceTree = "<group>"; };
@@ -358,8 +353,6 @@
 		6B01F1B7179DA7AD00E34C49 /* ImageIO.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ImageIO.framework; path = System/Library/Frameworks/ImageIO.framework; sourceTree = SDKROOT; };
 		6B01F1B9179DA7BC00E34C49 /* libc++.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libc++.dylib"; path = "usr/lib/libc++.dylib"; sourceTree = SDKROOT; };
 		6B01F1BB179DA7CA00E34C49 /* libicucore.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libicucore.dylib; path = usr/lib/libicucore.dylib; sourceTree = SDKROOT; };
-		6B0DFB2017A2DF2E007DA8B0 /* popup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = popup.h; sourceTree = "<group>"; };
-		6B0DFB2117A2DF2E007DA8B0 /* popup.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = popup.m; sourceTree = "<group>"; };
 		6B30372115FA3FF300056DAD /* Payo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Payo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		6B30372515FA3FF300056DAD /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		6B30372715FA3FF300056DAD /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -495,8 +488,6 @@
 		849AF6BC19A3183000693385 /* close_button.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = close_button.png; sourceTree = "<group>"; };
 		84B65A71188542E9009A5205 /* NSString+ASBase64.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+ASBase64.h"; sourceTree = "<group>"; };
 		84B65A72188542E9009A5205 /* NSString+ASBase64.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+ASBase64.m"; sourceTree = "<group>"; };
-		84B79FFD19BEDEB50081A2AF /* iCarousel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = iCarousel.h; sourceTree = "<group>"; };
-		84B79FFE19BEDEB50081A2AF /* iCarousel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = iCarousel.m; sourceTree = "<group>"; };
 		84BACAF619FF7A50001F796D /* FBUserSettingsViewResources.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = FBUserSettingsViewResources.bundle; sourceTree = "<group>"; };
 		84C3EF19187D101E004687F6 /* ReEnterPin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReEnterPin.h; sourceTree = "<group>"; };
 		84C3EF1A187D101E004687F6 /* ReEnterPin.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ReEnterPin.m; sourceTree = "<group>"; };
@@ -817,8 +808,6 @@
 				6B83649A16C314360034655F /* serve.m */,
 				6B89276316DEB10200F9100F /* popSelect.h */,
 				6B89276416DEB10200F9100F /* popSelect.m */,
-				6B0DFB2017A2DF2E007DA8B0 /* popup.h */,
-				6B0DFB2117A2DF2E007DA8B0 /* popup.m */,
 			);
 			name = "Custom Classes";
 			sourceTree = "<group>";
@@ -922,8 +911,6 @@
 			isa = PBXGroup;
 			children = (
 				5CDEC7071B73D880005A1576 /* GoogleService-Info.plist */,
-				84B79FFD19BEDEB50081A2AF /* iCarousel.h */,
-				84B79FFE19BEDEB50081A2AF /* iCarousel.m */,
 				0103AEA918FC8B8D003225DA /* FAImageView.h */,
 				0103AEAA18FC8B8D003225DA /* FAImageView.m */,
 				0103AEAB18FC8B8D003225DA /* NSString+FontAwesome.h */,
@@ -931,8 +918,6 @@
 				0103AEAD18FC8B8D003225DA /* UIFont+FontAwesome.h */,
 				0103AEAE18FC8B8D003225DA /* UIFont+FontAwesome.m */,
 				01C49ADF18D8C83500BACE23 /* fontawesome */,
-				01C49AE418D8C83500BACE23 /* MBProgressHUD.h */,
-				01C49AE518D8C83500BACE23 /* MBProgressHUD.m */,
 				841A3E0618A61491001DAAA2 /* UIImage-categories */,
 				01C26DF91843E676005179B7 /* Reachability.h */,
 				01C26DFA1843E676005179B7 /* Reachability.m */,
@@ -1314,7 +1299,6 @@
 				846A5E3119DAB0FC0093FF9C /* MKAnnotationView+WebCache.m in Sources */,
 				0103AEAF18FC8B8D003225DA /* FAImageView.m in Sources */,
 				01085FB717FB6ABE00A31F63 /* ReferralCode.m in Sources */,
-				84B79FFF19BEDEB50081A2AF /* iCarousel.m in Sources */,
 				01085FF5180345D200A31F63 /* ResetPassword.m in Sources */,
 				846EF0CB198B5F55009D5491 /* DisputeDetail.m in Sources */,
 				0169E22D18D8D7C200442642 /* addBank.m in Sources */,
@@ -1360,7 +1344,6 @@
 				5C17925C1B581F9900BB774F /* IdVerifyImageUpload.m in Sources */,
 				6B89276516DEB10200F9100F /* popSelect.m in Sources */,
 				842E3316187424440057EAFB /* GetEncryptionValue.m in Sources */,
-				01C49AEC18D8C83500BACE23 /* MBProgressHUD.m in Sources */,
 				846A5E3319DAB0FC0093FF9C /* SDImageCache.m in Sources */,
 				01085FD218030E5900A31F63 /* SettingsOptions.m in Sources */,
 				01C83E8417FB1606009CABBF /* NavControl.m in Sources */,
@@ -1373,7 +1356,6 @@
 				84172D15186D416D0041929F /* core.m in Sources */,
 				846A5E3A19DAB0FC0093FF9C /* UIButton+WebCache.m in Sources */,
 				84172D18186D42200041929F /* assist.m in Sources */,
-				6B0DFB2217A2DF2E007DA8B0 /* popup.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

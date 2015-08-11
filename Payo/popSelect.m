@@ -96,19 +96,15 @@
         else if(indexPath.row == 1) {
             listType = @"SENT";
         }
-        else if(indexPath.row == 4) {
+        else if(indexPath.row == 2) {
             listType = @"DISPUTED";
         }
-        else if(indexPath.row == 5) {
+        else if(indexPath.row == 3) {
             listType = @"CANCEL";
         }
         isFilterSelected = YES;
         [[NSNotificationCenter defaultCenter] postNotificationName:@"dismissPopOver" object:nil];
 
-        return;
-    }
-
-    if (!memoList) {
         return;
     }
     return;

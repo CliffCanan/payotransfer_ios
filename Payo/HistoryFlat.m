@@ -188,37 +188,6 @@
     [self.slidingViewController anchorTopViewTo:ECRight];
 }
 
-
-/*-(void)move:(id)sender
-{
-    [self.view bringSubviewToFront:mapArea];
-    CGPoint translatedPoint = [(UIPanGestureRecognizer*)sender translationInView:self.view];
-    if ([(UIPanGestureRecognizer*)sender state] == UIGestureRecognizerStateBegan) {
-        firstX = [[sender view] center].x;
-        firstY = [[sender view] center].y;
-    }
-    if (firstX+translatedPoint.x==150.500000) {
-        return;
-    }
-    if (firstX+translatedPoint.x==572.500000) {
-        return;
-    }
-    translatedPoint = CGPointMake(firstX+translatedPoint.x, firstY);
-
-    CGFloat animationDuration = 0.2;
-    CGFloat velocityX = (0.0*[(UIPanGestureRecognizer*)sender velocityInView:self.view].x);
-    
-    CGFloat finalX = translatedPoint.x + velocityX;
-    CGFloat finalY = firstY;
-    [[sender view] setCenter:translatedPoint];
-    [UIView beginAnimations:nil context:NULL];
-    [UIView setAnimationDuration:animationDuration];
-    [UIView setAnimationCurve:UIViewAnimationCurveEaseOut];
-    [UIView setAnimationDelegate:self];
-    [[sender view] setCenter:CGPointMake(finalX, finalY)];
-    [UIView commitAnimations];
-}*/
-
 -(void)FilterHistory:(id)sender
 {
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(dismissFP:) name:@"dismissPopOver" object:nil];
