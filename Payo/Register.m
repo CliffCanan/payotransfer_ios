@@ -24,8 +24,8 @@
 @property(nonatomic,strong) UITextField *password_field;
 @property(nonatomic,strong) __block NSMutableDictionary *facebook_pic;
 @property(nonatomic,strong) UIButton * facebookLogin;
-@property(nonatomic,strong) UIButton *cont;
-@property(nonatomic,strong) UIButton *login;
+@property(nonatomic,strong) UIButton * cont;
+@property(nonatomic,strong) UIButton * login;
 @property(nonatomic,strong) MBProgressHUD *hud;
 @property(nonatomic,strong) UILabel *or;
 @property(nonatomic,strong) UILabel * emailValidator;

@@ -78,7 +78,7 @@
     shadow.shadowOffset = CGSizeMake(0, -1);
     NSDictionary * textAttributes = @{NSShadowAttributeName: shadow };
 
-    NSLog(@"FbConnect.m -> FB ID is: %@",[user valueForKey:@"facebook_id"]);
+    //NSLog(@"FbConnect.m -> FB ID is: %@",[user valueForKey:@"facebook_id"]);
 
     if ([[user valueForKey:@"facebook_id"] length] == 0 ||
         [[user valueForKey:@"facebook_id"] isKindOfClass:[NSNull class]])
@@ -270,7 +270,6 @@
     [self.facebook removeTarget:self action:@selector(toggleFacebookLogin:) forControlEvents:UIControlEventTouchUpInside];
     [self.facebook addTarget:self action:@selector(disconnect_fb) forControlEvents:UIControlEventTouchUpInside];
 }
-
 
 #pragma mark - server Delegation
 -(void)listen:(NSString *)result tagName:(NSString *)tagName

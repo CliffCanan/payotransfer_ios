@@ -311,13 +311,7 @@
     [self.navigationController popViewControllerAnimated:YES];
 }
 
-
-
-
-
-
-
-
+#pragma mark - Facebook Methods
 -(void)toggleFacebookLoginForPic
 {
     if ([FBSDKAccessToken currentAccessToken])

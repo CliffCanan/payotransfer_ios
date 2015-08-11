@@ -48,7 +48,7 @@
 -(void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
-     self.screenName = @"Login Screen";
+    self.screenName = @"Login Screen";
     self.artisanNameTag = @"Login Screen";
 }
 
@@ -326,7 +326,6 @@
              }
          }];
     }
-    
 }
 
 // Facebook: Show the user the logged-out UI (In theory this should never be called since the FB session is either already closed when the app is opened, or the user gets automatically logged in after clicking Login with FB button)
@@ -388,7 +387,7 @@
 }
 
 # pragma mark - CLLocationManager Delegate Methods
-- (void)locationManager:(CLLocationManager *)manager
+-(void)locationManager:(CLLocationManager *)manager
      didUpdateLocations:(NSArray *)locations
 {
     [locationManager stopUpdatingLocation];
@@ -402,7 +401,7 @@
     [[assist shared]setlocationAllowed:YES];
 }
 
-- (void)locationManager:(CLLocationManager *)manager
+-(void)locationManager:(CLLocationManager *)manager
        didFailWithError:(NSError *)error
 {
     if ([error code] == kCLErrorDenied){
@@ -432,8 +431,7 @@
     }
 }
 
-
-- (void)forgot_pass_Login
+-(void)forgot_pass_Login
 {
     NSString * avTitle = NSLocalizedString(@"Login_ForgPwAlrtTtl", @"'Forgot Password' Alert Title");
     NSString * avMsg = NSLocalizedString(@"Login_ForgPwAlrtBody", @"'Please enter your email and we will send you a reset link.' Alert Body Text");
@@ -455,7 +453,7 @@
 }
 
 
-- (void)check_credentials
+-(void)check_credentials
 {
     if ([self.email.text length] > 1 &&
         [self.email.text rangeOfString:@"@"].location != NSNotFound &&
@@ -498,7 +496,6 @@
 {
     [self.navigationController popViewControllerAnimated:YES];
 }
-
 
 - (void)alertView:(UIAlertView *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex
 {

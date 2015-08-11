@@ -21,7 +21,7 @@
 #import <FBSDKLoginKit/FBSDKLoginKit.h>
 
 UIImageView *picture;
-@interface ProfileInfo (){
+@interface ProfileInfo () {
     NSString * fbID;
 }
 
@@ -551,7 +551,7 @@ UIImageView *picture;
     [super viewDidDisappear:animated];
 }
 
-- (void)applicationWillEnterFG_Profile:(NSNotification *)notification
+-(void)applicationWillEnterFG_Profile:(NSNotification *)notification
 {
     //NSLog(@"Checkpoint: applicationWillEnterFG notification");
     [self checkUsersStatus];
@@ -580,7 +580,7 @@ UIImageView *picture;
     }
 }
 
-- (void)goToSettings1
+-(void)goToSettings1
 {
     if (isProfileOpenFromSideBar || sentFromHomeScrn || isFromTransDetails)
     {
@@ -818,7 +818,6 @@ UIImageView *picture;
     [self.hud show:YES];
 
     NSMutableDictionary * transaction = [[NSMutableDictionary alloc] initWithObjectsAndKeys:transactionInput, @"mySettings", nil];
-
     serve * req = [serve new];
     req.Delegate = self;
     req.tagName = @"MySettingsResult";
@@ -944,7 +943,6 @@ UIImageView *picture;
 // Facebook: Show the user the logged-in UI
 -(void)userLoggedIn
 {
-    // Success! Now set the facebook_id to be the fb_id that was just returned & send to Nooch DB
     [ARProfileManager setUserFacebook:fbID];
 
     [user setObject:fbID forKey:@"facebook_id"];
@@ -961,7 +959,7 @@ UIImageView *picture;
                               [[assist shared]setTranferImage:nil];
                               [[assist shared]setTranferImage:image];
                           }
-    }];
+                      }];
 
     isPhotoUpdate = YES;
 
@@ -975,7 +973,6 @@ UIImageView *picture;
     [imageCache clearDisk];
     [imageCache cleanDisk];
 }
-
 
 #pragma mark - Table Methods
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView

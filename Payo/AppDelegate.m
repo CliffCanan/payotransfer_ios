@@ -27,7 +27,6 @@
 @implementation AppDelegate
 
 static NSString *const kTrackingId = @"UA-36976317-2";
-@synthesize tracker = tracker_;
 @synthesize inactiveDate;
 bool modal;
 
@@ -111,7 +110,6 @@ bool modal;
     [GAI sharedInstance].dispatchInterval = 15;
     [GAI sharedInstance].trackUncaughtExceptions = YES;
     //[[[GAI sharedInstance] logger] setLogLevel:kGAILogLevelWarning];
-    //tracker_.allowIDFACollection = YES;
 
     // MOBILE APP TRACKING
     // Account Configuration info - must be set
@@ -424,6 +422,7 @@ void exceptionHandler(NSException *exception){
 {
     // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
 }
+
 // Facebook: Show the user the logged-in UI
 - (void)userLoggedIn
 {
