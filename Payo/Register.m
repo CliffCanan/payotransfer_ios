@@ -9,20 +9,21 @@
 #import "SelectPicture.h"
 #import "Login.h"
 #import "terms.h"
-#import <FacebookSDK/FacebookSDK.h>
+#import <FBSDKCoreKit/FBSDKCoreKit.h>
+#import <FBSDKLoginKit/FBSDKLoginKit.h>
 #import "Appirater.h"
 #import "UIDevice+IdentifierAddition.h"
 #import <ArtisanSDK/ArtisanSDK.h>
 
-@interface Register ()<FBLoginViewDelegate>{
+@interface Register () {
     core*me;
-    NSString*email_fb,*fbID,*firstname_fb,*lastname_fb;
+    NSString *firstname_fb, *lastname_fb;
 }
 @property(nonatomic,strong) UITextField *name_field;
 @property(nonatomic,strong) UITextField *email_field;
 @property(nonatomic,strong) UITextField *password_field;
-@property(nonatomic,strong) __block NSMutableDictionary *facebook_info;
-@property(nonatomic,strong) UIButton *facebookLogin;
+@property(nonatomic,strong) __block NSMutableDictionary *facebook_pic;
+@property(nonatomic,strong) UIButton * facebookLogin;
 @property(nonatomic,strong) UIButton *cont;
 @property(nonatomic,strong) UIButton *login;
 @property(nonatomic,strong) MBProgressHUD *hud;
@@ -32,8 +33,8 @@
 @property(nonatomic,strong) UILabel * fullNameInstruc;
 @property(nonatomic,strong) UILabel * pwValidator;
 @property(nonatomic,strong) UIView * pwValidator1, * pwValidator2, * pwValidator3, * pwValidator4;
-
 @end
+
 @implementation Register
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
@@ -53,6 +54,21 @@
     self.screenName = @"Register Screen";
     self.artisanNameTag = @"Register Screen";
     [self.navigationController setNavigationBarHidden:YES];
+
+    if (fromLoginWithFbFail)
+    {
+        fromLoginWithFbFail = false;
+
+        if (fullNameFromFb != NULL)
+        {
+            self.name_field.text = fullNameFromFb;
+        }
+
+        if (email_fb != NULL)
+        {
+            self.email_field.text = email_fb;
+        }
+    }
 }
 
 - (void)viewDidAppear:(BOOL)animated
@@ -104,11 +120,9 @@
 
     [super viewDidLoad];
 
-    [FBSession.activeSession close];
-    [FBSession setActiveSession:nil];
-    [[UIApplication sharedApplication]setStatusBarStyle:UIStatusBarStyleLightContent];
+    [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent];
     [self.hud hide:YES];
-    [[UIApplication sharedApplication]setStatusBarHidden:YES];
+    [[UIApplication sharedApplication] setStatusBarHidden:YES];
     [nav_ctrl performSelector:@selector(disable)];
 
     // Do any additional setup after loading the view from its nib.
@@ -116,7 +130,7 @@
     [self.view setBackgroundColor:[UIColor whiteColor]];
     [self.navigationController setNavigationBarHidden:YES];
 
-    self.facebook_info = [NSMutableDictionary new];
+    self.facebook_pic = [NSMutableDictionary new];
 
     UIView * boxOutline = [[UIView alloc] initWithFrame:CGRectMake(9, 244, 302, 175)];
     boxOutline.backgroundColor = [UIColor whiteColor];
@@ -136,8 +150,8 @@
     [signup setStyleClass:@"instruction_text"];
     [signup setStyleId:@"instruction_text_lg"];
     [self.view addSubview:signup];
-
-    self.facebookLogin = [UIButton buttonWithType:UIButtonTypeRoundedRect];
+    
+    self.facebookLogin = [[UIButton alloc] init];
     [self.facebookLogin setTitleShadowColor:Rgb2UIColor(19, 32, 38, 0.19) forState:UIControlStateNormal];
     self.facebookLogin.titleLabel.shadowOffset = CGSizeMake(0.0, -1.0);
     [self.facebookLogin setTitle:@"  Facebook" forState:UIControlStateNormal];
@@ -151,7 +165,7 @@
     NSDictionary * textAttributes = @{NSShadowAttributeName: shadow };
 
     UILabel * glyphFB = [UILabel new];
-    [glyphFB setFont:[UIFont fontWithName:@"FontAwesome" size:19]];
+    [glyphFB setFont:[UIFont fontWithName:@"FontAwesome" size:21]];
     [glyphFB setFrame:CGRectMake(58, 8, 30, 30)];
     [glyphFB setTextColor:[UIColor whiteColor]];
     glyphFB.attributedText = [[NSAttributedString alloc] initWithString:[NSString fontAwesomeIconStringForIconIdentifier:@"fa-facebook-square"] attributes:textAttributes];
@@ -185,6 +199,8 @@
     [self.name_field setAutocapitalizationType:UITextAutocapitalizationTypeWords];
     [self.name_field setTag:1];
     [self.view addSubview:self.name_field];
+
+    fullNameFromFb = nil;
 
     self.nameValidator = [UILabel new];
     [self.nameValidator setFrame:CGRectMake(12, 0, 21, 40)];
@@ -361,94 +377,93 @@
 
         [self.cont setFrame:CGRectMake(0, 380, 0, 0)];
     }
-}
 
-- (void)toggleFacebookLogin:(id)sender
-{
-    // If the session state is any of the two "open" states when the button is clicked
-    if (FBSession.activeSession.state == FBSessionStateOpen
-        || FBSession.activeSession.state == FBSessionStateOpenTokenExtended)
+    if ([FBSDKAccessToken currentAccessToken])
     {
-        // Close the session and remove the access token from the cache
-        // The session state handler (in the app delegate) will be called automatically
-        [FBSession.activeSession closeAndClearTokenInformation];
-    }
-    else // If the session state is NOT any of the two "open" states when the button is clicked
-    {
-        // Open a session showing the user the login UI
-        // You must ALWAYS ask for public_profile permissions when opening a session
-        [FBSession openActiveSessionWithReadPermissions:@[@"public_profile", @"email", @"user_friends"]
-                                           allowLoginUI:YES
-                                      completionHandler:
-         ^(FBSession *session, FBSessionState state, NSError *error) {
-             // Call the sessionStateChanged:state:error method to handle session state changes
-             [self sessionStateChanged:session state:state error:error];
-         }];
+        // (8/10/15) - Not sure about this... automatically login to FB IF the access token exists.
+        // I guess for that to happen the user would have to have already logged into FB *on Nooch*... so it's probably
+        // ok to just log them in
+        //[self loginWithFacebook];
     }
 }
 
-- (void)sessionStateChanged:(FBSession *)session state:(FBSessionState) state error:(NSError *)error
+
+-(void)toggleFacebookLogin:(id)sender
 {
-    // If the session was opened successfully
-    if (!error && state == FBSessionStateOpen)
+    if ([FBSDKAccessToken currentAccessToken])
     {
-        NSLog(@"FB Session opened");
-        // Show the user the logged-in UI
-        [self attemptFBLogin];
-        return;
+        [self loginWithFacebook];
     }
-    
-    if (state == FBSessionStateClosed || state == FBSessionStateClosedLoginFailed)
-    {  // If the session is closed
-        NSLog(@"FB Session closed");
-        // Show the user the logged-out UI
-        [self userLoggedOut];
-    }
-    
-    // Handle errors
-    if (error)
+    else
     {
-        NSLog(@"FB Error");
-        NSString *alertText;
-        NSString *alertTitle;
-        // If the error requires people using an app to make an action outside of the app in order to recover
-        if ([FBErrorUtility shouldNotifyUserForError:error] == YES)
-        {
-            alertTitle = @"Something went wrong";
-            alertText = [FBErrorUtility userMessageForError:error];
-            [self showMessage:alertText withTitle:alertTitle];
-        }
-        else
-        {
-            // If the user cancelled login, do nothing
-            if ([FBErrorUtility errorCategoryForError:error] == FBErrorCategoryUserCancelled)
+        FBSDKLoginManager *login = [[FBSDKLoginManager alloc] init];
+        [login logInWithReadPermissions:@[@"email"] handler:^(FBSDKLoginManagerLoginResult *result, NSError *error) {
+            if (error)
             {
-                NSLog(@"User cancelled login");
+                [self userLoggedOut];
             }
-            // Handle session closures that happen outside of the app
-            else if ([FBErrorUtility errorCategoryForError:error] == FBErrorCategoryAuthenticationReopenSession)
+            else if (result.isCancelled)
             {
-                alertTitle = @"Session Error";
-                alertText = @"Your current Facebook session is no longer valid. Please log in again.";
-                [self showMessage:alertText withTitle:alertTitle];
+                // Handle cancellations
+                [self userLoggedOut];
             }
-            // For simplicity, here we just show a generic message for all other errors
-            // You can learn how to handle other errors using our guide: https://developers.facebook.com/docs/ios/errors
             else
             {
-                //Get more error information from the error
-                NSDictionary *errorInformation = [[[error.userInfo objectForKey:@"com.facebook.sdk:ParsedJSONResponseKey"] objectForKey:@"body"] objectForKey:@"error"];
-                
-                // Show the user an error message
-                alertTitle = @"Something went wrong";
-                alertText = [NSString stringWithFormat:@"Please retry. \n\n If the problem persists contact us and mention this error code: %@", [errorInformation objectForKey:@"message"]];
-                [self showMessage:alertText withTitle:alertTitle];
+                // If you ask for multiple permissions at once, you should check if specific permissions missing
+                if ([result.grantedPermissions containsObject:@"email"])
+                {
+                    NSLog(@"Login w FB successful --> FB ID is %@",[[FBSDKAccessToken currentAccessToken] userID]);
+
+                    // Update UI
+                    [self userLoggedIn];
+
+                    // Success! Now Log User into Nooch using the FB ID
+                    [user setObject:[[FBSDKAccessToken currentAccessToken] userID] forKey:@"facebook_id"];
+
+                    [self loginWithFacebook];
+                }
             }
-        }
-        // Clear this token
-        [FBSession.activeSession closeAndClearTokenInformation];
-        // Show the user the logged-out UI
-        [self userLoggedOut];
+        }];
+    }
+}
+
+-(void)loginWithFacebook
+{
+    RTSpinKitView * spinner1 = [[RTSpinKitView alloc] initWithStyle:RTSpinKitViewStyleArcAlt];
+    spinner1.color = [UIColor whiteColor];
+    self.hud = [[MBProgressHUD alloc] initWithView:self.navigationController.view];
+    [self.navigationController.view addSubview:self.hud];
+    self.hud.mode = MBProgressHUDModeCustomView;
+    self.hud.customView = spinner1;
+    self.hud.delegate = self;
+    self.hud.labelText = @"Checking Login Credentials...";
+    [self.hud show:YES];
+
+    if ([FBSDKAccessToken currentAccessToken])
+    {
+        [[[FBSDKGraphRequest alloc] initWithGraphPath:@"me" parameters:@{@"fields" : @"email,first_name,last_name"}]
+
+         startWithCompletionHandler:^(FBSDKGraphRequestConnection *connection, id result, NSError *error)
+         {
+             if (!error)
+             {
+                 isloginWithFB = YES;
+
+                 NSLog(@"LoginWithFacebook -> fetched user: %@", result);
+
+                 NSString * udid = [[UIDevice currentDevice] uniqueDeviceIdentifier];
+
+                 fbID = [[FBSDKAccessToken currentAccessToken] userID];
+                 email_fb = [result objectForKey:@"email"];
+                 firstname_fb = [result objectForKey:@"first_name"];
+                 lastname_fb = [result objectForKey:@"last_name"];
+
+                 serve * log = [serve new];
+                 [log setDelegate:self];
+                 [log setTagName:@"loginwithFB"];
+                 [log loginwithFB:email_fb FBId:fbID remember:YES lat:39.95 lon:-75.16 uid:udid];
+             }
+         }];
     }
 }
 
@@ -492,72 +507,22 @@
     shadowFB.shadowOffset = CGSizeMake(0, -1);
     NSDictionary * shadowFBdict = @{NSShadowAttributeName: shadowFB};
 
-    [self.facebookLogin setTitle:@"       Facebook Connected" forState:UIControlStateNormal];
+    [self.facebookLogin setTitle:@"        Facebook Connected" forState:UIControlStateNormal];
 
     UILabel * glyphFB = [UILabel new];
-    [glyphFB setFont:[UIFont fontWithName:@"FontAwesome" size:19]];
+    [glyphFB setFont:[UIFont fontWithName:@"FontAwesome" size:21]];
     [glyphFB setFrame:CGRectMake(17, 8, 26, 30)];
     glyphFB.attributedText = [[NSAttributedString alloc] initWithString:[NSString fontAwesomeIconStringForIconIdentifier:@"fa-facebook-square"] attributes:shadowFBdict];
     [glyphFB setTextColor:[UIColor whiteColor]];
     [self.facebookLogin addSubview:glyphFB];
 
     UILabel * glyph_check = [UILabel new];
-    [glyph_check setFont:[UIFont fontWithName:@"FontAwesome" size:13]];
-    [glyph_check setFrame:CGRectMake(36, 8, 18, 30)];
+    [glyph_check setFont:[UIFont fontWithName:@"FontAwesome" size:14]];
+    [glyph_check setFrame:CGRectMake(39, 8, 20, 30)];
     glyph_check.attributedText = [[NSAttributedString alloc] initWithString:[NSString fontAwesomeIconStringForIconIdentifier:@"fa-check"] attributes:shadowFBdict];
     [glyph_check setTextColor:[UIColor whiteColor]];
 
     [self.facebookLogin addSubview:glyph_check];
-}
-
-- (void)attemptFBLogin
-{
-    [FBRequestConnection startForMeWithCompletionHandler:^(FBRequestConnection *connection, id result, NSError *error) {
-        if (!error)
-        {
-            // Success! Now Log User into Nooch using the FB ID
-            [user setObject:[result objectForKey:@"id"] forKey:@"facebook_id"];
-            NSLog(@"Login w FB successful --> fb id is %@",[result objectForKey:@"id"]);
-
-            isloginWithFB = YES;
-
-            RTSpinKitView * spinner1 = [[RTSpinKitView alloc] initWithStyle:RTSpinKitViewStyleArcAlt];
-            spinner1.color = [UIColor whiteColor];
-            self.hud = [[MBProgressHUD alloc] initWithView:self.navigationController.view];
-            [self.navigationController.view addSubview:self.hud];
-            self.hud.mode = MBProgressHUDModeCustomView;
-            self.hud.customView = spinner1;
-            self.hud.delegate = self;
-            self.hud.labelText = @"Checking Login Credentials...";
-            [self.hud show:YES];
-
-            NSString * udid = [[UIDevice currentDevice] uniqueDeviceIdentifier];
-            email_fb = [result objectForKey:@"email"];
-            fbID = [result objectForKey:@"id"];
-            firstname_fb = [result objectForKey:@"first_name"];
-            lastname_fb = [result objectForKey:@"last_name"];
-
-            serve * log = [serve new];
-            [log setDelegate:self];
-            [log setTagName:@"loginwithFB"];
-            [log loginwithFB:email_fb FBId:fbID remember:YES lat:39.95 lon:-75.16 uid:udid];
-        }
-        else
-        {
-            // An error occurred, we need to handle the error
-            // See: https://developers.facebook.com/docs/ios/errors
-        }
-    }];
-}
-
-// Show an alert message (For Facebook methods)
-- (void)showMessage:(NSString *)text withTitle:(NSString *)title
-{
-    [[[UIAlertView alloc] initWithTitle:title
-                                message:text
-                               delegate:self
-                      cancelButtonTitle:@"OK"
-                      otherButtonTitles:nil] show];
 }
 
 -(void)termsAndConditions:(UIButton*)sender
@@ -799,18 +764,6 @@
             [self.password_field becomeFirstResponder];
 
             self.email_field.text = email_fb;
-            
-            NSString * imgURL = [NSString stringWithFormat:@"https://graph.facebook.com/%@/picture?type=large", fbID];
-
-            [user setObject:fbID forKey:@"facebook_id"];
-
-            if (imgURL)
-            {
-                NSData * imgData = [NSData dataWithContentsOfURL:[NSURL URLWithString:imgURL]];
-                NSMutableDictionary * dictWithFbImage = [self.facebook_info mutableCopy];
-                [dictWithFbImage setObject:imgData forKey:@"image"];
-                self.facebook_info = [dictWithFbImage mutableCopy];
-            }
 
             [self.or setText:NSLocalizedString(@"Rgstr_NwCrtPwTxt", @"Register screen 'Now just create a password...' Instruction Text")];
 
@@ -827,13 +780,13 @@
             NSDictionary * textAttributes1 = @{NSShadowAttributeName: shadow };
 
             UILabel * glyphFB = [UILabel new];
-            [glyphFB setFont:[UIFont fontWithName:@"FontAwesome" size:19]];
+            [glyphFB setFont:[UIFont fontWithName:@"FontAwesome" size:21]];
             [glyphFB setFrame:CGRectMake(17, 8, 26, 30)];
             [glyphFB setTextColor:[UIColor whiteColor]];
             glyphFB.attributedText = [[NSAttributedString alloc] initWithString:[NSString fontAwesomeIconStringForIconIdentifier:@"fa-facebook-square"] attributes:textAttributes1];
 
             UILabel * glyph_check = [UILabel new];
-            [glyph_check setFont:[UIFont fontWithName:@"FontAwesome" size:15]];
+            [glyph_check setFont:[UIFont fontWithName:@"FontAwesome" size:14]];
             [glyph_check setFrame:CGRectMake(39, 8, 20, 30)];
             [glyph_check setTextColor:[UIColor whiteColor]];
             glyph_check.attributedText = [[NSAttributedString alloc] initWithString:[NSString fontAwesomeIconStringForIconIdentifier:@"fa-check"] attributes:textAttributes1];
@@ -841,6 +794,18 @@
             [self.facebookLogin addSubview:glyphFB];
             [self.facebookLogin addSubview:glyph_check];
             [self.facebookLogin setUserInteractionEnabled:NO];
+
+            NSString * imgURL = [NSString stringWithFormat:@"https://graph.facebook.com/%@/picture?type=large", fbID];
+
+            [user setObject:fbID forKey:@"facebook_id"];
+
+            if (imgURL)
+            {
+                NSData * imgData = [NSData dataWithContentsOfURL:[NSURL URLWithString:imgURL]];
+                NSMutableDictionary * dictWithFbImage = [self.facebook_pic mutableCopy];
+                [dictWithFbImage setObject:imgData forKey:@"image"];
+                self.facebook_pic = [dictWithFbImage mutableCopy];
+            }
         }
 
         else if ([loginResult objectForKey:@"Result"] &&
@@ -864,8 +829,7 @@
                 [self.hud hide:YES];
             }
             
-            [FBSession.activeSession close];
-            [FBSession setActiveSession:nil];
+            [self userLoggedOut];
             
             UIAlertView * alert = [[UIAlertView alloc]initWithTitle:@"Unable to Login"
                                                             message:@"We had trouble connecting to that Facebook account.  Please try signing up by entering your name and email."
@@ -890,8 +854,6 @@
                                                   otherButtonTitles:@"Contact Support", nil];
             [alert setTag:50];
             [alert show];
-
-            [spinner stopAnimating];
         }
 
         else if ( [loginResult objectForKey:@"Result"] &&
@@ -907,62 +869,29 @@
                                                   otherButtonTitles:@"Contact Support", nil];
             [alert setTag:51];
             [alert show];
-
-            [spinner stopAnimating];
         }
 
         else if ( [loginResult objectForKey:@"Result"] &&
                  [[loginResult objectForKey:@"Result"] isEqualToString:@"Temporarily_Blocked"] && loginResult != nil)
         {
-            [spinner stopAnimating];
             [self.hud hide:YES];
 
-          /*if ([UIAlertController class]) // for iOS 8
-            {
-                UIAlertController * alert = [UIAlertController
-                                             alertControllerWithTitle:NSLocalizedString(@"Rgstr_SuspAlrtTtl1", @"Register screen 'Account Temporarily Suspended' Alert Title")
-                                             message:NSLocalizedString(@"Rgstr_SuspAlrtBody1", @"Register screen Account Temporarily Suspended Alert Body Text")
-                                             preferredStyle:UIAlertControllerStyleAlert];
-                
-                UIAlertAction * ok = [UIAlertAction
-                                      actionWithTitle:@"OK"
-                                      style:UIAlertActionStyleDefault
-                                      handler:^(UIAlertAction * action)
-                                      {
-                                          [alert dismissViewControllerAnimated:YES completion:nil];
-                                      }];
-                UIAlertAction * contactSupport = [UIAlertAction
-                                                  actionWithTitle:NSLocalizedString(@"Rgstr_SuspAlrtBtn1", @"Register screen 'Contact Support' Alert Btn")
-                                                  style:UIAlertActionStyleDefault
-                                                  handler:^(UIAlertAction * action)
-                                                  {
-                                                      [alert dismissViewControllerAnimated:YES completion:nil];
-                                                      [self emailNoochSupport];
-                                                  }];
-                [alert addAction:ok];
-                [alert addAction:contactSupport];
-                
-                [self presentViewController:alert animated:YES completion:nil];
-            }
-            else // iOS 7 and prior
-            {
-              */UIAlertView * alert = [[UIAlertView alloc]initWithTitle:NSLocalizedString(@"Rgstr_SuspAlrtTtl2", @"Register screen 'Account Temporarily Suspended' Alert Title (2nd)")
+            UIAlertView * alert = [[UIAlertView alloc]initWithTitle:NSLocalizedString(@"Rgstr_SuspAlrtTtl2", @"Register screen 'Account Temporarily Suspended' Alert Title (2nd)")
                                                                 message:NSLocalizedString(@"Rgstr_SuspAlrtBody2", @"Register screen Account Temporarily Suspended Alert Body Text (2nd)")
                                                                delegate:self
                                                       cancelButtonTitle:@"OK"
                                                       otherButtonTitles:NSLocalizedString(@"Rgstr_SuspAlrtBtn2", @"Register screen 'Contact Support' Alert Btn (2nd)"), nil];
-                [alert show];
-                [alert setTag:52];
-          //}
+            [alert show];
+            [alert setTag:52];
         }
     }
 
     else if ([tagName isEqualToString:@"getMemberId"])
     {
-        NSError *error;
-        //user = [NSUserDefaults standardUserDefaults];
+        NSError * error;
 
-        NSDictionary *loginResult = [NSJSONSerialization JSONObjectWithData:[result dataUsingEncoding:NSUTF8StringEncoding] options:0 error:&error];
+        NSDictionary * loginResult = [NSJSONSerialization JSONObjectWithData:[result dataUsingEncoding:NSUTF8StringEncoding] options:0 error:&error];
+
         [user setObject:[loginResult objectForKey:@"Result"] forKey:@"MemberId"];
         [user setObject:email_fb forKey:@"UserName"];
 
@@ -1001,7 +930,6 @@
         [nav_ctrl.navigationItem setLeftBarButtonItem:nil];
         [user removeObjectForKey:@"Balance"];
         [self.navigationItem setBackBarButtonItem:Nil];
-        [spinner stopAnimating];
 
         [UIView beginAnimations:nil context:NULL];
         [UIView setAnimationCurve:UIViewAnimationCurveEaseInOut];
@@ -1061,7 +989,7 @@
                      @"email":self.email_field.text,
                      @"password":self.password_field.text,
                      @"facebook_id":fbID,
-                     @"image":[self.facebook_info objectForKey:@"image"]};
+                     @"image":[self.facebook_pic objectForKey:@"image"]};
         }
 
         SelectPicture *picture = [[SelectPicture alloc] initWithData:user];

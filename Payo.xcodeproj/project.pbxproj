@@ -198,7 +198,6 @@
 		849AF6BD19A3183000693385 /* close_button.png in Resources */ = {isa = PBXBuildFile; fileRef = 849AF6BC19A3183000693385 /* close_button.png */; };
 		84B65A73188542E9009A5205 /* NSString+ASBase64.m in Sources */ = {isa = PBXBuildFile; fileRef = 84B65A72188542E9009A5205 /* NSString+ASBase64.m */; };
 		84B79FFF19BEDEB50081A2AF /* iCarousel.m in Sources */ = {isa = PBXBuildFile; fileRef = 84B79FFE19BEDEB50081A2AF /* iCarousel.m */; };
-		84BACAF519FF7A48001F796D /* FacebookSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84BACAF419FF7A48001F796D /* FacebookSDK.framework */; };
 		84BACAF719FF7A50001F796D /* FBUserSettingsViewResources.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 84BACAF619FF7A50001F796D /* FBUserSettingsViewResources.bundle */; };
 		84C3EF1B187D101E004687F6 /* ReEnterPin.m in Sources */ = {isa = PBXBuildFile; fileRef = 84C3EF1A187D101E004687F6 /* ReEnterPin.m */; };
 		962ACBC84BB2D83DBD984DAB /* libPods-Payo.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 648705D7446F11855B984A74 /* libPods-Payo.a */; };
@@ -498,7 +497,6 @@
 		84B65A72188542E9009A5205 /* NSString+ASBase64.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+ASBase64.m"; sourceTree = "<group>"; };
 		84B79FFD19BEDEB50081A2AF /* iCarousel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = iCarousel.h; sourceTree = "<group>"; };
 		84B79FFE19BEDEB50081A2AF /* iCarousel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = iCarousel.m; sourceTree = "<group>"; };
-		84BACAF419FF7A48001F796D /* FacebookSDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = FacebookSDK.framework; sourceTree = "<group>"; };
 		84BACAF619FF7A50001F796D /* FBUserSettingsViewResources.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = FBUserSettingsViewResources.bundle; sourceTree = "<group>"; };
 		84C3EF19187D101E004687F6 /* ReEnterPin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReEnterPin.h; sourceTree = "<group>"; };
 		84C3EF1A187D101E004687F6 /* ReEnterPin.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ReEnterPin.m; sourceTree = "<group>"; };
@@ -534,7 +532,6 @@
 				6BD38F3316A476DE006B9AE1 /* libz.1.1.3.dylib in Frameworks */,
 				6B5265FE16680D8F00E5341F /* OpenGLES.framework in Frameworks */,
 				6B5265FC16680D5200E5341F /* CoreVideo.framework in Frameworks */,
-				84BACAF519FF7A48001F796D /* FacebookSDK.framework in Frameworks */,
 				6B5265FA16680D4600E5341F /* CoreMedia.framework in Frameworks */,
 				6B5265F816680D2400E5341F /* AVFoundation.framework in Frameworks */,
 				6B30385215FA597700056DAD /* Twitter.framework in Frameworks */,
@@ -855,7 +852,6 @@
 				5C02949C1AABB4F00037595D /* LocalAuthentication.framework */,
 				5CF86F6A1AA666EC00D62C0E /* GameThrive.framework */,
 				84BACAF619FF7A50001F796D /* FBUserSettingsViewResources.bundle */,
-				84BACAF419FF7A48001F796D /* FacebookSDK.framework */,
 				5C10EB7C19F6D4DC0025EB7F /* PixateFreestyle.framework */,
 				5C4A205219E77C0000D1A0EE /* StoreKit.framework */,
 				846A5E0F19DAB0FC0093FF9C /* SDWebImage */,
@@ -1513,6 +1509,7 @@
 					"$(PROJECT_DIR)/Payo/GmThrv_iOS_SDK/Framework",
 					"$(PROJECT_DIR)/Payo/artisan-sdk-latest",
 					"$(PROJECT_DIR)/Payo/Pixate/Framework",
+					"/Users/cliffcanan/Desktop/Cocoa_Libraries/FacebookSDKs-iOS-20150810",
 				);
 				GCC_OPTIMIZATION_LEVEL = s;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -1560,6 +1557,7 @@
 					"$(PROJECT_DIR)/Payo/GmThrv_iOS_SDK/Framework",
 					"$(PROJECT_DIR)/Payo/artisan-sdk-latest",
 					"$(PROJECT_DIR)/Payo/Pixate/Framework",
+					"/Users/cliffcanan/Desktop/Cocoa_Libraries/FacebookSDKs-iOS-20150810",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Payo/Payo-Prefix.pch";

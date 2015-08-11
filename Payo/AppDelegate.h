@@ -8,7 +8,6 @@
 
 #import <UIKit/UIKit.h>
 #import "Reachability.h"
-#import <FacebookSDK/FacebookSDK.h>
 #import <GameThrive/GameThrive.h>
 #import <MobileAppTracker/MobileAppTracker.h>
 
@@ -26,7 +25,7 @@ bool inBack;
 @property (nonatomic,retain) NSDate *inactiveDate;
 @property (strong, nonatomic) GameThrive *gameThrive;
 
-- (void)sessionStateChanged:(FBSession *)session state:(FBSessionState) state error:(NSError *)error;
+//- (void)sessionStateChanged:(FBSession *)session state:(FBSessionState) state error:(NSError *)error;
 - (void)userLoggedIn;
 - (void)userLoggedOut;
 

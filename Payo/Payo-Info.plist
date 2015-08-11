@@ -21,7 +21,7 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>0.0.2</string>
+	<string>0.0.3</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleURLTypes</key>
@@ -30,16 +30,16 @@
 			<key>CFBundleURLSchemes</key>
 			<array>
 				<string>nooch</string>
-				<string>fb198279616971457</string>
+				<string>fb877455335662932</string>
 			</array>
 		</dict>
 	</array>
 	<key>CFBundleVersion</key>
-	<string>0.0.2</string>
+	<string>0.0.3</string>
 	<key>FacebookAppID</key>
-	<string>198279616971457</string>
+	<string>877455335662932</string>
 	<key>FacebookDisplayName</key>
-	<string>Nooch</string>
+	<string>Payo</string>
 	<key>GameThrive_APPID</key>
 	<string>d748b06e-95ea-11e4-b2b2-fbd23597044a</string>
 	<key>LSApplicationCategoryType</key>

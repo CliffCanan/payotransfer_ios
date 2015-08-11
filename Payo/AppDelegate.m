@@ -19,6 +19,8 @@
 #import "HistoryFlat.h"
 #import "SettingsOptions.h"
 #import "IdVerifyImageUpload.h"
+#import <FBSDKCoreKit/FBSDKCoreKit.h>
+#import <FBSDKLoginKit/FBSDKLoginKit.h>
 #import <Google/Analytics.h>
 @import GoogleMaps;
 
@@ -130,20 +132,8 @@ bool modal;
 
     [MobileAppTracker measureSession];
 
-    // Whenever a person opens the app, check for a cached FB session
-    if (FBSession.activeSession.state == FBSessionStateCreatedTokenLoaded)
-    {
-        // If there's one, just open the session silently, without showing the user the login UI
-        [FBSession openActiveSessionWithReadPermissions:@[@"public_profile",@"email",@"user_friends"]
-                                           allowLoginUI:NO
-                                      completionHandler:^(FBSession *session, FBSessionState state, NSError *error) {
-                                          // Handler for session state changes
-                                          // This method will be called EACH time the session state changes,
-                                          // also for intermediate states and NOT just when the session open
-                                          [self sessionStateChanged:session state:state error:error];
-                                      }];
-    }
     [self application:nil handleOpenURL:[NSURL URLWithString:@"Nooch:"]];
+
     [self.window makeKeyAndVisible];
 
     [application setApplicationIconBadgeNumber:0];
@@ -308,7 +298,20 @@ bool modal;
     [ARManager startWithAppId:@"55bbad8c369f840f5c000001"];
 
     [[NSUserDefaults standardUserDefaults] setBool:false forKey:@"VersionUpdateNoticeDisplayed"];
-    return YES;
+
+    if ([FBSDKAccessToken currentAccessToken])
+    {
+        NSLog(@"App didFinishLaunching -> FB Token Found");
+        [self userLoggedIn];
+    }
+    else
+    {
+        NSLog(@"App didFinishLaunching -> FB Token NOT Found");
+        [self userLoggedOut];
+    }
+
+    return [[FBSDKApplicationDelegate sharedInstance] application:application
+                                    didFinishLaunchingWithOptions:launchOptions];
 }
 
 -(void)connectCheck:(NSNotification *)notice
@@ -414,84 +417,17 @@ void exceptionHandler(NSException *exception){
     }
 
     // Call the 'activateApp' method to log an app event for use in analytics and advertising reporting.
-    [FBAppEvents activateApp];
-
-    // FBSample logic
-    // We need to properly handle activation of the application with regards to SSO
-    //  (e.g., returning from iOS 6.0 authorization dialog or from fast app switching).
-    [FBAppCall handleDidBecomeActive];
+    [FBSDKAppEvents activateApp];
 }
 
 -(void)applicationWillTerminate:(UIApplication *)application
 {
     // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
-    // Close the FB Session if active (does not clear the cache of the FB Token)
-    [FBSession.activeSession close];
 }
-
-#pragma mark - Facebook Methods
-// This method will handle ALL the FB session state changes in the app
-- (void)sessionStateChanged:(FBSession *)session state:(FBSessionState) state error:(NSError *)error
+// Facebook: Show the user the logged-in UI
+- (void)userLoggedIn
 {
-    // If the session was opened successfully
-    if (!error && state == FBSessionStateOpen)
-    {
-        NSLog(@"FB Session opened");
-        [self userLoggedIn];
-        return;
-    }
-
-    // If the session is closed
-    if (state == FBSessionStateClosed || state == FBSessionStateClosedLoginFailed)
-    {
-        NSLog(@"FB Session closed");
-        [self userLoggedOut];
-    }
-
-    // Handle errors
-    if (error)
-    {
-        NSLog(@"FB Error");
-        NSString *alertText;
-        NSString *alertTitle;
-        // If the error requires people using an app to make an action outside of the app in order to recover
-        if ([FBErrorUtility shouldNotifyUserForError:error] == YES)
-        {
-            alertTitle = @"Something went wrong";
-            alertText = [FBErrorUtility userMessageForError:error];
-            [self showMessage:alertText withTitle:alertTitle];
-        }
-        else
-        {
-            // If the user cancelled login, do nothing
-            if ([FBErrorUtility errorCategoryForError:error] == FBErrorCategoryUserCancelled)
-            {
-                NSLog(@"User cancelled login");
-            }
-            // Handle session closures that happen outside of the app
-            else if ([FBErrorUtility errorCategoryForError:error] == FBErrorCategoryAuthenticationReopenSession)
-            {
-                alertTitle = @"Session Error";
-                alertText = @"Your current session is no longer valid. Please log in again.";
-                [self showMessage:alertText withTitle:alertTitle];
-            }
-            // For simplicity, here we just show a generic message for all other errors
-            // You can learn how to handle other errors using our guide: https://developers.facebook.com/docs/ios/errors
-            else
-            {
-                //Get more error information from the error
-                NSDictionary *errorInformation = [[[error.userInfo objectForKey:@"com.facebook.sdk:ParsedJSONResponseKey"] objectForKey:@"body"] objectForKey:@"error"];
-
-                // Show the user an error message
-                alertTitle = @"Something went wrong";
-                alertText = [NSString stringWithFormat:@"Please retry. \n\n If the problem persists contact us and mention this error code: %@", [errorInformation objectForKey:@"message"]];
-                [self showMessage:alertText withTitle:alertTitle];
-            }
-        }
-        // Clear this token
-        [FBSession.activeSession closeAndClearTokenInformation];
-        [self userLoggedOut];
-    }
+    [user setObject:[[FBSDKAccessToken currentAccessToken] userID] forKey:@"facebook_id"];
 }
 // Facebook: Show the user the logged-out UI
 - (void)userLoggedOut
@@ -499,31 +435,7 @@ void exceptionHandler(NSException *exception){
     [user removeObjectForKey:@"facebook_id"];
     [user synchronize];
 }
-// Facebook: Show the user the logged-in UI
-- (void)userLoggedIn
-{
-    [FBRequestConnection startForMeWithCompletionHandler:^(FBRequestConnection *connection, id result, NSError *error) {
-        if (!error)
-        {
-            // Success! Now set the facebook_id to be the fb_id that was just returned
-            [[NSUserDefaults standardUserDefaults] setObject:[result objectForKey:@"id"] forKey:@"facebook_id"];
-        }
-        else
-        {
-            // An error occurred, we need to handle the error
-            // See: https://developers.facebook.com/docs/ios/errors
-        }
-    }];
-}
-// Show an alert message (For Facebook methods)
--(void)showMessage:(NSString *)text withTitle:(NSString *)title
-{
-    [[[UIAlertView alloc] initWithTitle:title
-                                message:text
-                               delegate:self
-                      cancelButtonTitle:@"OK"
-                      otherButtonTitles:nil] show];
-}
+
 
 #pragma mark - Notification Handling Methods
 -(void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken
@@ -596,11 +508,10 @@ void exceptionHandler(NSException *exception){
 
     if ([[url absoluteString] rangeOfString:@"facebook"].location != NSNotFound)
     {
-        return [FBAppCall handleOpenURL:url
-                      sourceApplication:sourceApplication
-                        fallbackHandler:^(FBAppCall *call) {
-                            NSLog(@"In fallback handler");
-                        }];
+        return [[FBSDKApplicationDelegate sharedInstance] application:application
+                                                              openURL:url
+                                                    sourceApplication:sourceApplication
+                                                           annotation:annotation];
     }
 
     // If coming from Synapse add bank process
