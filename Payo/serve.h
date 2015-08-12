@@ -75,7 +75,7 @@
 -(void)resendSMS;
 -(void)saveDob:(NSString*)dob;
 -(void)saveSsn:(NSString*)ssn;
--(void)saveUserIpAddress:(NSString*)IpAddress;
+-(void)saveUserIpAddressAndDeviceId:(NSString*)IpAddress deviceId:(NSString*)deviceId;
 -(void)SaveImmediateRequire:(BOOL)IsRequiredImmediatley;
 -(void)saveShareToFB_Twitter:(NSString*)PostTo;
 -(void)storeFB:(NSString*)fb_id isConnect:(NSString*)isconnect;

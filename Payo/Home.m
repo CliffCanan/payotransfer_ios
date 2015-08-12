@@ -149,6 +149,17 @@ NSMutableURLRequest *request;
 
     [ARProfileManager setSharedUserId:[user valueForKey:@"MemberId"]];
     [ARProfileManager registerLocation:@"lastKnownLocation"];
+
+    NSURL * theURL = [[NSURL alloc] initWithString:@"http://ip-api.com/line/?fields=query"];
+    NSString * myIP = [[NSString alloc] initWithData:[NSData dataWithContentsOfURL:theURL] encoding:NSUTF8StringEncoding];
+
+    NSString * deviceID = [NSString stringWithFormat:@"%@-AAPL",[UIDevice currentDevice].identifierForVendor.UUIDString];
+    NSLog(@"deviceID is: %@", deviceID);
+
+    if ([myIP length] < 16)
+    {
+        [self saveIpAddressAndDeviceId:myIP deviceId:deviceID];
+    }
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -314,14 +325,6 @@ NSMutableURLRequest *request;
             [ARProfileManager setStringValue:@"NO" forVariable:@"IsSynapseBankAttached"];
         }
     });
-
-    NSURL * theURL = [[NSURL alloc] initWithString:@"http://ip-api.com/line/?fields=query"];
-    NSString * myIP = [[NSString alloc] initWithData:[NSData dataWithContentsOfURL:theURL] encoding:NSUTF8StringEncoding];
-    
-    if ([myIP length] < 16)
-    {
-        [self saveIpAddress:myIP];
-    }
 }
 
 -(void)viewDidDisappear:(BOOL)animated
@@ -1160,7 +1163,7 @@ void addressBookChanged(ABAddressBookRef addressBook, CFDictionaryRef info, void
     return [documentsDirectory stringByAppendingPathComponent:[NSString stringWithFormat:@"autoLogin.plist"]];
 }
 
--(void)saveIpAddress:(NSString*)Ip
+-(void)saveIpAddressAndDeviceId:(NSString*)Ip deviceId:(NSString*)deviceId
 {
     if ([Ip rangeOfString:@"\n"].location != NSNotFound)
     {
@@ -1169,11 +1172,14 @@ void addressBookChanged(ABAddressBookRef addressBook, CFDictionaryRef info, void
     //NSLog(@"IP: %@", Ip);
 
     serve * saveIP = [serve new];
-    [saveIP setTagName:@"saveIpAddress"];
+    [saveIP setTagName:@"saveIpAddressAndDeviceId"];
     [saveIP setDelegate:self];
-    [saveIP saveUserIpAddress:Ip];
+    [saveIP saveUserIpAddressAndDeviceId:Ip deviceId:deviceId];
+
+    [user setObject:deviceId forKey:@"deviceId"];
 
     [ARProfileManager setStringValue:Ip forVariable:@"IPaddress"];
+    [ARProfileManager setStringValue:deviceId forVariable:@"DeviceID"];
 }
 
 - (void)applicationWillEnterFG_Home:(NSNotification *)notification

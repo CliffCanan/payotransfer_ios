@@ -622,16 +622,16 @@
 
 -(void)post
 {
-    NSString * post_text = nil;
+    //NSString * post_text = nil;
 
-    if ([[self.trans objectForKey:@"TransactionStatus"] isEqualToString:@"Success"])
-    {
-        post_text = [NSString stringWithFormat:@"I just paid %@!",[self.trans objectForKey:@"Name"]];
-    }
+    //if ([[self.trans objectForKey:@"TransactionStatus"] isEqualToString:@"Success"])
+    //{
+        //post_text = [NSString stringWithFormat:@"I just paid %@!",[self.trans objectForKey:@"Name"]];
+    //}
 
-    NSString * postTitle = @"Payo makes money simple";
-    NSString * postLink = @"https://157054.measurementapi.com/serve?action=click&publisher_id=157054&site_id=91086";
-    NSString * postImgUrl = @"https://www.nooch.com/wp-content/themes/newnooch/library/images/nooch-logo.svg";
+    //NSString * postTitle = @"Payo makes money simple";
+    //NSString * postLink = @"https://157054.measurementapi.com/serve?action=click&publisher_id=157054&site_id=91086";
+    //NSString * postImgUrl = @"https://www.nooch.com/wp-content/themes/newnooch/library/images/nooch-logo.svg";
 
     // Check if the Facebook app is installed and we can present the share dialog
 /*    FBLinkShareParams *params = [[FBLinkShareParams alloc] init];

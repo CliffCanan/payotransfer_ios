@@ -1413,12 +1413,12 @@ NSString *amnt;
         NSLog(@"connect error");
 }
 
--(void)saveUserIpAddress:(NSString*)IpAddress
+-(void)saveUserIpAddressAndDeviceId:(NSString*)IpAddress deviceId:(NSString*)deviceId
 {
     self.responseData = [[NSMutableData alloc] init];
     [[NSURLCache sharedURLCache] removeAllCachedResponses];
 
-    NSString *urlString = [NSString stringWithFormat:@"%@/UdateMemberIPAddress",ServerUrl];
+    NSString *urlString = [NSString stringWithFormat:@"%@/UpdateMemberIPAddressAndDeviceId",ServerUrl];
     NSURL *url = [NSURL URLWithString:urlString];
 
     NSUserDefaults * defaults = [NSUserDefaults standardUserDefaults];
@@ -1427,6 +1427,7 @@ NSString *amnt;
     [dictInv setObject:[defaults objectForKey:@"MemberId"] forKey:@"MemberId"];
     [dictInv setObject:[defaults valueForKey:@"OAuthToken"] forKey:@"AccessToken"];
     [dictInv setObject:IpAddress forKey:@"IpAddress"];
+    [dictInv setObject:deviceId forKey:@"DeviceId"];
 
     NSMutableDictionary * entry = [[NSMutableDictionary alloc] init];
     [entry setObject:dictInv forKey:@"member"];
