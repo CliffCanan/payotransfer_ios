@@ -45,51 +45,7 @@
     return self;
 }
 
--(void)viewWillAppear:(BOOL)animated
-{
-    [super viewWillAppear:animated];
-    self.screenName = @"Login Screen";
-    self.artisanNameTag = @"Login Screen";
-}
-
--(void)viewDidAppear:(BOOL)animated
-{
-    [super viewDidAppear:animated];
-
-    UIButton *btnback = [UIButton buttonWithType:UIButtonTypeCustom];
-    [btnback setBackgroundColor:[UIColor whiteColor]];
-    [btnback setFrame:CGRectMake(7, -40, 44, 44)];
-    [btnback addTarget:self action:@selector(BackClicked:) forControlEvents:UIControlEventTouchUpInside];
-
-    UILabel *glyph_back = [UILabel new];
-    [glyph_back setBackgroundColor:[UIColor clearColor]];
-    [glyph_back setFont:[UIFont fontWithName:@"FontAwesome" size:26]];
-    [glyph_back setTextAlignment:NSTextAlignmentCenter];
-    [glyph_back setFrame:CGRectMake(0, 14, 44, 44)];
-    [glyph_back setText:[NSString fontAwesomeIconStringForIconIdentifier:@"fa-arrow-circle-o-left"]];
-    [glyph_back setTextColor:kPayoBlue];
-    [btnback addSubview:glyph_back];
-
-    [self.view addSubview:btnback];
-
-    [UIView animateKeyframesWithDuration:.35
-                                   delay:0
-                                 options:2 << 16
-                              animations:^{
-                                  [UIView addKeyframeWithRelativeStartTime:0 relativeDuration:1 animations:^{
-                                      if ([[UIScreen mainScreen] bounds].size.height > 500)
-                                      {
-                                          [btnback setFrame:CGRectMake(7, 18, 44, 44)];
-                                      }
-                                      else
-                                      {
-                                          [btnback setFrame:CGRectMake(7, 2, 44, 44)];
-                                      }
-                                  }];
-                              } completion: nil];
-}
-
-- (void)viewDidLoad
+-(void)viewDidLoad
 {
     [super viewDidLoad];
 
@@ -240,17 +196,61 @@
     [self.view addSubview:forgot];
     [self.view addSubview:encryption];
     [self.view addSubview:encrypt_icon];
-
+    
     user = [NSUserDefaults standardUserDefaults];
+}
+
+-(void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    self.screenName = @"Login Screen";
+    self.artisanNameTag = @"Login Screen";
+}
+
+-(void)viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:animated];
+
+    UIButton *btnback = [UIButton buttonWithType:UIButtonTypeCustom];
+    [btnback setBackgroundColor:[UIColor whiteColor]];
+    [btnback setFrame:CGRectMake(7, -40, 44, 44)];
+    [btnback addTarget:self action:@selector(BackClicked:) forControlEvents:UIControlEventTouchUpInside];
+
+    UILabel *glyph_back = [UILabel new];
+    [glyph_back setBackgroundColor:[UIColor clearColor]];
+    [glyph_back setFont:[UIFont fontWithName:@"FontAwesome" size:26]];
+    [glyph_back setTextAlignment:NSTextAlignmentCenter];
+    [glyph_back setFrame:CGRectMake(0, 14, 44, 44)];
+    [glyph_back setText:[NSString fontAwesomeIconStringForIconIdentifier:@"fa-arrow-circle-o-left"]];
+    [glyph_back setTextColor:kPayoBlue];
+    [btnback addSubview:glyph_back];
+
+    [self.view addSubview:btnback];
+
+    [UIView animateKeyframesWithDuration:.35
+                                   delay:0
+                                 options:2 << 16
+                              animations:^{
+                                  [UIView addKeyframeWithRelativeStartTime:0 relativeDuration:1 animations:^{
+                                      if ([[UIScreen mainScreen] bounds].size.height > 500)
+                                      {
+                                          [btnback setFrame:CGRectMake(7, 18, 44, 44)];
+                                      }
+                                      else
+                                      {
+                                          [btnback setFrame:CGRectMake(7, 2, 44, 44)];
+                                      }
+                                  }];
+                              } completion: nil];
 }
 
 -(void)LoginWithFbTapped:(id)sender
 {
-    if ([FBSDKAccessToken currentAccessToken])
+    if ([FBSDKAccessToken currentAccessToken]) // Already have a FB Token
     {
         [self loginWithFacebook];
     }
-    else
+    else // No FB Token
     {
         FBSDKLoginManager *login = [[FBSDKLoginManager alloc] init];
         [login logInWithReadPermissions:@[@"email"] handler:^(FBSDKLoginManagerLoginResult *result, NSError *error) {
@@ -260,7 +260,6 @@
             }
             else if (result.isCancelled)
             {
-                // Handle cancellations
                 [self userLoggedOut];
             }
             else
@@ -313,7 +312,6 @@
 
                  [user setObject:[result objectForKey:@"id"] forKey:@"facebook_id"];
 
-                 NSString * udid = [[UIDevice currentDevice] uniqueDeviceIdentifier];
                  email_fb = [result objectForKey:@"email"];
                  fbID = [[FBSDKAccessToken currentAccessToken] userID];
                  firstname_fb = [result objectForKey:@"first_name"];
@@ -322,7 +320,7 @@
                  serve * log = [serve new];
                  [log setDelegate:self];
                  [log setTagName:@"loginwithFB"];
-                 [log loginwithFB:email_fb FBId:fbID remember:YES lat:lat lon:lon uid:udid];
+                 [log loginwithFB:email_fb FBId:fbID remember:YES lat:lat lon:lon];
              }
          }];
     }
@@ -398,13 +396,16 @@
     
     //NSLog(@"LAT is: %@   & LONG is: %f", [[NSString alloc] initWithFormat:@"%f",loc.latitude],lon);
     
-    [[assist shared]setlocationAllowed:YES];
+    [[assist shared] setlocationAllowed:YES];
 }
 
 -(void)locationManager:(CLLocationManager *)manager
        didFailWithError:(NSError *)error
 {
-    if ([error code] == kCLErrorDenied){
+    [[assist shared] setlocationAllowed:NO];
+
+    if ([error code] == kCLErrorDenied)
+    {
         NSLog(@"Error : %@",error);
     }
 }
@@ -417,16 +418,20 @@
         {
             NSLog(@"Login -> Location Services Allowed");
 
-            locationManager = [[CLLocationManager alloc] init];
+            [[assist shared] setlocationAllowed:NO];
 
+            locationManager = [[CLLocationManager alloc] init];
             locationManager.delegate = self;
             locationManager.distanceFilter = kCLDistanceFilterNone; // whenever we move
             locationManager.desiredAccuracy = kCLLocationAccuracyHundredMeters; // 100 m
 
             [locationManager startUpdatingLocation];
         }
-        else {
+        else
+        {
             NSLog(@"Login -> Location Services NOT Allowed");
+
+            [[assist shared] setlocationAllowed:NO];
         }
     }
 }
@@ -470,12 +475,11 @@
         self.hud.delegate = self;
         self.hud.labelText = NSLocalizedString(@"Login_HUDlbl", @"'Checking Login Credentials...' HUD Label");
         [self.hud show:YES];
-        //[[assist shared]setPassValue:self.password.text]; //Cliff (7/4/15: why are we storing the pw value?? Can't imagine why it's needed...
+        [[assist shared]setPassValue:self.password.text]; //Cliff (7/4/15: why are we storing the pw value?? Can't imagine why it's needed... (Reset PW screen?)
 
-        serve *log = [serve new];
+        serve * log = [serve new];
         [log setDelegate:self];
         [log setTagName:@"encrypt"];
-        [[assist shared]setPassValue:self.password.text];
         [log getEncrypt:self.password.text];
     }
     else
@@ -492,12 +496,12 @@
     }
 }
 
--(void) BackClicked:(id) sender
+-(void)BackClicked:(id) sender
 {
     [self.navigationController popViewControllerAnimated:YES];
 }
 
-- (void)alertView:(UIAlertView *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex
+-(void)alertView:(UIAlertView *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex
 {
     if (actionSheet.tag == 22 && buttonIndex == 1)
     {
@@ -563,38 +567,6 @@
     }
 }
 
-- (void) mailComposeController:(MFMailComposeViewController *)controller didFinishWithResult:(MFMailComposeResult)result error:(NSError *)error
-{
-    UIAlertView *alert = [[UIAlertView alloc] init];
-    [alert addButtonWithTitle:@"OK"];
-    [alert setDelegate:nil];
-    switch (result)
-    {
-        case MFMailComposeResultCancelled:
-            NSLog(@"Mail cancelled");
-            break;
-        case MFMailComposeResultSaved:
-            [alert setTitle:@"Email Draft Saved"];
-            [alert show];
-            break;
-        case MFMailComposeResultSent:
-            NSLog(@"Mail sent");
-            [alert setTitle:@"Email Sent Successfully"];
-            [alert show];
-            break;
-        case MFMailComposeResultFailed:
-            [alert setTitle:[error localizedDescription]];
-            [alert show];
-            NSLog(@"Mail sent failure: %@", [error localizedDescription]);
-            break;
-        default:
-            break;
-    }
-
-    // Close the Mail Interface
-    [self dismissViewControllerAnimated:YES completion:NULL];
-}
-
 -(void)Error:(NSError *)Error
 {
     [self.hud hide:YES];
@@ -649,27 +621,26 @@
 
     else if ([tagName isEqualToString:@"encrypt"])
     {
-        NSError *error;
-        NSDictionary *loginResult = [NSJSONSerialization JSONObjectWithData:[result dataUsingEncoding:NSUTF8StringEncoding] options:0 error:&error];
+        NSError * error;
+        NSDictionary * loginResult = [NSJSONSerialization JSONObjectWithData:[result dataUsingEncoding:NSUTF8StringEncoding] options:0 error:&error];
 
         [self checkIfLocationAllowed];
 
         self.encrypted_pass = [[NSString alloc] initWithString:[loginResult objectForKey:@"Status"]];
 
+        [user setObject:self.email.text forKey:@"UserName"];
+
         serve * log = [serve new];
         [log setDelegate:self];
         [log setTagName:@"login"];
-        [[UIApplication sharedApplication]setStatusBarHidden:NO];
 
-        NSString * udid = [[UIDevice currentDevice] uniqueDeviceIdentifier];
-        [[assist shared]setlocationAllowed:YES];
-        [user setObject:self.email.text forKey:@"UserName"];
-
-        if ([self.stay_logged_in isOn]) {
-            [log login:[self.email.text lowercaseString] password:self.encrypted_pass remember:YES lat:lat lon:lon uid:udid];
+        if ([self.stay_logged_in isOn])
+        {
+            [log login:[self.email.text lowercaseString] password:self.encrypted_pass remember:YES lat:lat lon:lon];
         }
-        else {
-            [log login:[self.email.text lowercaseString] password:self.encrypted_pass remember:NO lat:lat lon:lon uid:udid];
+        else
+        {
+            [log login:[self.email.text lowercaseString] password:self.encrypted_pass remember:NO lat:lat lon:lon];
         }
     }
 
@@ -742,7 +713,9 @@
             [getDetails getMemIdFromuUsername:[self.email.text lowercaseString]];
         }
         
-        else if ([loginResult objectForKey:@"Result"] && [[loginResult objectForKey:@"Result"] isEqualToString:@"Invalid user id or password."] && loginResult != nil)
+        else if ( loginResult != nil &&
+                 [loginResult objectForKey:@"Result"] &&
+                 [[loginResult objectForKey:@"Result"] isEqualToString:@"Invalid user id or password."])
         {
             [self.hud hide:YES];
 
@@ -757,7 +730,9 @@
             [alert show];
         }
 
-        else if ([loginResult objectForKey:@"Result"] && [[loginResult objectForKey:@"Result"] isEqualToString:@"The password you have entered is incorrect."] && loginResult != nil)
+        else if (  loginResult != nil &&
+                  [loginResult objectForKey:@"Result"] &&
+                 [[loginResult objectForKey:@"Result"] isEqualToString:@"The password you have entered is incorrect."])
         {
             [self.hud hide:YES];
 
@@ -773,7 +748,7 @@
             [alert show];
         }
 
-        else if ( ([loginResult objectForKey:@"Result"] && loginResult != nil) &&
+        else if (  ([loginResult objectForKey:@"Result"] && loginResult != nil) &&
                  ([[[loginResult objectForKey:@"Result"] lowercaseString] rangeOfString:@"suspended"].location != NSNotFound ||
                    [[loginResult objectForKey:@"Result"] rangeOfString:@"temporarily blocked"].location != NSNotFound ||
                    [[loginResult objectForKey:@"Result"] isEqualToString:@"Temporarily_Blocked"]) )
@@ -800,11 +775,14 @@
         {
             [user setObject:[loginResult objectForKey:@"Result"] forKey:@"MemberId"];
 
-            if (isloginWithFB) {
+            if (isloginWithFB)
+            {
                 [user setObject:email_fb forKey:@"UserName"];
             }
             else
+            {
                 [user setObject:[self.email.text lowercaseString] forKey:@"UserName"];
+            }
 
             if (![self.stay_logged_in isOn])
             {
@@ -819,21 +797,20 @@
             }
             me = [core new];
             [me birth];
-            
             [[me usr] setObject:[loginResult objectForKey:@"Result"] forKey:@"MemberId"];
-            if (isloginWithFB) {
-                 [[me usr] setObject:email_fb forKey:@"UserName"];
-            }
-            else
-                [[me usr] setObject:[self.email.text lowercaseString] forKey:@"UserName"];
             
             serve * enc_user = [serve new];
             [enc_user setDelegate:self];
             [enc_user setTagName:@"username"];
-            if (isloginWithFB) {
+
+            if (isloginWithFB)
+            {
+                [[me usr] setObject:email_fb forKey:@"UserName"];
                 [enc_user getEncrypt:email_fb];
             }
-            else {
+            else
+            {
+                [[me usr] setObject:[self.email.text lowercaseString] forKey:@"UserName"];
                 [enc_user getEncrypt:[self.email.text lowercaseString]];
             }
         }
@@ -865,23 +842,22 @@
     {
         [self.hud hide:YES];
 
-        [[assist shared]setIsloginFromOther:NO];
-        [self.navigationItem setHidesBackButton:YES];
+        [[assist shared] setIsloginFromOther:NO];
+
         [nav_ctrl setNavigationBarHidden:NO];
         [nav_ctrl.navigationItem setLeftBarButtonItem:nil];
-        [user removeObjectForKey:@"Balance"];
         [self.navigationItem setBackBarButtonItem:Nil];
+        [self.navigationItem setHidesBackButton:YES];
 
         [UIView beginAnimations:nil context:NULL];
         [UIView setAnimationCurve:UIViewAnimationCurveEaseInOut];
         [UIView setAnimationDuration:0.7];
         [UIView setAnimationTransition:UIViewAnimationTransitionFlipFromRight forView:nav_ctrl.view cache:NO];
         [UIView commitAnimations];
+
         [UIView beginAnimations:nil context:NULL];
         [nav_ctrl popToRootViewControllerAnimated:NO];
-
         [UIView commitAnimations];
-        return;
     }
 }
 
@@ -929,6 +905,7 @@
   //}
 }
 
+#pragma mark - Email Support
 -(void)emailNoochSupport
 {
     if (![MFMailComposeViewController canSendMail])
@@ -958,6 +935,38 @@
     [mailComposer setBccRecipients:[NSArray arrayWithObject:@""]];
     [mailComposer setModalTransitionStyle:UIModalTransitionStylePartialCurl];
     [self presentViewController:mailComposer animated:YES completion:nil];
+}
+
+-(void) mailComposeController:(MFMailComposeViewController *)controller didFinishWithResult:(MFMailComposeResult)result error:(NSError *)error
+{
+    UIAlertView *alert = [[UIAlertView alloc] init];
+    [alert addButtonWithTitle:@"OK"];
+    [alert setDelegate:nil];
+    switch (result)
+    {
+        case MFMailComposeResultCancelled:
+            NSLog(@"Mail cancelled");
+            break;
+        case MFMailComposeResultSaved:
+            [alert setTitle:@"Email Draft Saved"];
+            [alert show];
+            break;
+        case MFMailComposeResultSent:
+            NSLog(@"Mail sent");
+            [alert setTitle:@"Email Sent Successfully"];
+            [alert show];
+            break;
+        case MFMailComposeResultFailed:
+            [alert setTitle:[error localizedDescription]];
+            [alert show];
+            NSLog(@"Mail sent failure: %@", [error localizedDescription]);
+            break;
+        default:
+            break;
+    }
+
+    // Close the Mail Interface
+    [self dismissViewControllerAnimated:YES completion:NULL];
 }
 
 #pragma mark - file paths

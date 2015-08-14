@@ -153,12 +153,9 @@ NSMutableURLRequest *request;
     NSURL * theURL = [[NSURL alloc] initWithString:@"http://ip-api.com/line/?fields=query"];
     NSString * myIP = [[NSString alloc] initWithData:[NSData dataWithContentsOfURL:theURL] encoding:NSUTF8StringEncoding];
 
-    NSString * deviceID = [NSString stringWithFormat:@"%@-AAPL",[UIDevice currentDevice].identifierForVendor.UUIDString];
-    NSLog(@"deviceID is: %@", deviceID);
-
     if ([myIP length] < 16)
     {
-        [self saveIpAddressAndDeviceId:myIP deviceId:deviceID];
+        [self saveIpAddressAndDeviceId:myIP];
     }
 }
 
@@ -1163,7 +1160,7 @@ void addressBookChanged(ABAddressBookRef addressBook, CFDictionaryRef info, void
     return [documentsDirectory stringByAppendingPathComponent:[NSString stringWithFormat:@"autoLogin.plist"]];
 }
 
--(void)saveIpAddressAndDeviceId:(NSString*)Ip deviceId:(NSString*)deviceId
+-(void)saveIpAddressAndDeviceId:(NSString*)Ip
 {
     if ([Ip rangeOfString:@"\n"].location != NSNotFound)
     {
@@ -1174,12 +1171,9 @@ void addressBookChanged(ABAddressBookRef addressBook, CFDictionaryRef info, void
     serve * saveIP = [serve new];
     [saveIP setTagName:@"saveIpAddressAndDeviceId"];
     [saveIP setDelegate:self];
-    [saveIP saveUserIpAddressAndDeviceId:Ip deviceId:deviceId];
-
-    [user setObject:deviceId forKey:@"deviceId"];
+    [saveIP saveUserIpAddressAndDeviceId:Ip];
 
     [ARProfileManager setStringValue:Ip forVariable:@"IPaddress"];
-    [ARProfileManager setStringValue:deviceId forVariable:@"DeviceID"];
 }
 
 - (void)applicationWillEnterFG_Home:(NSNotification *)notification

@@ -302,7 +302,7 @@
                password:[[NSString alloc] initWithString:[loginResult objectForKey:@"Status"]]
                     pin:[self.user objectForKey:@"pin_number"]
                 invCode:[self.code_field.text length] == 0 ? refCodeFromArtisan : self.code_field.text
-                   fbId:[self.user objectForKey:@"facebook_id"] ? [self.user objectForKey:@"facebook_id"] : @"" ];
+                   fbId:[self.user objectForKey:@"facebook_id"] ? [self.user objectForKey:@"facebook_id"] : @""];
 
         // NSLog(@"User Fields to be sent to server are: %@",create);
         self.code_field.text = @"";
@@ -310,17 +310,16 @@
     }
     else if ([tagName isEqualToString:@"create_account"])
     {
-        NSLog(@"Login Result: %@",result);
+        NSLog(@"create_account Result: %@",result);
         
         NSDictionary *response = [NSJSONSerialization JSONObjectWithData:[result dataUsingEncoding:NSUTF8StringEncoding] options:0 error:&error];
         
         if ([[[response objectForKey:@"MemberRegistrationResult"]objectForKey:@"Result"] isEqualToString:@"Thanks for registering! Check your email to complete activation."])
         {
-            NSString * udid = [user valueForKey:@"DeviceToken"];
             serve * login = [serve new];
             login.Delegate = self;
             login.tagName = @"login";
-            [login login:[user objectForKey:@"UserName"] password:getEncryptedPassword remember:YES lat:lat lon:lon uid:udid];
+            [login login:[user objectForKey:@"UserName"] password:getEncryptedPassword remember:YES lat:lat lon:lon];
         }
         else if ([[[response objectForKey:@"MemberRegistrationResult"] objectForKey:@"Result"] isEqualToString:@"You are already a nooch member."])
         {
@@ -367,8 +366,8 @@
     }
 }
 
-- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex{
-    
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
+{    
     if (alertView.tag == 88 || alertView.tag == 101)
     {
         if (buttonIndex == 1)

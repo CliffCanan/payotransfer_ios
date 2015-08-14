@@ -186,13 +186,12 @@ NSString *amnt;
 
 -(void)getRecents
 {
-    NSUserDefaults*defaults=[NSUserDefaults standardUserDefaults];
     [[NSURLCache sharedURLCache] removeAllCachedResponses];
 
     self.responseData = [[NSMutableData alloc] init];
 
-    NSMutableURLRequest *request=[NSMutableURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@"@"/GetRecentMembers?id=%@&accessToken=%@",ServerUrl,[[NSUserDefaults standardUserDefaults]stringForKey:@"MemberId"],[defaults valueForKey:@"OAuthToken"]]]];
-    NSURLConnection *connection =[[NSURLConnection alloc] initWithRequest:request delegate:self];
+    NSMutableURLRequest * request=[NSMutableURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@"@"/GetRecentMembers?id=%@&accessToken=%@",ServerUrl,[[NSUserDefaults standardUserDefaults] stringForKey:@"MemberId"],[user valueForKey:@"OAuthToken"]]]];
+    NSURLConnection * connection =[[NSURLConnection alloc] initWithRequest:request delegate:self];
     if (!connection)
         NSLog(@"connect error");
 }
@@ -204,28 +203,26 @@ NSString *amnt;
 
     requestdup = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@"@"/%@?%@=%@", ServerUrl, @"IsDuplicateMember", @"name", email]]];
 
-    NSURLConnection *connection=[[NSURLConnection alloc] initWithRequest:requestdup delegate:self];
+    NSURLConnection * connection = [[NSURLConnection alloc] initWithRequest:requestdup delegate:self];
     if (!connection)
         NSLog(@"connect error");
 }
 
--(void)login:(NSString*)email password:(NSString*)pass remember:(BOOL)isRem lat:(float)lat lon:(float)lng uid:(NSString*)strId
+-(void)login:(NSString*)email password:(NSString*)pass remember:(BOOL)isRem lat:(float)lat lon:(float)lng
 {
     [[assist shared] setSusPended:NO];
     ServiceType = @"Login";
    
-    [[NSUserDefaults standardUserDefaults] setObject:@"0" forKey:@"pincheck"];
+    [user setObject:@"0" forKey:@"pincheck"];
     [[NSURLCache sharedURLCache] removeAllCachedResponses];
 
     self.responseData = [[NSMutableData alloc] init];
 
+    NSString * remember = (isRem) ? @"true" : @"false";
+
     if (isRem)
     {
-        requestLogin = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@"@"/%@?%@=%@&%@=%@&rememberMeEnabled=true&lat=%f&lng=%f&udid=%@&devicetoken=%@", ServerUrl, @"LoginRequest", @"name", email, @"pwd", pass,lat,lng,[[NSUserDefaults standardUserDefaults] valueForKey:@"DeviceToken"],[[NSUserDefaults standardUserDefaults] valueForKey:@"DeviceToken"]]]];
-    }
-    else
-    {
-        requestLogin = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@"@"/%@?%@=%@&%@=%@&rememberMeEnabled=false&lat=%f&lng=%f&udid=%@&devicetoken=%@", ServerUrl, @"LoginRequest", @"name", email, @"pwd", pass,lat,lng,[[NSUserDefaults standardUserDefaults] valueForKey:@"DeviceToken"],[[NSUserDefaults standardUserDefaults] valueForKey:@"DeviceToken"]]]];
+        requestLogin = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@"@"/LoginRequest?name=%@&pwd=%@&rememberMeEnabled=%@&lat=%f&lng=%f&udid=%@&devicetoken=%@", ServerUrl,email,pass,remember,lat,lng,[user valueForKey:@"UUID"],[user valueForKey:@"DeviceToken"]]]];
     }
 
     [requestLogin setTimeoutInterval:10000];
@@ -234,39 +231,23 @@ NSString *amnt;
         NSLog(@"connect error");
 }
 
--(void)loginwithFB:(NSString*)email FBId:(NSString*)FBId remember:(BOOL)isRem lat:(float)lat lon:(float)lng uid:(NSString*)strId
+-(void)loginwithFB:(NSString*)email FBId:(NSString*)FBId remember:(BOOL)isRem lat:(float)lat lon:(float)lng
 {
     [[assist shared] setSusPended:NO];
     ServiceType = @"Login";
 
-    //LoginWithFacebook(string userEmail, string FBId, Boolean rememberMeEnabled, decimal lat, decimal lng, string udid, string devicetoken)
-
-    [[NSUserDefaults standardUserDefaults] setObject:@"0" forKey:@"pincheck"];
+    [user setObject:@"0" forKey:@"pincheck"];
     [[NSURLCache sharedURLCache] removeAllCachedResponses];
     
     self.responseData = [[NSMutableData alloc] init];
-    if (isRem)
-    {
-        requestLogin = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@"@"/%@?%@=%@&%@=%@&rememberMeEnabled=true&lat=%f&lng=%f&udid=%@&devicetoken=%@", ServerUrl, @"LoginWithFacebook", @"userEmail", email, @"FBId", FBId,lat,lng,[[NSUserDefaults standardUserDefaults] valueForKey:@"DeviceToken"],[[NSUserDefaults standardUserDefaults] valueForKey:@"DeviceToken"]]]];
-    }
-    else
-    {
-        requestLogin = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@"@"/%@?%@=%@&%@=%@&rememberMeEnabled=false&lat=%f&lng=%f&udid=%@&devicetoken=%@", ServerUrl, @"LoginWithFacebook", @"userEmail", email, @"FBId", FBId,lat,lng,[[NSUserDefaults standardUserDefaults] valueForKey:@"DeviceToken"],[[NSUserDefaults standardUserDefaults] valueForKey:@"DeviceToken"]]]];
-    }
+
+    NSString * remember = (isRem) ? @"true" : @"false";
+
+    requestLogin = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@"@"/LoginWithFacebook?userEmail=%@&FBId=%@&rememberMeEnabled=%@&lat=%f&lng=%f&udid=%@&devicetoken=%@", ServerUrl,email,FBId,remember,lat,lng,[user valueForKey:@"UUID"],[user valueForKey:@"DeviceToken"]]]];
+
     [requestLogin setTimeoutInterval:10000];
     connectionLogin = [[NSURLConnection alloc] initWithRequest:requestLogin delegate:self];
     if (!connectionLogin)
-        NSLog(@"connect error");
-}
-
--(void)memberDevice:(NSString *)deviceToken
-{
-    self.responseData = [[NSMutableData alloc] init];
-    NSUserDefaults*defaults=[NSUserDefaults standardUserDefaults];
-    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@"@"/%@?memberId=%@&deviceToken=%@&accessToken=%@", ServerUrl, @"MemberDevice", [[NSUserDefaults standardUserDefaults]stringForKey:@"MemberId"],deviceToken,[defaults valueForKey:@"OAuthToken"]]]];
-    
-    NSURLConnection *connection = [[NSURLConnection alloc] initWithRequest:request delegate:self];
-    if (!connection)
         NSLog(@"connect error");
 }
 
@@ -314,6 +295,9 @@ NSString *amnt;
 {
     self.responseData = [NSMutableData data];
 
+    NSString * UUID = [NSString stringWithFormat:@"%@-AAPL",[UIDevice currentDevice].identifierForVendor.UUIDString];
+    [user setObject:UUID forKey:@"UUID"];
+
     NSMutableDictionary * dictnew = [[NSMutableDictionary alloc] init];
     [dictnew setObject:email forKey:@"UserName"];
     [dictnew setObject:fName forKey:@"FirstName"];
@@ -326,8 +310,9 @@ NSString *amnt;
     [dictnew setObject:@"" forKey:@"friendRequestId"];
     [dictnew setObject:@"" forKey:@"invitedFriendFacebookId"];
     [dictnew setObject:fbId forKey:@"facebookAccountLogin"];
+    [dictnew setObject:UUID forKey:@"UdId"]; // This is specifically for Device Fingerprinting (for Synapse). Since the user cannot have given permission for Push Notifications yet, we don't actually have the "deviceToken" for that purpose. We will store this value here as "UDID1" on the server.
     
-    if ([[assist shared]getTranferImage])
+    if ([[assist shared] getTranferImage])
     {
         NSData * data = UIImagePNGRepresentation([[assist shared] getTranferImage]);
         NSUInteger len = data.length;
@@ -345,6 +330,7 @@ NSString *amnt;
         NSArray * arr = [result1 componentsSeparatedByString:@","];
         [dictnew setObject:arr forKey:@"Picture"];
     }
+
     NSDictionary * memDetails = [NSDictionary dictionaryWithObjectsAndKeys:dictnew,@"MemberDetails", nil];
     //NSLog(@"%@",memDetails);
 
@@ -461,12 +447,14 @@ NSString *amnt;
 }
 
 # pragma mark - CLLocationManager Delegate Methods
-- (void)locationManager:(CLLocationManager *)manager didFailWithError:(NSError *)error{
+- (void)locationManager:(CLLocationManager *)manager didFailWithError:(NSError *)error
+{
     if ([error code] == kCLErrorDenied){
         NSLog(@"Error : %@",error);
     }
 }
--(void) updateLocation:(NSString*)latitudeField longitudeField:(NSString*)longitudeField{
+-(void) updateLocation:(NSString*)latitudeField longitudeField:(NSString*)longitudeField
+{
     //http://maps.googleapis.com/maps/api/geocode/json?latlng=40.714224,-73.961452&sensor=true_or_false
     
     //  NSString *fetchURL = [NSString stringWithFormat:@"http://maps.googleapis.com/maps/api/geocode/json?latlng=%@,%@&sensor=true_or_false", latitudeField, longitudeField];
@@ -533,20 +521,22 @@ NSString *amnt;
 # pragma  mark - NSURL Delegate Methods
 
 //response method for all request
-- (void)connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)response {
+-(void)connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)response
+{
     [responseData setLength:0];
 }
-- (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data {
+-(void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data
+{
     [responseData appendData:data];
 }
-- (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error {
+-(void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error
+{
     NSLog(@"Serve.m Connect ERROR. Service Tag: %@.  Error: %@", self.tagName, error);
-    //if ([tagName isEqualToString:@"EncryptReqImm"]) {}
 
     [self.Delegate Error:error];
 }
 
-- (void)connectionDidFinishLoading:(NSURLConnection *)connection
+-(void)connectionDidFinishLoading:(NSURLConnection *)connection
 {
     responseString = [[NSString alloc] initWithData:responseData encoding:NSASCIIStringEncoding];
 
@@ -869,21 +859,24 @@ NSString *amnt;
     [self.Delegate listen:responseString tagName:self.tagName];
 }
 
+-(BOOL)connection:(NSURLConnection *)connection canAuthenticateAgainstProtectionSpace:(NSURLProtectionSpace *)protectionSpace
+{
+    return [protectionSpace.authenticationMethod isEqualToString:NSURLAuthenticationMethodServerTrust];
+}
+
+-(void)connection:(NSURLConnection *)connection didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
+{
+    if ([challenge.protectionSpace.authenticationMethod isEqualToString:NSURLAuthenticationMethodServerTrust])
+        [challenge.sender useCredential:[NSURLCredential credentialForTrust:challenge.protectionSpace.serverTrust] forAuthenticationChallenge:challenge];
+    [challenge.sender continueWithoutCredentialForAuthenticationChallenge:challenge];
+}
+
 #pragma mark - file paths
 - (NSString *)autoLogin
 {
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
     NSString *documentsDirectory = [paths objectAtIndex:0];
     return [documentsDirectory stringByAppendingPathComponent:[NSString stringWithFormat:@"autoLogin.plist"]];
-}
-
-- (BOOL)connection:(NSURLConnection *)connection canAuthenticateAgainstProtectionSpace:(NSURLProtectionSpace *)protectionSpace {
-    return [protectionSpace.authenticationMethod isEqualToString:NSURLAuthenticationMethodServerTrust];
-}
-- (void)connection:(NSURLConnection *)connection didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge {
-    if ([challenge.protectionSpace.authenticationMethod isEqualToString:NSURLAuthenticationMethodServerTrust])
-        [challenge.sender useCredential:[NSURLCredential credentialForTrust:challenge.protectionSpace.serverTrust] forAuthenticationChallenge:challenge];
-    [challenge.sender continueWithoutCredentialForAuthenticationChallenge:challenge];
 }
 
 -(void)validateInviteCode:(NSString *)inviteCode
@@ -1413,7 +1406,7 @@ NSString *amnt;
         NSLog(@"connect error");
 }
 
--(void)saveUserIpAddressAndDeviceId:(NSString*)IpAddress deviceId:(NSString*)deviceId
+-(void)saveUserIpAddressAndDeviceId:(NSString*)IpAddress
 {
     self.responseData = [[NSMutableData alloc] init];
     [[NSURLCache sharedURLCache] removeAllCachedResponses];
@@ -1421,13 +1414,14 @@ NSString *amnt;
     NSString *urlString = [NSString stringWithFormat:@"%@/UpdateMemberIPAddressAndDeviceId",ServerUrl];
     NSURL *url = [NSURL URLWithString:urlString];
 
-    NSUserDefaults * defaults = [NSUserDefaults standardUserDefaults];
+    NSString * UUID = [NSString stringWithFormat:@"%@-AAPL",[UIDevice currentDevice].identifierForVendor.UUIDString];
+    [user setObject:UUID forKey:@"UUID"];
 
     dictInv = [[NSMutableDictionary alloc] init];
-    [dictInv setObject:[defaults objectForKey:@"MemberId"] forKey:@"MemberId"];
-    [dictInv setObject:[defaults valueForKey:@"OAuthToken"] forKey:@"AccessToken"];
+    [dictInv setObject:[user objectForKey:@"MemberId"] forKey:@"MemberId"];
+    [dictInv setObject:[user valueForKey:@"OAuthToken"] forKey:@"AccessToken"];
     [dictInv setObject:IpAddress forKey:@"IpAddress"];
-    [dictInv setObject:deviceId forKey:@"DeviceId"];
+    [dictInv setObject:UUID forKey:@"DeviceId"];
 
     NSMutableDictionary * entry = [[NSMutableDictionary alloc] init];
     [entry setObject:dictInv forKey:@"member"];

@@ -58,13 +58,12 @@
 -(void)GetServerCurrentTime;
 -(void)histMore:(NSString*)type sPos:(NSInteger)sPos len:(NSInteger)len subType:(NSString*)subType;
 -(void)histMoreSerachbyName:(NSString*)type sPos:(NSInteger)sPos len:(NSInteger)len name:(NSString*)name subType:(NSString*)subType;
--(void)login:(NSString*)email password:(NSString*)pass remember:(BOOL)isRem lat:(float)lat lon:(float)lng uid:(NSString*)strId;
--(void)loginwithFB:(NSString*)email FBId:(NSString*)FBId remember:(BOOL)isRem lat:(float)lat lon:(float)lng uid:(NSString*)strId;
+-(void)login:(NSString*)email password:(NSString*)pass remember:(BOOL)isRem lat:(float)lat lon:(float)lng;
+-(void)loginwithFB:(NSString*)email FBId:(NSString*)FBId remember:(BOOL)isRem lat:(float)lat lon:(float)lng;
 -(void)LogOutRequest:(NSString*) memberId;
--(void)memberDevice:(NSString *)deviceToken;
 -(void)MemberNotificationSettings:(NSDictionary*) memberNotificationSettings type:(NSString*)type;
 -(void)MemberNotificationSettingsInput;
--(void)newUser:(NSString *)email first:(NSString *)fName last:(NSString *)lName password:(NSString *)password pin:(NSString*)pin invCode:(NSString*)inv fbId:(NSString *)fbId ;
+-(void)newUser:(NSString *)email first:(NSString *)fName last:(NSString *)lName password:(NSString *)password pin:(NSString*)pin invCode:(NSString*)inv fbId:(NSString *)fbId;
 -(void)pinCheck:(NSString*)memId pin:(NSString*)pin;
 -(void)ReferalCodeRequest:(NSString*)email;
 -(void)RemoveSynapseBankAccount;
@@ -75,7 +74,7 @@
 -(void)resendSMS;
 -(void)saveDob:(NSString*)dob;
 -(void)saveSsn:(NSString*)ssn;
--(void)saveUserIpAddressAndDeviceId:(NSString*)IpAddress deviceId:(NSString*)deviceId;
+-(void)saveUserIpAddressAndDeviceId:(NSString*)IpAddress;
 -(void)SaveImmediateRequire:(BOOL)IsRequiredImmediatley;
 -(void)saveShareToFB_Twitter:(NSString*)PostTo;
 -(void)storeFB:(NSString*)fb_id isConnect:(NSString*)isconnect;
