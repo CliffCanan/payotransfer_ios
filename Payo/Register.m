@@ -534,6 +534,7 @@
 - (void)open_terms_webview
 {
     isfromRegister = YES;
+
     terms * term = [terms new];
 
     CGRect rect = term.view.frame;
@@ -569,7 +570,9 @@
 #pragma mark - navigation
 - (void)continue_to_signup
 {
-    if (([self.password_field.text length] == 0) || ([self.name_field.text length] == 0) || ([self.email_field.text length] == 0))
+    if (([self.password_field.text length] == 0) ||
+        ([self.name_field.text length] == 0) ||
+        ([self.email_field.text length] == 0))
     {
         UIAlertView *av = [[UIAlertView alloc] initWithTitle:@"Eager Beaver"
                                                      message:@"You have not filled out the sign up form!"
@@ -1027,12 +1030,14 @@
     {
         [self.cont setAlpha:1];
 
-        if ([self.password_field.text length] > 4)
+        if ([self.password_field.text length] > 4 ||
+            (textField == self.password_field && string.length > 4))
         {
             [self.cont setEnabled:YES];
             [self.cont setAlpha:1];
         }
-        else {
+        else
+        {
             [self.cont setEnabled:NO];
         }
     }
@@ -1284,6 +1289,11 @@
     return YES;
 }
 
+- (void)textFieldDidEndEditing:(UITextField *)textField
+{
+    self.name_field.text = self.name_field.text.capitalizedString;
+}
+
 -(BOOL)checkNameForNumsAndSpecChars
 {
     BOOL containsPunctuation = NSNotFound != [self.name_field.text rangeOfCharacterFromSet:NSCharacterSet.punctuationCharacterSet].location;
@@ -1369,11 +1379,6 @@
     {
         return true;
     }
-}
-
-- (void)textFieldDidEndEditing:(UITextField *)textField
-{
-    self.name_field.text = self.name_field.text.capitalizedString;
 }
 
 -(void)emailNoochSupport

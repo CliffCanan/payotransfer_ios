@@ -1535,12 +1535,6 @@ UIImageView *picture;
 
                               }
      ];
-
-    /*[UIView beginAnimations:@"bucketsOff" context:nil];
-    [UIView setAnimationDuration:0.3];
-    [UIView setAnimationDelegate:self];
-
-    [UIView commitAnimations];*/
 }
 
 -(BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string

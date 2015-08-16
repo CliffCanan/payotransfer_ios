@@ -113,19 +113,6 @@
     page5.titleIconView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"HistoryPending"]];
     page5.titleIconPositionY = 120;
 
-    EAIntroPage *page6 = [EAIntroPage page];
-    page6.bgImage = [UIImage imageNamed:@"Tour_stats_bg"];
-
-    page6.title = NSLocalizedString(@"Tour_Page6Title", @"Tour 'Stats & Analytics' page Title");
-    page6.titlePositionY = 120;
-
-    page6.desc = NSLocalizedString(@"Tour_Page6Desc", @"Tour page 6 Description");
-    page6.descWidth = 300;
-    page6.descPositionY = page6.titlePositionY - 26;
-
-    page6.titleIconView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"StatsCircled"]];
-    page6.titleIconPositionY = 120;
-
     if ([[UIScreen mainScreen] bounds].size.height < 500)
     {
         page1.descPositionY = 136;
@@ -142,7 +129,7 @@
         page5.titleIconPositionY = 130;
     }
 
-    intro = [[EAIntroView alloc] initWithFrame:CGRectMake(0, 0, 320, 504) andPages:@[page1,page2,page3,page4,page5,page6]];
+    intro = [[EAIntroView alloc] initWithFrame:CGRectMake(0, 0, 320, 504) andPages:@[page1,page2,page3,page4,page5]];
     [intro setDelegate:self];
     [intro.skipButton setStyleClass:@"reallyLight_gray"];
     [intro setBgViewContentMode:UIViewContentModeScaleAspectFill];

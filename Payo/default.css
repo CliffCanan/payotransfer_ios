@@ -1281,7 +1281,7 @@ table-view#select_recipientwithoutSeperator {
 .pin_instructiontext {
     width			: 300px;
     left			: 10px;
-    top             : 14px;
+    top             : 10px;
     height          : 20px;
     font-family		: "Roboto";
     font-weight		: medium;
@@ -1292,11 +1292,6 @@ table-view#select_recipientwithoutSeperator {
 .pin_instructiontext_4 {
     top             : 4px;
 }
-/**  Making the word "transfer" green.  **/  
-#pin_instructiontext_send { 
-    text-align : center;
-    color 	: #55BA50;
-}
 #Transferpin_instructiontext_send { 
     text-align : center;
     color 	: #55BA50;
@@ -1305,30 +1300,15 @@ table-view#select_recipientwithoutSeperator {
 #pin_instructiontext_request { 
     text-align : center;
     color	: #1A5BAA;
+    font-family: "Roboto";
+    font-weight: medium;
 }
 
 /**  The Amount of the transfer displayed in the middle of the PIN screen.  **/  
-.pin_amountfield {
-    left            : 60px;
-    top             : 114px;
-    width			: 200px;
-    height			: 60px;
-    font-family		: "Roboto";
-    font-size		: 50px;
-    font-weight     : medium;
-    text-align      : center;
-    color 			: #313233;
-}
 .pin_amountfield_4 {
-    left            : 60px;
     top             : 83px;
-    width			: 200px;
     height			: 46px;
-    font-family		: "Roboto";
-    font-size		: 42px;
-    font-weight     : medium;
-    text-align      : center;
-    color 			: #313233;
+    font-size		: 40px;
 }
 
 /**  Background white box for the recipient info right above the number pad.  **/  
@@ -2498,17 +2478,7 @@ table-view#refer {
 }
 
 /*=============================
-			Move Up
-  ============================= */
-@keyframes moveUp_transDetailsBtns {
-    0% {top: 540px;}
-    40% {top: 448px;}
-    60% {top: 459px;}
-    80% {top: 450px;}
-    100% {top: 454px;}
-}
-/*=============================
-			SHAKE (For incorrect PIN entry)
+        SHAKE (For incorrect PIN entry)
   ============================= */
 @keyframes shakePin1 {
   from	{left: 45px}
@@ -2529,7 +2499,6 @@ table-view#refer {
 	animation-iteration-count: 1;
     animation-timing-function: ease;
 }
-
 @keyframes shakePin2 {
   from	{left: 108px}
   10%	{left: 101px}

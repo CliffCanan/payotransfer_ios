@@ -50,12 +50,6 @@
         {
             receiverFirst = [receiver valueForKey:@"FirstName"];
         }
-        if ([receiver valueForKey:@"phone"])
-        {
-            self.phone = [[receiver valueForKey:@"phone"] stringByReplacingOccurrencesOfString:@"[^0-9]" withString:@"" options:NSRegularExpressionSearch range:NSMakeRange(0, [[receiver valueForKey:@"phone"] length])];
-            
-            NSLog(@"self.phone is: %@",self.phone);
-        }
         if ([receiver valueForKey:@"memo"])
         {
             self.memo = [receiver valueForKey:@"memo"];
@@ -87,7 +81,7 @@
     [super viewDidDisappear:animated];
 }
 
-- (void)viewDidLoad
+-(void)viewDidLoad
 {
     [super viewDidLoad];
 
@@ -134,8 +128,9 @@
     [self.pin becomeFirstResponder];
     [self.view setBackgroundColor:[UIColor whiteColor]];
 
-    UILabel *title = [[UILabel alloc] initWithFrame:CGRectMake(10, 40, 300, 60)];
-    [title setText:NSLocalizedString(@"EnterPIN_InstructionTxt", @"Enter PIN Screen instruction text")]; [title setTextAlignment:NSTextAlignmentCenter];
+    UILabel * title = [[UILabel alloc] initWithFrame:CGRectMake(10, 40, 300, 60)];
+    [title setText:NSLocalizedString(@"EnterPIN_InstructionTxt", @"Enter PIN Screen instruction text")];
+    [title setTextAlignment:NSTextAlignmentCenter];
     [title setNumberOfLines:2];
     [title setStyleClass:@"pin_instructiontext"];
     [self.view addSubview:title];
@@ -146,21 +141,39 @@
     }
     else
     {
-        self.prompt = [[UILabel alloc] initWithFrame:CGRectMake(10, 42, 300, 18)];
+        self.prompt = [[UILabel alloc] initWithFrame:CGRectMake(10, 30, 300, 18)];
     }
 
-    if ([self.type isEqualToString:@"send"] || [self.type isEqualToString:@"requestRespond"])
-    {
-        [self.prompt setText:NSLocalizedString(@"EnterPIN_InstructTransfer", @"Enter PIN Screen instructions transfer")];
-        [self.prompt setStyleId:@"Transferpin_instructiontext_send"];
-    }
+    [self.prompt setText:NSLocalizedString(@"EnterPIN_InstructTransfer", @"Enter PIN Screen instructions transfer")];
+    [self.prompt setStyleId:@"Transferpin_instructiontext_send"];
     [self.prompt setTextAlignment:NSTextAlignmentCenter];
     [self.view addSubview:self.prompt];
 
-    UILabel * total = [[UILabel alloc] initWithFrame:CGRectMake(10, 200, 290, 30)];
-    [total setBackgroundColor:[UIColor clearColor]];
-    [total setTextColor:[UIColor whiteColor]]; [total setTextAlignment:NSTextAlignmentRight];
-    [total setText:[NSString stringWithFormat:@"$ %.02f",self.amnt]];
+    UILabel * amount = [[UILabel alloc] initWithFrame:CGRectMake(75, 95, 170, 44)];
+    [amount setBackgroundColor:[UIColor clearColor]];
+    [amount setFont:[UIFont fontWithName:@"Roboto-medium" size:40]];
+    [amount setTextColor:[Helpers hexColor:@"313233"]];
+    [amount setTextAlignment:NSTextAlignmentRight];
+    [amount setText:[NSString stringWithFormat:@"$ %.02f",self.amnt]];
+
+    UILabel * fee = [[UILabel alloc] initWithFrame:CGRectMake(75, 142, 166, 16)];
+    [fee setBackgroundColor:[UIColor clearColor]];
+    [fee setFont:[UIFont fontWithName:@"Roboto-light" size:15]];
+    [fee setTextColor:[Helpers hexColor:@"313233"]];
+    [fee setTextAlignment:NSTextAlignmentRight];
+    [fee setText:@"Fee:      $ 5.00"];
+
+    UIView * line = [[UIView alloc] initWithFrame:CGRectMake(140, 160, 101, 1)];
+    [line setBackgroundColor:kNoochGrayLight];
+    //[line setAlpha:0.5];
+    [self.view addSubview:line];
+
+    UILabel * totalAmount = [[UILabel alloc] initWithFrame:CGRectMake(75, 164, 166, 16)];
+    [totalAmount setBackgroundColor:[UIColor clearColor]];
+    [totalAmount setFont:[UIFont fontWithName:@"Roboto-regular" size:15]];
+    [totalAmount setTextColor:[Helpers hexColor:@"313233"]];
+    [totalAmount setTextAlignment:NSTextAlignmentRight];
+    [totalAmount setText:[NSString stringWithFormat:@"Total:  $ %.02f", self.amnt + 5]];
 
     UIView * back = [UIView new];
     [back setStyleClass:@"raised_view"];
@@ -169,13 +182,9 @@
 
     UIView * bar = [UIView new];
     [bar setStyleClass:@"pin_recipientname_bar"];
-
-    if ([self.type isEqualToString:@"send"] || [self.type isEqualToString:@"requestRespond"])
-    {
-        [bar setStyleId:@"pin_recipientname_send"];
-    }
-
+    [bar setStyleId:@"pin_recipientname_send"];
     [self.view addSubview:bar];
+
     NSShadow * shadow = [[NSShadow alloc] init];
     shadow.shadowColor = Rgb2UIColor(31, 32, 33, .25);
     shadow.shadowOffset = CGSizeMake(0, 1);
@@ -183,49 +192,16 @@
 
     UILabel * to_label = [UILabel new];
 
-    if ([self.receiver objectForKey:@"nonuser"])
+    if ([self.receiver objectForKey:@"firstName"] && [self.receiver objectForKey:@"lastName"])
     {
-        UILabel * glyph_nonuserType = [UILabel new];
-        [glyph_nonuserType setTextColor:[UIColor whiteColor]];
+        short numOfChars = [[self.receiver objectForKey:@"firstName"] length] + [[self.receiver objectForKey:@"lastName"] length];
+        if (numOfChars > 23) {numOfChars = 23;}
 
-        if ([self.receiver objectForKey:@"email"])
-        {
-            [glyph_nonuserType setFont:[UIFont fontWithName:@"FontAwesome" size:17]];
-            glyph_nonuserType.attributedText = [[NSAttributedString alloc]initWithString:[NSString fontAwesomeIconStringForIconIdentifier:@"fa-envelope-o"] attributes:textAttributes];
-        }
-        else if ([self.receiver objectForKey:@"phone"])
-        {
-            [glyph_nonuserType setFont:[UIFont fontWithName:@"FontAwesome" size:20]];
-            glyph_nonuserType.attributedText = [[NSAttributedString alloc]initWithString:[NSString fontAwesomeIconStringForIconIdentifier:@"fa-mobile"] attributes:textAttributes];
-        }
-
-        if ([self.receiver objectForKey:@"firstName"] && [self.receiver objectForKey:@"lastName"])
-        {
-            short numOfChars = [[self.receiver objectForKey:@"firstName"] length] + [[self.receiver objectForKey:@"lastName"] length];
-            if (numOfChars > 23) {numOfChars = 23;}
-
-            to_label.attributedText = [[NSAttributedString alloc] initWithString:[NSString stringWithFormat:@"%@ %@",[self.receiver objectForKey:@"firstName"],[self.receiver objectForKey:@"lastName"]] attributes:textAttributes];
-
-            [glyph_nonuserType setFrame:CGRectMake(198 + ((numOfChars * 10) / 2), 198, 20, 38)];
-            [self.view addSubview:glyph_nonuserType];
-        }
-        else if ([self.receiver objectForKey:@"firstName"])
-        {
-            short numOfChars = [[self.receiver objectForKey:@"firstName"] length];
-
-            to_label.attributedText = [[NSAttributedString alloc] initWithString:[NSString stringWithFormat:@"%@",[self.receiver objectForKey:@"firstName"]] attributes:textAttributes];
-
-            [glyph_nonuserType setFrame:CGRectMake(200 + ((numOfChars * 10) / 2), 198, 20, 38)];
-            [self.view addSubview:glyph_nonuserType];
-        }
-        else if ([self.receiver objectForKey:@"email"])
-        {
-            to_label.attributedText = [[NSAttributedString alloc] initWithString:[NSString stringWithFormat:@"%@",[self.receiver objectForKey:@"email"]] attributes:textAttributes];
-        }
-        else if ([self.receiver objectForKey:@"phone"])
-        {
-            to_label.attributedText = [[NSAttributedString alloc] initWithString:[NSString stringWithFormat:@"%@",[self.receiver objectForKey:@"phone"]] attributes:textAttributes];
-        }
+        to_label.attributedText = [[NSAttributedString alloc] initWithString:[NSString stringWithFormat:@"%@ %@",[self.receiver objectForKey:@"firstName"],[self.receiver objectForKey:@"lastName"]] attributes:textAttributes];
+    }
+    else if ([self.receiver objectForKey:@"firstName"])
+    {
+        to_label.attributedText = [[NSAttributedString alloc] initWithString:[NSString stringWithFormat:@"%@",[self.receiver objectForKey:@"firstName"]] attributes:textAttributes];
     }
     else
     {
@@ -274,26 +250,23 @@
         [bar setStyleClass:@"pin_recipientname_bar_4"];
         [user_pic setFrame:CGRectMake(11, 137, 58, 58)];
 
-        [total setStyleClass:@"pin_amountfield_4"];
+        [amount setStyleClass:@"pin_amountfield_4"];
 
-        self.first_num = [[UIView alloc] initWithFrame:CGRectMake(46,50,28,28)];
-        self.second_num = [[UIView alloc] initWithFrame:CGRectMake(110,50,28,28)];
-        self.third_num = [[UIView alloc] initWithFrame:CGRectMake(175,50,28,28)];
-        self.fourth_num = [[UIView alloc] initWithFrame:CGRectMake(239,50,28,28)];
-        self.first_num.layer.cornerRadius = self.second_num.layer.cornerRadius = self.third_num.layer.cornerRadius = self.fourth_num.layer.cornerRadius = 14;
+        self.first_num = [[UIView alloc] initWithFrame:CGRectMake(46,48,28,28)];
+        self.second_num = [[UIView alloc] initWithFrame:CGRectMake(110,48,28,28)];
+        self.third_num = [[UIView alloc] initWithFrame:CGRectMake(175,48,28,28)];
+        self.fourth_num = [[UIView alloc] initWithFrame:CGRectMake(239,48,28,28)];
     }
     else
     {
         [user_pic setFrame:CGRectMake(11, 205, 58, 58)];
 
-        [total setStyleClass:@"pin_amountfield"];
-
-        self.first_num = [[UIView alloc] initWithFrame:CGRectMake(44,70,32,32)];
-        self.second_num = [[UIView alloc] initWithFrame:CGRectMake(107,70,32,32)];
-        self.third_num = [[UIView alloc] initWithFrame:CGRectMake(170,70,32,32)];
-        self.fourth_num = [[UIView alloc] initWithFrame:CGRectMake(233,70,32,32)];
-        self.first_num.layer.cornerRadius = self.second_num.layer.cornerRadius = self.third_num.layer.cornerRadius = self.fourth_num.layer.cornerRadius = 16;
+        self.first_num = [[UIView alloc] initWithFrame:CGRectMake(46,58,28,28)];
+        self.second_num = [[UIView alloc] initWithFrame:CGRectMake(110,58,28,28)];
+        self.third_num = [[UIView alloc] initWithFrame:CGRectMake(175,58,28,28)];
+        self.fourth_num = [[UIView alloc] initWithFrame:CGRectMake(239,58,28,28)];
     }
+    self.first_num.layer.cornerRadius = self.second_num.layer.cornerRadius = self.third_num.layer.cornerRadius = self.fourth_num.layer.cornerRadius = 14;
 
     [self.view addSubview:to_label];
     [self.view addSubview:memo_label];
@@ -324,17 +297,12 @@
 
     self.first_num.backgroundColor = self.second_num.backgroundColor = self.third_num.backgroundColor = self.fourth_num.backgroundColor = [UIColor clearColor];
     self.first_num.layer.borderWidth = self.second_num.layer.borderWidth = self.third_num.layer.borderWidth = self.fourth_num.layer.borderWidth = 3;
+    self.first_num.layer.borderColor = self.second_num.layer.borderColor = self.third_num.layer.borderColor = self.fourth_num.layer.borderColor = kPayoGreen.CGColor;
 
-    if ([self.type isEqualToString:@"send"])
-    {
-        self.first_num.layer.borderColor = self.second_num.layer.borderColor = self.third_num.layer.borderColor = self.fourth_num.layer.borderColor = kPayoGreen.CGColor;        
-    }
-    else
-    {
-        self.first_num.layer.borderColor = self.second_num.layer.borderColor = self.third_num.layer.borderColor = self.fourth_num.layer.borderColor = kPayoBlue.CGColor;    
-    }
-
-    [self.view addSubview:total];
+    [self.view addSubview:amount];
+    [self.view addSubview:fee];
+    [self.view addSubview:line];
+    [self.view addSubview:totalAmount];
     [self.view addSubview:self.first_num];
     [self.view addSubview:self.second_num];
     [self.view addSubview:self.third_num];

@@ -10,21 +10,19 @@
 #import "Home.h"
 #import "serve.h"
 #import "HowMuch.h"
-#import <AddressBook/AddressBook.h>
-#import <AddressBookUI/AddressBookUI.h>
+#import "AddRecipient.h"
 #import "SpinKit/RTSpinKitView.h"
 
-BOOL isphoneBook, isFromBankWebView;
+BOOL isFromBankWebView;
 int screenLoadedTimes;
+NSMutableDictionary * dict;
 
-@interface SelectRecipient : GAITrackedViewController<UITableViewDelegate,UITableViewDataSource,serveD,UISearchBarDelegate,ABPeoplePickerNavigationControllerDelegate,UIActionSheetDelegate,MBProgressHUDDelegate>
+@interface SelectRecipient : GAITrackedViewController<UITableViewDelegate,UITableViewDataSource,serveD,UISearchBarDelegate,UIActionSheetDelegate,MBProgressHUDDelegate>
 {
     BOOL searching, navIsUp, isRecentList;
-    BOOL emailEntry, shouldAnimate, phoneNumEntry;
+    BOOL shouldAnimate;
 
-    NSArray * emailAddresses;
     NSMutableArray * arrSearchedRecords;
-    NSString * emailphoneBook, * phoneBookPhoneNum , * firstNamePhoneBook, * lastNamePhoneBook;
     NSString * searchString;
 
     UIImageView * arrow;

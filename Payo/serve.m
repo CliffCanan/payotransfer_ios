@@ -190,7 +190,7 @@ NSString *amnt;
 
     self.responseData = [[NSMutableData alloc] init];
 
-    NSMutableURLRequest * request=[NSMutableURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@"@"/GetRecentMembers?id=%@&accessToken=%@",ServerUrl,[[NSUserDefaults standardUserDefaults] stringForKey:@"MemberId"],[user valueForKey:@"OAuthToken"]]]];
+    NSMutableURLRequest * request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@"@"/GetRecentMembers?id=%@&accessToken=%@",ServerUrl,[user stringForKey:@"MemberId"],[user valueForKey:@"OAuthToken"]]]];
     NSURLConnection * connection =[[NSURLConnection alloc] initWithRequest:request delegate:self];
     if (!connection)
         NSLog(@"connect error");
@@ -1528,6 +1528,18 @@ NSString *amnt;
     [requestSet setTimeoutInterval:4000];
 
     NSURLConnection *connection = [[NSURLConnection alloc] initWithRequest:requestSet delegate:self];
+    if (!connection)
+        NSLog(@"connect error");
+}
+
+-(void)addRecipient:(NSString*)firstName lastName:(NSString*)lastName email:(NSString*)email phone:(NSString*)phone city:(NSString*)cityInNepal
+{
+    [[NSURLCache sharedURLCache] removeAllCachedResponses];
+    self.responseData = [NSMutableData data];
+
+    requestdup = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@"@"/addRecipient?firstName=%@&lastName=%@&email=%@&phone=%@&city=%@", ServerUrl, firstName, lastName, email, phone, cityInNepal]]];
+
+    NSURLConnection * connection = [[NSURLConnection alloc] initWithRequest:requestdup delegate:self];
     if (!connection)
         NSLog(@"connect error");
 }

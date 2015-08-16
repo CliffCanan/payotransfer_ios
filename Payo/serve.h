@@ -40,6 +40,7 @@
 @property (nonatomic, retain) NSString *tagName;
 @property(nonatomic,strong) MBProgressHUD *hud;
 
+-(void)addRecipient:(NSString*)firstName lastName:(NSString*)lastName email:(NSString*)email phone:(NSString*)phone city:(NSString*)city;
 -(void)dupCheck:(NSString*)email;
 -(void)forgotPass:(NSString *)email;
 -(void)getSettings;

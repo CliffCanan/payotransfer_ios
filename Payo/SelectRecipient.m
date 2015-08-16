@@ -16,13 +16,11 @@
 
 @interface SelectRecipient ()
 
-@property(nonatomic,strong) UITableView *contacts;
-@property(nonatomic,strong) NSMutableArray *recents;
-@property(nonatomic, strong) ABPeoplePickerNavigationController *addressBookController;
-@property(nonatomic,strong) MBProgressHUD *hud;
+@property(nonatomic,strong) UITableView * contacts;
+@property(nonatomic,strong) NSMutableArray * recents;
+@property(nonatomic,strong) MBProgressHUD * hud;
 @property(nonatomic,strong) UIImageView * noContact_img;
-@property(nonatomic, strong) UILabel * glyphEmail;
-@property(nonatomic, strong) UIImageView * backgroundImage;
+@property(nonatomic,strong) UIImageView * backgroundImage;
 @end
 
 @implementation SelectRecipient
@@ -49,7 +47,16 @@
     UIBarButtonItem * menu = [[UIBarButtonItem alloc] initWithCustomView:back_button];
     [self.navigationItem setLeftBarButtonItem:menu];
 
-    isphoneBook = NO;
+    UIButton * Done = [UIButton buttonWithType:UIButtonTypeRoundedRect];
+    Done.frame = CGRectMake(278, 25, 45, 35);
+    [Done setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    [Done setTitle:@"+ Add" forState:UIControlStateNormal];
+    [Done setTitleShadowColor:Rgb2UIColor(19, 32, 38, 0.16) forState:UIControlStateNormal];
+    Done.titleLabel.shadowOffset = CGSizeMake(0.0, -1.0);
+    [Done addTarget:self action:@selector(addNewRecipient) forControlEvents:UIControlEventTouchUpInside];
+
+    UIBarButtonItem * backItem = [[UIBarButtonItem alloc] initWithCustomView:Done];
+    [self.navigationItem setRightBarButtonItem:backItem];
 
     search = [[UISearchBar alloc] initWithFrame:CGRectMake(0, 6, 320, 40)];
     search.searchBarStyle = UISearchBarStyleMinimal;
@@ -94,11 +101,6 @@
 
     self.noContact_img = [[UIImageView alloc] init];
     self.noContact_img.contentMode = UIViewContentModeScaleAspectFit;
-
-    self.glyphEmail = [[UILabel alloc] initWithFrame:CGRectMake(115, 125, 30, 30)];
-    [self.glyphEmail setTextColor:kNoochPurple];
-    [self.glyphEmail setAlpha:.2];
-    [self.view addSubview:self.glyphEmail];
 }
 
 -(void)viewWillAppear:(BOOL)animated
@@ -145,130 +147,77 @@
         [self.navigationItem setLeftBarButtonItem:backItem];
     }
 
-    [self.navigationItem setRightBarButtonItem:Nil];
 
+    [ARTrackingManager trackEvent:@"SelectRecip_viewWillAppear1"];
 
-    if (emailEntry || phoneNumEntry)
+    if ([self.recents count] == 0)
     {
-        [self searchBarTextDidBeginEditing:search];
+        [self.view addSubview: self.noContact_img];
     }
 
-    if (!emailEntry && !phoneNumEntry)
+    [search setTintColor:kPayoBlue];
+
+    isRecentList = YES;
+    searching = NO;
+
+    search.text = @"";
+    [search resignFirstResponder];
+    search.searchBarStyle = UISearchBarStyleMinimal;
+    [search setShowsCancelButton:NO animated:YES];
+    [self.contacts setStyleId:@"select_recipient"];
+
+    if (navIsUp == YES)
     {
-        [ARTrackingManager trackEvent:@"SelectRecip_viewWillAppear1"];
+        navIsUp = NO;
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self lowerNavBar];
+        });
+    }
 
-        if ([self.recents count] == 0)
-        {
-            [self.view addSubview: self.noContact_img];
-        }
+    [UIView beginAnimations:nil context:nil];
+    [UIView setAnimationDuration:0.12];
+    [self.contacts setAlpha:0];
+    [UIView commitAnimations];
 
-        [self.glyphEmail setAlpha: 0];
+    //NSLog(@"noRecentContacts is: %d",noRecentContacts);
 
-        [search setTintColor:kPayoBlue];
+    if (noRecentContacts == true)
+    {
+        [self displayFirstTimeUserImg];
+    }
+    else
+    {
+        RTSpinKitView * spinner1 = [[RTSpinKitView alloc] initWithStyle:RTSpinKitViewStyleArcAlt];
+        spinner1.color = [UIColor whiteColor];
+        self.hud.customView = spinner1;
+        self.hud.labelText = NSLocalizedString(@"SelectRecip_RecentLoading", @"Select Recipient Recent List Loading Text");
+        self.hud.detailsLabelText = nil;
+        [self.hud show:YES];
 
-        isphoneBook = NO;
-        isRecentList = YES;
-        searching = NO;
-
-        search.text = @"";
-        [search resignFirstResponder];
-        search.searchBarStyle = UISearchBarStyleMinimal;
-        [search setShowsCancelButton:NO animated:YES];
-        [self.contacts setStyleId:@"select_recipient"];
-
-        if (navIsUp == YES) {
-            navIsUp = NO;
-            dispatch_async(dispatch_get_main_queue(), ^{
-                [self lowerNavBar];
-            });
-        }
-
-        [UIView beginAnimations:nil context:nil];
-        [UIView setAnimationDuration:0.12];
-        [self.contacts setAlpha:0];
-        [UIView commitAnimations];
-
-        //NSLog(@"noRecentContacts is: %d",noRecentContacts);
-
-        if (noRecentContacts == true)
-        {
-            [self displayFirstTimeUserImg];
-        }
-        else
-        {
-            RTSpinKitView * spinner1 = [[RTSpinKitView alloc] initWithStyle:RTSpinKitViewStyleArcAlt];
-            spinner1.color = [UIColor whiteColor];
-            self.hud.customView = spinner1;
-            self.hud.labelText = NSLocalizedString(@"SelectRecip_RecentLoading", @"Select Recipient Recent List Loading Text");
-            self.hud.detailsLabelText = nil;
-            [self.hud show:YES];
-
-            serve * recents = [serve new];
-            [recents setTagName:@"recents"];
-            [recents setDelegate:self];
-            [recents getRecents];
-        }
+        serve * recents = [serve new];
+        [recents setTagName:@"recents"];
+        [recents setDelegate:self];
+        [recents getRecents];
     }
 }
 
 -(void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
-
-    if ((ABAddressBookGetAuthorizationStatus() == kABAuthorizationStatusDenied ||
-         ABAddressBookGetAuthorizationStatus() == kABAuthorizationStatusRestricted) &&
-         !emailEntry && !phoneNumEntry)
-    {
-        NSLog(@"Contacts permission denied");
-        NSLog(@"screenLoadedTimes is: %d  and  shouldNotDisplayContactsAlert is: %d",screenLoadedTimes,[user boolForKey:@"shouldNotDisplayContactsAlert"]);
-
-        if (screenLoadedTimes % 2 == 0 &&
-            ![user boolForKey:@"shouldNotDisplayContactsAlert"])
-        {
-            UIAlertView * alert = [[UIAlertView alloc]initWithTitle:@"Access To Contacts"
-                                                            message:@"Did you know you can send money to ANY email address OR phone number? It's really helpful to select a contact you already have in your iPhone's Address Book.\n\nTO ENABLE, turn on access to Contacts in your iPhone's Settings:\n\nSettings --> 'Privacy' --> 'Contacts'"
-                                                           delegate:self
-                                                  cancelButtonTitle:@"OK"
-                                                  otherButtonTitles:@"Don't Show Again", nil];
-            [alert setTag:2];
-            [alert show];
-        }
-        screenLoadedTimes += 1;
-    }
-    else if (ABAddressBookGetAuthorizationStatus() == kABAuthorizationStatusAuthorized)
-    {
-        NSLog(@"AB Authorized");
-        [self address_book];
-    }
-    else
-    {
-        ABAddressBookRequestAccessWithCompletion(ABAddressBookCreateWithOptions(NULL, nil), ^(bool granted, CFErrorRef error) {
-            if (!granted)
-            {
-                NSLog(@"AB Just denied");
-                return;
-            }
-            [self address_book];
-            NSLog(@"AD Just authorized");
-
-        });
-        NSLog(@"AB Not determined");
-    }
 }
 
 -(void)viewDidDisappear:(BOOL)animated
 {
-    if (!emailEntry && !phoneNumEntry)
-    {
-        [UIView beginAnimations:nil context:nil];
-        [UIView setAnimationDuration:.12];
-        [self.contacts setAlpha:0];
-        [UIView commitAnimations];
-    }
+    [UIView beginAnimations:nil context:nil];
+    [UIView setAnimationDuration:.12];
+    [self.contacts setAlpha:0];
+    [UIView commitAnimations];
+
     [self.hud hide:YES];
     [super viewDidDisappear:animated];
 }
 
+#pragma mark - Navigation Methods
 -(void)backPressed_SelectRecip
 {
     [[assist shared] setneedsReload:NO]; //Going right back to Home, so don't really need to reload
@@ -285,6 +234,17 @@
 
     Home * goHome = [Home new];
     [self.navigationController pushViewController:goHome animated:YES];
+}
+
+-(void)addNewRecipient
+{
+    AddRecipient * addRecipient = [[AddRecipient alloc] init];
+
+    UINavigationController * navigationController = [[UINavigationController alloc]
+                           initWithRootViewController:addRecipient];
+
+    [self presentViewController:navigationController animated:YES completion: nil];
+    //[self.navigationController pushViewController:addRecipient animated:YES];
 }
 
 -(void)lowerNavBar
@@ -306,231 +266,7 @@
     ];
 }
 
--(void)address_book
-{
-    NSMutableArray * additions = [NSMutableArray new];
-    ABAddressBookRef addressBook = ABAddressBookCreateWithOptions(nil, nil);
-    CFArrayRef people = ABAddressBookCopyArrayOfAllPeople(addressBook);
-    CFIndex nPeople = ABAddressBookGetPersonCount(addressBook);
-
-    for (int i = 0; i < nPeople; i++)
-    {
-        NSMutableDictionary * curContact = [[NSMutableDictionary alloc] init];
-        ABRecordRef person = CFArrayGetValueAtIndex(people, i);
-        
-        NSString * contacName;
-        
-        CFTypeRef contacNameValue = ABRecordCopyValue(person, kABPersonFirstNameProperty);
-        contacName = [[NSString stringWithFormat:@"%@", contacNameValue] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
-        if (contacNameValue)
-            CFRelease(contacNameValue);
-
-        NSString * firstName;
-        NSString * lastName;
-        NSData * contactImage;
-
-        // Get FirstName Ref
-        CFTypeRef firstNameValue = ABRecordCopyValue(person, kABPersonFirstNameProperty);
-
-        firstName = [[NSString stringWithFormat:@"%@", firstNameValue] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
-
-        if (firstNameValue)
-            CFRelease(firstNameValue);
-        
-        // Get LastName Ref
-        CFTypeRef LastNameValue = ABRecordCopyValue(person, kABPersonLastNameProperty);
-        
-        if (LastNameValue)
-        {
-            [contacName stringByAppendingString:[NSString stringWithFormat:@" %@", LastNameValue]];
-
-            lastName = [[NSString stringWithFormat:@"%@", LastNameValue] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
-
-            if (LastNameValue)
-                CFRelease(LastNameValue);
-        }
-
-        // Get Contact Image Ref
-        if (ABPersonHasImageData(person) > 0 )
-        {
-            CFTypeRef contactImageValue = ABPersonCopyImageDataWithFormat(person, kABPersonImageFormatThumbnail);
-            contactImage = (__bridge NSData *)(contactImageValue);
-            [curContact setObject:contactImage forKey:@"image"];
-            if (contactImageValue)
-                CFRelease(contactImageValue);
-            
-        }
-        else
-        {
-            contactImage = UIImageJPEGRepresentation([UIImage imageNamed:@"profile_picture.png"], 1);
-            [curContact setObject:contactImage forKey:@"image"];
-        }
-
-        if (contacName != NULL) [curContact setObject:contacName forKey:@"Name"];
-        if (firstName != NULL) [curContact setObject:firstName forKey:@"FirstName"];
-        if (lastName != NULL) [curContact setObject:lastName forKey:@"LastName"];
-        [curContact setObject:@"YES" forKey:@"addressbook"];
-
-        ABMultiValueRef phoneNumber = ABRecordCopyValue(person, kABPersonPhoneProperty);
-        ABMultiValueRef emailInfo = ABRecordCopyValue(person, kABPersonEmailProperty);
-
-        //Get emailInfo Ref
-        for (int j = 0; j < ABMultiValueGetCount(emailInfo); j++)
-        {
-            CFTypeRef emailIdValue = ABMultiValueCopyValueAtIndex(emailInfo, j);
-            NSString * emailId = [[NSString stringWithFormat:@"%@", emailIdValue] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
-            
-            if ( emailId != NULL &&
-                [emailId rangeOfString:@"@facebook.com"].location == NSNotFound &&
-                [emailId rangeOfString:@"hushmail.com"].location == NSNotFound &&
-                [emailId rangeOfString:@"mailinator."].location == NSNotFound &&
-                [emailId rangeOfString:@"mailinater."].location == NSNotFound &&
-                [emailId rangeOfString:@"hmamail.com"].location == NSNotFound &&
-                [emailId rangeOfString:@"guerrillamail"].location == NSNotFound &&
-                [emailId rangeOfString:@"sharklasers"].location == NSNotFound &&
-                [emailId rangeOfString:@"anonymousemail"].location == NSNotFound)
-            {
-                [curContact setObject:emailId forKey:@"UserName"];
-                [curContact setObject:emailId forKey:[NSString stringWithFormat:@"emailAdday%d",j]];
-                [curContact setObject:[NSString stringWithFormat:@"%d",j+1] forKey:@"emailCount"];
-            }
-            if (emailIdValue) {
-                CFRelease(emailIdValue);
-            }
-        }
-
-        if (emailInfo) {
-            CFRelease(emailInfo);
-        }
-
-
-        // Get phoneValue Ref
-        NSString *phone;//, *phone2, *phone3;
-
-        for (int j = 0; j < ABMultiValueGetCount(phoneNumber); j++)
-        {
-            CFTypeRef phoneValue = ABMultiValueCopyValueAtIndex(phoneNumber, j);
-            phone = [[NSString stringWithFormat:@"%@", phoneValue] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
-
-            if (phoneValue)
-                CFRelease(phoneValue);
-
-            if (phone != NULL)
-            {
-                phone = [phone stringByReplacingOccurrencesOfString:@"[^0-9]" withString:@"" options:NSRegularExpressionSearch range:NSMakeRange(0, [phone length])];
-
-                if ([phone length] == 11) // In case the number begins with '1'
-                {
-                    phone = [phone substringFromIndex:1];
-                }
-
-                [curContact setObject:phone forKey:@"phoneNo"];
-                [curContact setObject:phone forKey:[NSString stringWithFormat:@"phoneAdday%d",j]];
-                [curContact setObject:[NSString stringWithFormat:@"%d",j+1] forKey:@"phoneCount"];
-
-                [additions addObject:curContact];
-            }
-            
-        }
-        
-        if (phoneNumber) {
-            CFRelease(phoneNumber);
-        }
-
-        else
-        {
-            [additions addObject:curContact];
-        }
-    }
-
-    [[assist shared] addAssos:additions.mutableCopy];
-    NSMutableArray *get_ids_input = [NSMutableArray new];
-
-    for (NSDictionary *person in additions)
-    {
-        NSMutableDictionary *person_input = [NSMutableDictionary new];
-        [person_input setObject:@"" forKey:@"memberId"];
-
-        if (person[@"phoneNo"]) [person_input setObject:person[@"phoneNo"] forKey:@"phoneNo"];
-
-        if (person[@"emailAddy"]) [person_input setObject:person[@"emailAddy"] forKey:@"emailAddy"];
-        else [person_input setObject:@"" forKey:@"emailAddy"];
-        
-        if (person[@"phoneNo2"]) [person_input setObject:person[@"phoneNo2"] forKey:@"phoneNo2"];
-        
-        if (person[@"phoneNo3"]) [person_input setObject:person[@"phoneNo3"] forKey:@"phoneNo3"];
-        
-        [get_ids_input addObject:person_input];
-    }
-
-    serve *get_ids = [serve new];
-    [get_ids setDelegate:self];
-    [get_ids setTagName:@"getMemberIds"];
-    [get_ids getMemberIds:get_ids_input];
-
-     if (people)
-    CFRelease(people);
-     if (addressBook)
-    CFRelease(addressBook);
-}
-
--(void)phonebook:(id)sender
-{
-    _addressBookController = [[ABPeoplePickerNavigationController alloc] init];
-    [_addressBookController setPeoplePickerDelegate:self];
-    [self.view removeConstraints:self.view.constraints];
-    NSArray * displayedItems = [NSArray arrayWithObjects:
-                               [NSNumber numberWithInt:kABPersonEmailProperty],
-                               nil];
-    _addressBookController.view.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-    _addressBookController.view.translatesAutoresizingMaskIntoConstraints=YES;
-	[_addressBookController.view removeConstraints:_addressBookController.view.constraints];
-    _addressBookController.displayedProperties = displayedItems;
-    [self presentViewController:_addressBookController animated:YES completion:nil];
-}
-
--(BOOL)peoplePickerNavigationController:(ABPeoplePickerNavigationController *)peoplePicker shouldContinueAfterSelectingPerson:(ABRecordRef)person
-{
-    ABMultiValueRef emailMultiValue = ABRecordCopyValue(person, kABPersonEmailProperty);
-    emailAddresses = (__bridge NSArray *)ABMultiValueCopyArrayOfAllValues(emailMultiValue) ;
-
-    NSLog(@"Email Address: %@",emailAddresses);
-
-    if (emailMultiValue)
-    CFRelease(emailMultiValue);
-    [_addressBookController dismissViewControllerAnimated:YES completion:^{
-        if ([emailAddresses count] == 0)
-        {
-            UIAlertView * alert = [[UIAlertView alloc]initWithTitle:@"Uh Oh"
-                                                            message:NSLocalizedString(@"SelectRecip_NoEmailSelected", @"Select Recipient No Email Address Selected Alert Body")
-                                                           delegate:Nil
-                                                  cancelButtonTitle:@"OK"
-                                                  otherButtonTitles:Nil, nil];
-            [alert show];
-        }
-        else if ([emailAddresses count] == 1)
-        {
-            emailphoneBook = [emailAddresses objectAtIndex:0];
-            isphoneBook = YES;
-            [self getMemberIdByUsingUserNameFromPhoneBook];
-        }
-        /*else
-        {
-            UIActionSheet * actionSheet = [[UIActionSheet alloc]init];
-            [actionSheet setDelegate:self];
-
-            for (int i = 0 ; i < [emailAddresses count]; i++)
-            {
-                [actionSheet addButtonWithTitle:[NSString stringWithFormat:@"%@",[emailAddresses objectAtIndex:i]]];
-            }
-            actionSheet.tag = 1111;
-            [actionSheet addButtonWithTitle:@"Cancel"];
-            [actionSheet showInView:self.view];
-        }*/
-    }];
-    return NO;
-}
-
+#pragma mark - Action Sheet Handlers
 - (void)willPresentActionSheet:(UIActionSheet *)actionSheet
 {
     for (UIView *_currentView in actionSheet.subviews)
@@ -544,93 +280,9 @@
 
 - (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex
 {
-    if ([actionSheet tag] == 1111)  // Not sure that this is ever actually called or necessary
-    {
-        if (![[actionSheet buttonTitleAtIndex:buttonIndex] isEqualToString:@"Cancel"])
-        {
-            emailphoneBook = [actionSheet buttonTitleAtIndex:buttonIndex];
-            isphoneBook = YES;
-            [self getMemberIdByUsingUserNameFromPhoneBook];
-        }
-    }
-    else if ([actionSheet tag] == 1122)
-    {
-        NSString * selectedEmail = [actionSheet buttonTitleAtIndex:buttonIndex];
-        emailphoneBook = selectedEmail;
-        isphoneBook = YES;
 
-        if ([emailphoneBook isEqualToString:[user objectForKey:@"UserName"]])
-        {
-            UIAlertView *av = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"SelectRecip_VerySneaky", @"Select Recipient Very Sneaky Alert Title")
-                                                         message:[NSString stringWithFormat:@"\xF0\x9F\x98\xB1\n%@", NSLocalizedString(@"SelectRecip_VerySneakyBody", @"Select Recipient Very Sneak Body Text")]
-                                                        delegate:self
-                                               cancelButtonTitle:@"OK"
-                                               otherButtonTitles:nil];
-            [av show];
-        }
-        else if (![selectedEmail isEqualToString:@"Cancel"])
-        {
-            [search resignFirstResponder];
-
-            RTSpinKitView * spinner2 = [[RTSpinKitView alloc] initWithStyle:RTSpinKitViewStyleCircleFlip];
-            spinner2.color = [UIColor whiteColor];
-            self.hud.customView = spinner2;
-            self.hud.labelText = NSLocalizedString(@"SelectRecip_HUDchecking", @"Select Recipient HUD Checking Text");
-            self.hud.detailsLabelText = [NSString stringWithFormat:@"'%@'",[selectedEmail lowercaseString]];
-            self.hud.detailsLabelColor = [UIColor whiteColor];
-            [self.hud show:YES];
-
-            serve * emailCheck = [serve new];
-            emailCheck.Delegate = self;
-            emailCheck.tagName = @"emailCheck";
-            [emailCheck getMemIdFromuUsername:[selectedEmail lowercaseString]];
-        }
-    }
-    else if ([actionSheet tag] == 223)
-    {
-        NSString * selectedPhone = [actionSheet buttonTitleAtIndex:buttonIndex];
-        phoneBookPhoneNum = selectedPhone;
-        isphoneBook = YES;
-        
-        if (![selectedPhone isEqualToString:@"Cancel"])
-        {
-            [search resignFirstResponder];
-
-            RTSpinKitView * spinner2 = [[RTSpinKitView alloc] initWithStyle:RTSpinKitViewStyleWave];
-            spinner2.color = [UIColor whiteColor];
-            self.hud.customView = spinner2;
-            self.hud.labelText = NSLocalizedString(@"SelectRecip_HUDchecking2", @"Select Recipient HUD Checking Text");
-            self.hud.detailsLabelText = [NSString stringWithFormat:@"'%@'", selectedPhone];
-            [self.hud show:YES];
-
-            NSString * s = selectedPhone;
-            s = [s stringByReplacingOccurrencesOfString:@"("
-                                             withString:@""];
-            s = [s stringByReplacingOccurrencesOfString:@")"
-                                             withString:@""];
-            s = [s stringByReplacingOccurrencesOfString:@"-"
-                                             withString:@""];
-            s = [s stringByReplacingOccurrencesOfString:@" "
-                                             withString:@""];
-
-            serve * phoneCheck = [serve new];
-            phoneCheck.Delegate = self;
-            phoneCheck.tagName = @"phoneCheck";
-            [phoneCheck getMemIdFromPhoneNumber:s];
-        }
-    }
 }
 
--(BOOL)peoplePickerNavigationController:(ABPeoplePickerNavigationController *)peoplePicker shouldContinueAfterSelectingPerson:(ABRecordRef)person property:(ABPropertyID)property identifier:(ABMultiValueIdentifier)identifier
-{
-    return YES;
-}
-
--(void)peoplePickerNavigationControllerDidCancel:(ABPeoplePickerNavigationController *)peoplePicker
-{
-    isphoneBook = NO;
-    [_addressBookController dismissViewControllerAnimated:YES completion:nil];
-}
 
 #pragma mark - Searching
 -(void)searchBarCancelButtonClicked:(UISearchBar *)searchBar
@@ -644,12 +296,7 @@
     }
 
     searching = NO;
-    emailEntry = NO;
-    phoneNumEntry = NO;
-    isphoneBook = NO;
     isRecentList = YES;
-
-    [self.glyphEmail setAlpha: 0];
 
     searchBar.searchBarStyle = UISearchBarStyleMinimal;
     [searchBar resignFirstResponder];
@@ -718,11 +365,7 @@
     if ([searchBar.text length] == 0)
     {
         searching = NO;
-        emailEntry = NO;
-        phoneNumEntry = NO;
         isRecentList = YES;
-
-        [self.glyphEmail setAlpha:0];
 
         return;
     }
@@ -747,138 +390,15 @@
 
         searching = YES;
 
-        NSRange isRange = [searchText rangeOfString:[NSString stringWithFormat:@"@"] options:NSCaseInsensitiveSearch];
+        shouldAnimate = NO;
+        searchString = searchText;
+        [self searchTableView];
 
-        if (isRange.location != NSNotFound)
-        {
-            emailEntry = YES;
-            phoneNumEntry = NO;
-            shouldAnimate = YES;
-            isphoneBook = NO;
-            searching = NO;
-            isRecentList = NO;
-            searchString = searchText;
-
-            [self.glyphEmail setFont:[UIFont fontWithName:@"FontAwesome" size:22]];
-            [self.glyphEmail setText:[NSString fontAwesomeIconStringForIconIdentifier:@"fa-envelope-o"]];
-            int leftValue = ([[UIScreen mainScreen] bounds].size.width / 2) - 49 - (4.9 * [searchString length]);
-            [UIView beginAnimations:nil context:nil];
-            [UIView setAnimationDuration:.2];
-            if (leftValue < 2)
-            {
-                [self.glyphEmail setAlpha:0];
-            }
-            else
-            {
-                [self.glyphEmail setAlpha: 1];
-                [self.glyphEmail setFrame:CGRectMake(leftValue, 125, 30, 30)];
-            }
-            [UIView commitAnimations];
-
-            if (isRange.location < searchText.length - 1)
-            {
-                shouldAnimate = NO;
-            }
-        }
-        else
-        {
-            emailEntry = NO;
-            isphoneBook = NO;
-            isRecentList = NO;
-
-            NSString * s = searchText;
-            s = [s stringByReplacingOccurrencesOfString:@"("
-                                             withString:@""];
-            s = [s stringByReplacingOccurrencesOfString:@")"
-                                             withString:@""];
-            s = [s stringByReplacingOccurrencesOfString:@"-"
-                                             withString:@""];
-            s = [s stringByReplacingOccurrencesOfString:@" "
-                                             withString:@""];
-
-            NSCharacterSet * notDigits = [[NSCharacterSet decimalDigitCharacterSet] invertedSet];
-            if ([s rangeOfCharacterFromSet:notDigits].location == NSNotFound &&
-                [searchText length] > 3)
-            {
-                if (s.length > 3)
-                {
-                    phoneNumEntry = YES;
-                    searching = NO;
-                    searchString = searchBar.text;
-                }
-
-                if (s.length > 4)
-                {
-                    shouldAnimate = NO;
-                }
-
-                if (s.length == 4)
-                {
-                    NSMutableString * mu = [NSMutableString stringWithString:s];
-                    [mu insertString:@"(" atIndex:0];
-                    [mu insertString:@")" atIndex:4];
-                    [mu insertString:@" " atIndex:5];
-                    
-                    NSString * phoneWithSymbolsAddedBack = [NSString stringWithString:mu];
-                    searchBar.text = phoneWithSymbolsAddedBack;
-                    
-                    shouldAnimate = YES;
-                }
-
-                if (s.length == 7)
-                {
-                    NSMutableString * mu = [NSMutableString stringWithString:s];
-                    [mu insertString:@"(" atIndex:0];
-                    [mu insertString:@")" atIndex:4];
-                    [mu insertString:@" " atIndex:5];
-                    [mu insertString:@"-" atIndex:9];
-                    
-                    NSString * phoneWithSymbolsAddedBack = [NSString stringWithString:mu];
-                    searchBar.text = phoneWithSymbolsAddedBack;
-                }
-
-                if (phoneNumEntry && [s length] > 3)
-                {
-                    [self.glyphEmail setFont:[UIFont fontWithName:@"FontAwesome" size:27]];
-                    [self.glyphEmail setText:[NSString fontAwesomeIconStringForIconIdentifier:@"fa-mobile"]];
-                    int leftValue = ([[UIScreen mainScreen] bounds].size.width / 2) - 38 - (4.5 * [searchString length]);
-                    [UIView beginAnimations:nil context:nil];
-                    [UIView setAnimationDuration:.2];
-                    if (leftValue < 3)
-                    {
-                        [self.glyphEmail setAlpha:0];
-                    }
-                    else
-                    {
-                        [self.glyphEmail setFrame:CGRectMake(leftValue, 125, 30, 30)];
-                        [self.glyphEmail setAlpha: 1];
-                    }
-                    [UIView commitAnimations];
-                }
-                else
-                {
-                    [UIView beginAnimations:nil context:nil];
-                    [UIView setAnimationDuration:.15];
-                    [self.glyphEmail setAlpha: 0];
-                    [UIView commitAnimations];
-                }
-            }
-            else
-            {
-                phoneNumEntry = NO;
-                shouldAnimate = NO;
-                searching = YES;
-                searchString = searchText;
-                [self.glyphEmail setAlpha:0];
-                [self searchTableView];
-            }
-        }
         [self.contacts reloadData];
     }
 
     else
     {
-        isphoneBook = NO;
         searchString = [searchBar.text substringToIndex:[searchBar.text length] - 1];
         [self.contacts reloadData];
     }
@@ -939,87 +459,9 @@
     }
 }
 
-#pragma mark - Email From Address Book handling
--(void)getMemberIdByUsingUserNameFromPhoneBook
-{
-    if ([emailphoneBook isEqualToString:[user objectForKey:@"UserName"]])
-    {
-        UIAlertView *av = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"SelectRecip_TryAgainAlertTitle", @"Select Recipient Try That Again Alert Title")
-                                                     message:[NSString stringWithFormat:@"\xE2\x98\x9D\n%@", NSLocalizedString(@"SelectRecip_TryAgainAlertBody", @"Select Recipient Try That Again Alert Body Text")]
-                                                    delegate:self
-                                           cancelButtonTitle:@"OK"
-                                           otherButtonTitles:nil];
-        [av show];
-    }
-    else
-    {
-        [search resignFirstResponder];
-
-        serve *emailCheck = [serve new];
-        emailCheck.Delegate = self;
-        emailCheck.tagName = @"emailCheck";
-        [emailCheck getMemIdFromuUsername:emailphoneBook];
-    }
-}
-
-#pragma mark - Manually Entered Email Handling
--(void)getMemberIdByUsingUserName
-{
-    if ([[search.text lowercaseString] isEqualToString:[user objectForKey:@"UserName"]])
-    {
-        [self.hud hide:YES];
-        UIAlertView *av = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"SelectRecip_HoldOnThere", @"Select Recipient Hold On There Alert Title")
-                                                     message:[NSString stringWithFormat:@"\xF0\x9F\x98\xB1\n%@", NSLocalizedString(@"SelectRecip_HoldOnThereBody", @"Select Recipient Hold On There Alert Body Text")]
-                                                    delegate:self
-                                           cancelButtonTitle:@"OK"
-                                           otherButtonTitles:nil];
-        [av show];
-    }
-    else
-    {
-        [search resignFirstResponder];
-
-        serve *emailCheck = [serve new];
-        emailCheck.Delegate = self;
-        emailCheck.tagName = @"emailCheck";
-        [emailCheck getMemIdFromuUsername:[search.text lowercaseString]];
-    }
-}
-
-#pragma Mark - Manually Entered Phone Number Handling
--(void)getMemberIdByUsingEnteredPhoneNumber
-{
-    [search resignFirstResponder];
-
-    NSString * s = search.text;
-    s = [s stringByReplacingOccurrencesOfString:@"("
-                                     withString:@""];
-    s = [s stringByReplacingOccurrencesOfString:@")"
-                                     withString:@""];
-    s = [s stringByReplacingOccurrencesOfString:@"-"
-                                     withString:@""];
-    s = [s stringByReplacingOccurrencesOfString:@" "
-                                     withString:@""];
-
-    serve * phoneCheck = [serve new];
-    phoneCheck.Delegate = self;
-    phoneCheck.tagName = @"phoneCheck";
-    [phoneCheck getMemIdFromPhoneNumber:s];
-}
-
-#pragma Mark - Phone Number From Address Book Handling
--(void)getMemberIdByUsingPhoneNumberFromAB
-{
-    [search resignFirstResponder];
-
-    serve * phoneCheck = [serve new];
-    phoneCheck.Delegate = self;
-    phoneCheck.tagName = @"phoneCheck";
-    [phoneCheck getMemIdFromPhoneNumber:phoneBookPhoneNum];
-}
-
 #pragma mark - file paths
-- (NSString *)autoLogin{
+- (NSString *)autoLogin
+{
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
     NSString *documentsDirectory = [paths objectAtIndex:0];
     return [documentsDirectory stringByAppendingPathComponent:[NSString stringWithFormat:@"autoLogin.plist"]];
@@ -1173,118 +615,6 @@
         }
     }
 
-    else if ([tagName isEqualToString:@"emailCheck"])
-    {
-        NSError * error;
-        NSMutableDictionary * dictResult = [NSJSONSerialization
-                                           JSONObjectWithData:[result dataUsingEncoding:NSUTF8StringEncoding]
-                                           options:kNilOptions
-                                           error:&error];
-
-        if ([dictResult objectForKey:@"Result"] != [NSNull null])
-        {
-            serve * getDetails = [serve new];
-            getDetails.Delegate = self;
-            getDetails.tagName = @"getMemberDetails";
-            [getDetails getDetails:[dictResult objectForKey:@"Result"]];
-        }
-        else
-        {
-            [self.hud hide:YES];
-
-            if (!emailEntry && !phoneNumEntry && navIsUp == YES) {
-                navIsUp = NO;
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    [self lowerNavBar];
-                });
-            }
-
-            [self.navigationItem setLeftBarButtonItem:nil];
-
-            NSMutableDictionary * dict = [[NSMutableDictionary alloc] init];
-            if (isphoneBook)
-            {
-                [dict setObject:emailphoneBook forKey:@"email"];
-                [dict setObject:firstNamePhoneBook forKey:@"firstName"];
-                [dict setObject:lastNamePhoneBook forKey:@"lastName"];
-            }
-            else
-                [dict setObject:searchString forKey:@"email"];
-            
-            [dict setObject:@"nonuser" forKey:@"nonuser"];
-            isFromHome = NO;
-            isFromArtisanDonationAlert = NO;
-
-            HowMuch * how_much = [[HowMuch alloc] initWithReceiver:dict];
-            [self.navigationController pushViewController:how_much animated:YES];
-
-            return;
-        }
-    }
-
-    else if ([tagName isEqualToString:@"phoneCheck"])
-    {
-        NSError * error;
-        NSMutableDictionary * dictResult = [NSJSONSerialization
-                                            JSONObjectWithData:[result dataUsingEncoding:NSUTF8StringEncoding]
-                                            options:kNilOptions
-                                            error:&error];
-
-        if ([dictResult objectForKey:@"Result"] != [NSNull null])
-        {
-            if ([[dictResult objectForKey:@"Result"] isEqualToString:[user objectForKey:@"MemberId"]])
-            {
-                [self.hud hide:YES];
-                [search becomeFirstResponder];
-                UIAlertView *av = [[UIAlertView alloc] initWithTitle:@"Hold On There..."
-                                                             message:@"\xF0\x9F\x98\xB1\nYou are attempting a transfer paradox, the results of which could cause a chain reaction that would unravel the very fabric of the space-time continuum and destroy the entire universe!\n\nPlease try someone ELSE's phone number!"
-                                                            delegate:self
-                                                   cancelButtonTitle:@"OK"
-                                                   otherButtonTitles:nil];
-                [av show];
-            }
-            else
-            {
-                serve * getDetails = [serve new];
-                getDetails.Delegate = self;
-                getDetails.tagName = @"getMemberDetails";
-                [getDetails getDetails:[dictResult objectForKey:@"Result"]];
-            }
-        }
-        else
-        {
-            [self.hud hide:YES];
-
-            if (!emailEntry && !phoneNumEntry && navIsUp == YES) {
-                navIsUp = NO;
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    [self lowerNavBar];
-                });
-            }
-
-            [self.navigationItem setLeftBarButtonItem:nil];
-
-            NSMutableDictionary * dict = [[NSMutableDictionary alloc] init];
-            if (isphoneBook)
-            {
-                [dict setObject:phoneBookPhoneNum forKey:@"phone"];
-                [dict setObject:firstNamePhoneBook forKey:@"firstName"];
-                [dict setObject:lastNamePhoneBook forKey:@"lastName"];
-            }
-            else
-                [dict setObject:searchString forKey:@"phone"];
-            
-            [dict setObject:@"nonuser" forKey:@"nonuser"];
-            isFromHome = NO;
-            isFromArtisanDonationAlert = NO;
-
-            HowMuch * how_much = [[HowMuch alloc] initWithReceiver:dict];
-            [self.navigationController pushViewController:how_much animated:YES];
-
-            return;
-        }
-    }
-
     else if ([tagName isEqualToString:@"getMemberDetails"])
     {
         NSError * error;
@@ -1356,12 +686,6 @@
 
 -(void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
 {
-    if (alertView.tag == 2 && buttonIndex == 1)
-    {
-        [user setBool:YES forKey:@"shouldNotDisplayContactsAlert"];
-        [user synchronize];
-        NSLog(@"shouldNotDisplayContactsAlert is: %d",[user boolForKey:@"shouldNotDisplayContactsAlert"]);
-    }
 }
 
 #pragma mark - UITableViewDataSource
@@ -1370,7 +694,7 @@
     return 1;
 }
 
-- (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
+-(UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
 {
     UIView * headerView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 320, 28)];
     UILabel * title = [[UILabel alloc] initWithFrame:CGRectMake (10, 0, 200, 28)];
@@ -1385,14 +709,9 @@
         else if (isRecentList) {
             title.text = NSLocalizedString(@"SelectRecip_RecentContacts", @"Select Recipient Recent Contacts");
         }
-        else if (emailEntry) {
-            title.text = NSLocalizedString(@"SelectRecip_Emai", @"Select Recipient Email Address Entry");
-        }
-        else if (phoneNumEntry) {
-            title.text = NSLocalizedString(@"SelectRecip_Phone", @"Select Recipient Phone Number Entry");
-        }
     }
-    else {
+    else
+    {
         title.text = @"";
     }
     [headerView addSubview:title];
@@ -1401,19 +720,11 @@
     return headerView;
 }
 
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
+-(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     if (searching)
     {
         return [arrSearchedRecords count];
-    }
-    else if (emailEntry)
-    {
-        return 1;
-    }
-    else if (phoneNumEntry)
-    {
-        return 1;
     }
     else
     {
@@ -1421,7 +732,7 @@
     }
 }
 
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
+-(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     static NSString * CellIdentifier = @"Cell";
     UITableViewCell * cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
@@ -1474,78 +785,7 @@
         
         [cell.textLabel setStyleClass:@"select_recipient_name"];
 
-
-        if (( [[[assist shared] assos] objectForKey:info[@"UserName"]] && [[assist shared] assos][info[@"UserName"]][@"addressbook"]) ||
-            ( [[[assist shared] assos] objectForKey:info[@"phoneNo"]] && [[assist shared] assos][info[@"phoneNo"]][@"addressbook"]))
-        {
-            UIImageView * ab = [UIImageView new];
-            [ab setStyleClass:@"addressbook-icons"];
-
-            if (shouldAnimate) {
-                [ab setStyleClass:@"animate_bubble"];
-            }
-            [cell.contentView addSubview:ab];
-
-            UILabel * phoneOrEmailLabel = [[UILabel alloc] initWithFrame:CGRectMake(90, 40, 200, 20)];
-            [phoneOrEmailLabel setFont:[UIFont fontWithName:@"Roboto-light" size:15]];
-            [phoneOrEmailLabel setFrame:CGRectMake(76, 37, 200, 18)];
-            [phoneOrEmailLabel setTextColor:kNoochGrayDark];
-            [phoneOrEmailLabel setTextAlignment:NSTextAlignmentLeft];
-
-            //NSLog(@"Inside Cell For Row... info object is: %@",info);
-
-            if (info[@"emailAdday0"])
-            {
-                [cell.textLabel setStyleClass:@"select_recipient_nameWithPhoneInCell"];
-                [phoneOrEmailLabel setText:info[@"emailAdday0"]];
-            }
-
-            else if (info[@"phoneAdday0"])
-            {
-                [cell.textLabel setStyleClass:@"select_recipient_nameWithPhoneInCell"];
-
-                if (info[@"phoneAdday3"])
-                {
-                    NSMutableString * mu = [NSMutableString stringWithString:info[@"phoneAdday0"]];
-                    [mu insertString:@"(" atIndex:0];
-                    [mu insertString:@")" atIndex:4];
-                    [mu insertString:@" " atIndex:5];
-                    [mu insertString:@"-" atIndex:9];
-
-                    NSString * phoneWithSymbolsAddedBack = [NSString stringWithString:mu];
-                    [phoneOrEmailLabel setText:phoneWithSymbolsAddedBack];
-                }
-                else if (info[@"phoneAdday2"])
-                {
-                    NSMutableString * mu = [NSMutableString stringWithString:info[@"phoneAdday0"]];
-                    [mu insertString:@"(" atIndex:0];
-                    [mu insertString:@")" atIndex:4];
-                    [mu insertString:@" " atIndex:5];
-                    [mu insertString:@"-" atIndex:9];
-
-                    NSString * phoneWithSymbolsAddedBack = [NSString stringWithString:mu];
-                    [phoneOrEmailLabel setText:phoneWithSymbolsAddedBack];
-                }
-                else
-                {
-                    if ([info[@"phoneAdday0"] length] == 10)
-                    {
-                        NSMutableString * mu = [NSMutableString stringWithString:info[@"phoneAdday0"]];
-                        [mu insertString:@"(" atIndex:0];
-                        [mu insertString:@")" atIndex:4];
-                        [mu insertString:@" " atIndex:5];
-                        [mu insertString:@"-" atIndex:9];
-
-                        NSString * phoneWithSymbolsAddedBack = [NSString stringWithString:mu];
-                        [phoneOrEmailLabel setText:phoneWithSymbolsAddedBack];
-                    }
-                }
-            }
-
-            [cell.contentView addSubview:phoneOrEmailLabel];
-        }
-
-        cell.accessoryType=UITableViewCellAccessoryNone;
+        cell.accessoryType = UITableViewCellAccessoryNone;
     }
 
     else if (isRecentList)
@@ -1577,43 +817,7 @@
 
         [pic setStyleClass:@"animate_bubble"];
     }
-    
-    else if (emailEntry || phoneNumEntry)
-    {
-        [self.contacts setStyleId:@"select_recipientwithoutSeperator"];
 
-        cell.accessoryType = UITableViewCellAccessoryNone;
-        cell.indentationWidth = 10;
-        [cell.contentView sizeToFit];
-
-        [pic setImage:[UIImage imageNamed:@"profile_picture.png"]];
-        [pic setFrame:CGRectMake(130, 62, 60, 60)];
-        pic.layer.cornerRadius = 30;
-
-        if (shouldAnimate)
-        {
-            [pic setStyleClass:@"animate_bubble"];
-        }
-
-        UILabel * send_to_label = [UILabel new];
-        [send_to_label setFont:[UIFont fontWithName:@"Roboto-light" size:19]];
-        [send_to_label setFrame:CGRectMake(60, 2, 200, 25)];
-        [send_to_label setText:NSLocalizedString(@"SelectRecip_SendToTxt", @"Select Recipient Send To Text")];
-        [send_to_label setTextColor:kPayoBlue];
-        [send_to_label setTextAlignment:NSTextAlignmentCenter];
-        [cell.contentView addSubview:send_to_label];
-
-        UILabel * send_to_email = [UILabel new];
-        [send_to_email setFont:[UIFont fontWithName:@"Roboto-light" size:22]];
-        [send_to_email setFrame:CGRectMake(10, 28, 300, 30)];
-        [send_to_email setText:[NSString stringWithFormat:@"%@",searchString]];
-        [send_to_email setTextColor:kNoochGrayDark];
-        [send_to_email setTextAlignment:NSTextAlignmentCenter];
-        [cell.contentView addSubview:send_to_email];
-
-        cell.textLabel.text = @"";
-        return cell;
-    }
     return cell;
 }
 
@@ -1622,188 +826,15 @@
 {
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
 
-    if (phoneNumEntry)
-    {
-        if ([search.text length] == 14)
-        {
-            RTSpinKitView * spinner2 = [[RTSpinKitView alloc] initWithStyle:RTSpinKitViewStyleArcAlt];
-            spinner2.color = [UIColor whiteColor];
-            self.hud.customView = spinner2;
-            self.hud.labelText = NSLocalizedString(@"SelectRecip_HUD_CheckingPhoneNum", @"Select Recipient HUD Checking That Phone Text");
-            self.hud.detailsLabelText = nil;
-            [self.hud show:YES];
-
-            [self getMemberIdByUsingEnteredPhoneNumber];
-        }
-        else
-        {
-            [search becomeFirstResponder];
-
-            UIAlertView * alert = [[UIAlertView alloc]initWithTitle:NSLocalizedString(@"SelectRecip_PhoneNumTroubleAlertTitle2", @"Select Recipient Phone Number Trouble Alert Title")
-                                                            message:NSLocalizedString(@"SelectRecip_PhoneNumTroubleAlertBody", @"Select Recipient Phone Number Trouble Body Text")
-                                                           delegate:nil
-                                                  cancelButtonTitle:@"OK"
-                                                  otherButtonTitles:nil, nil];
-            [alert show];
-        }
-        return;
-    }
-
-    if (emailEntry)
-    {
-        if ([search.text length] > 3 &&
-            [search.text rangeOfString:@"@"].location != NSNotFound &&
-            [search.text rangeOfString:@"@"].location > 1 &&
-            [search.text rangeOfString:@"."].location < search.text.length - 2 &&
-            [search.text rangeOfString:@"."].location != NSNotFound)
-        {
-            if ([self checkEmailForShadyDomainSelectRecip] == true)
-            {
-                RTSpinKitView * spinner2 = [[RTSpinKitView alloc] initWithStyle:RTSpinKitViewStyleArcAlt];
-                spinner2.color = [UIColor whiteColor];
-                self.hud.customView = spinner2;
-                self.hud.labelText = @"Checking that email address...";
-                self.hud.detailsLabelText = nil;
-                [self.hud show:YES];
-
-                [self getMemberIdByUsingUserName];
-            }
-        }
-        else
-        {
-            UIAlertView * av = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"SelectRecip_PlsCheckEmailAlertTitle2", @"Select Recipient Please Check That Email Alert Title")
-                                                              message:[NSString stringWithFormat:@"\xF0\x9F\x93\xA7\n%@", NSLocalizedString(@"SelectRecip_PlsCheckEmailAlertBody2", @"Select Recipient Please Check That Email Alert Body Text")]
-                                                             delegate:nil
-                                                    cancelButtonTitle:@"OK"
-                                                    otherButtonTitles: nil];
-                [av show];
-            //}
-        }
-        return;
-    }
+    NSDictionary * receiver = nil;
 
     if (searching)
     {
-        NSDictionary * receiver =  [arrSearchedRecords objectAtIndex:indexPath.row];
+        receiver =  [arrSearchedRecords objectAtIndex:indexPath.row];
 
         //NSLog(@"Receiver is: %@",receiver);
-        if ([[assist shared] assos][receiver[@"UserName"]][@"addressbook"] ||
-            [[assist shared] assos][receiver[@"phoneNo"]][@"addressbook"] )
-        {
-            isphoneBook = YES;
-            emailEntry = NO;
-            phoneNumEntry = NO;
 
-            if (receiver[@"UserName"]) {
-                emailphoneBook = receiver[@"UserName"];
-            }
-            else {
-                emailphoneBook = @"";
-            }
-    
-            if (receiver[@"phoneNo"]) {
-                phoneBookPhoneNum = receiver[@"phoneNo"];
-            }
-            else {
-                phoneBookPhoneNum = @"";
-            }
-
-            if (receiver[@"FirstName"]) {
-                firstNamePhoneBook = receiver[@"FirstName"];
-            }
-            else {
-                firstNamePhoneBook = @"";
-            }
-
-            if (receiver[@"LastName"]) {
-                lastNamePhoneBook = receiver[@"LastName"];
-            }
-            else {
-                lastNamePhoneBook = @"";
-            }
-
-            if (receiver[@"UserName"])
-            {
-                if ([receiver[@"emailCount"]intValue] > 1)
-                {
-                    UIActionSheet * actionSheetObject = [[UIActionSheet alloc] init];
-
-                    for (int j = 0; j < [receiver[@"emailCount"]intValue]; j++)
-                    {
-                        [actionSheetObject addButtonWithTitle:[receiver[[NSString stringWithFormat:@"emailAdday%d",j]] lowercaseString]];
-                    }
-
-                    actionSheetObject.title = [NSString stringWithFormat:@"Select which email to use for %@",receiver[@"FirstName"]];
-                    actionSheetObject.cancelButtonIndex = [actionSheetObject addButtonWithTitle:@"Cancel"];
-                    actionSheetObject.actionSheetStyle = UIActionSheetStyleDefault;
-                    [actionSheetObject setTag:1122];
-                    actionSheetObject.delegate = self;
-                    [actionSheetObject showInView:self.view];
-                }
-                else
-                {
-                    RTSpinKitView * spinner2 = [[RTSpinKitView alloc] initWithStyle:RTSpinKitViewStyleArcAlt];
-                    spinner2.color = [UIColor whiteColor];
-                    self.hud.customView = spinner2;
-                    self.hud.labelText = NSLocalizedString(@"SelectRecip_HUD_GeneratingTrnsfr", @"Select Recipient HUD Generating Transfer Text");
-                    self.hud.detailsLabelText = nil;
-                    [self.hud show:YES];
-
-                    [self getMemberIdByUsingUserNameFromPhoneBook];
-                }
-            }
-            else if (receiver[@"phoneNo"])
-            {
-                if ([receiver[@"phoneCount"] intValue] > 1) // More than 1 phone number
-                {
-                    UIActionSheet * actionSheetForPhoneNos = [[UIActionSheet alloc] init];
-
-                    for (int k = 0; k < [receiver[@"phoneCount"] intValue]; k++)
-                    {
-                        if ([receiver[[NSString stringWithFormat:@"phoneAdday%d",k]] length] == 10)
-                        {
-                            NSMutableString * mu = [NSMutableString stringWithString:receiver[[NSString stringWithFormat:@"phoneAdday%d",k]]];
-                            [mu insertString:@"(" atIndex:0];
-                            [mu insertString:@")" atIndex:4];
-                            [mu insertString:@" " atIndex:5];
-                            [mu insertString:@"-" atIndex:9];
-
-                            NSString * phoneWithSymbolsAddedBack = [NSString stringWithString:mu];
-
-                            [actionSheetForPhoneNos addButtonWithTitle:[phoneWithSymbolsAddedBack lowercaseString]];
-                        }
-                    }
-
-                    actionSheetForPhoneNos.title = [NSString stringWithFormat:@"Select which phone number to use for %@",receiver[@"FirstName"]];
-                    actionSheetForPhoneNos.cancelButtonIndex = [actionSheetForPhoneNos addButtonWithTitle:@"Cancel"];
-                    actionSheetForPhoneNos.actionSheetStyle = UIActionSheetStyleBlackTranslucent;
-                    [actionSheetForPhoneNos setTag:223];
-                    actionSheetForPhoneNos.delegate = self;
-                    [actionSheetForPhoneNos showInView:self.view];
-                }
-                else // only 1 Phone Number
-                {
-                    RTSpinKitView * spinner2 = [[RTSpinKitView alloc] initWithStyle:RTSpinKitViewStyleFadingCircleAlt];
-                    spinner2.color = [UIColor whiteColor];
-                    self.hud.customView = spinner2;
-                    self.hud.labelText = NSLocalizedString(@"SelectRecip_HUD_GeneratingTrnsfr2", @"Select Recipient HUD Generating Transfer Text");
-                    self.hud.detailsLabelText = nil;
-                    [self.hud show:YES];
-
-                    [self getMemberIdByUsingPhoneNumberFromAB];
-                }
-            }
-
-            [tableView deselectRowAtIndexPath:indexPath animated:YES];
-
-            return;
-        }
-
-
-        // BELOW THIS WOULD BE FOR WHEN THE SELECTED ROW CONTAINS A RESULT FROM
-        // THE USER'S 'RECENT LIST' AS OPPOSED TO A PHONE BOOK ENTRY (Email OR Phone)
         searching = NO;
-        emailEntry = NO;
         isRecentList = YES;
         [search resignFirstResponder];
         [search setText:@""];
@@ -1820,9 +851,6 @@
 
         isFromHome = NO;
         isFromArtisanDonationAlert = NO;
-
-        HowMuch * how_much = [[HowMuch alloc] initWithReceiver:receiver];
-        [self.navigationController pushViewController:how_much animated:YES];
     }
     else
     {
@@ -1837,11 +865,11 @@
         isFromHome = NO;
         isFromArtisanDonationAlert = NO;
 
-        NSDictionary * receiver = [self.recents objectAtIndex:indexPath.row];
-
-        HowMuch * how_much = [[HowMuch alloc] initWithReceiver:receiver];
-        [self.navigationController pushViewController:how_much animated:YES];
+        receiver = [self.recents objectAtIndex:indexPath.row];
     }
+
+    HowMuch * how_much = [[HowMuch alloc] initWithReceiver:receiver];
+    [self.navigationController pushViewController:how_much animated:YES];
 }
 
 -(bool)checkEmailForShadyDomainSelectRecip
@@ -1880,7 +908,7 @@
     }
 }
 
-- (void)didReceiveMemoryWarning
+-(void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
     SDImageCache *imageCache = [SDImageCache sharedImageCache];
