@@ -186,7 +186,6 @@ bool modal;
                                                @"alertText" : @"This screen shows your unique Referral Code. Send it out to anyone as often as you'd like and you'll get $5 for each new user who signs up with your code and makes a payment (up to 5 referrals)."
                                              }
                                    andBlock:^(NSDictionary *data, id context) {
-                                       sentFromStatsScrn = false;
                                        SendInvite *inv = [SendInvite new];
                                        [nav_ctrl pushViewController:inv animated:YES];
 

@@ -16,6 +16,7 @@
 {
     UIImageView * newRecipPic;
     UIImagePickerController * picker;
+    UILabel * edit_label;
 }
 
 @property(nonatomic,strong) UITextField * firstName;

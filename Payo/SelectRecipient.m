@@ -17,7 +17,7 @@
 @interface SelectRecipient ()
 
 @property(nonatomic,strong) UITableView * contacts;
-@property(nonatomic,strong) NSMutableArray * recents;
+@property(nonatomic,strong) NSMutableArray * recipientList;
 @property(nonatomic,strong) MBProgressHUD * hud;
 @property(nonatomic,strong) UIImageView * noContact_img;
 @property(nonatomic,strong) UIImageView * backgroundImage;
@@ -150,7 +150,7 @@
 
     [ARTrackingManager trackEvent:@"SelectRecip_viewWillAppear1"];
 
-    if ([self.recents count] == 0)
+    if ([self.recipientList count] == 0)
     {
         [self.view addSubview: self.noContact_img];
     }
@@ -289,7 +289,7 @@
 {
     [self lowerNavBar];
 
-    if ([self.recents count] == 0)
+    if ([self.recipientList count] == 0)
     {
         [self.contacts setHidden:YES];
         [self.view addSubview: self.noContact_img];
@@ -545,25 +545,24 @@
         }
 
         NSError * error;
-        self.recents = [NSJSONSerialization
-                        JSONObjectWithData:[result dataUsingEncoding:NSUTF8StringEncoding]
-                        options:kNilOptions
-                        error:&error];
+        self.recipientList = [NSJSONSerialization
+                              JSONObjectWithData:[result dataUsingEncoding:NSUTF8StringEncoding]
+                              options:kNilOptions
+                              error:&error];
         
         NSMutableArray * temp = [NSMutableArray new];
  
-        for (NSDictionary * dict in self.recents)
+        for (NSDictionary * dict in self.recipientList)
         {
             NSMutableDictionary * prep = dict.mutableCopy;
             [prep setObject:@"YES" forKey:@"recent"];
             [temp addObject:prep];
         }
 
-        self.recents = temp.mutableCopy;
-        [[assist shared] addAssos:[self.recents mutableCopy]];
+        self.recipientList = temp.mutableCopy;
+        [[assist shared] addAssos:[self.recipientList mutableCopy]];
 
-        [self.hud hide:YES];
-        if ([self.recents count] > 0)
+        if ([self.recipientList count] > 0)
         {
             if ([self.view.subviews containsObject:self.noContact_img])
             {
@@ -703,11 +702,13 @@
 
     if (section == 0)
     {
-        if (searching) {
+        if (searching)
+        {
             title.text = NSLocalizedString(@"SelectRecip_SearchResults", @"Select Recipient Search Results");
         }
-        else if (isRecentList) {
-            title.text = NSLocalizedString(@"SelectRecip_RecentContacts", @"Select Recipient Recent Contacts");
+        else if (isRecentList)
+        {
+            title.text = NSLocalizedString(@"SelectRecip_RecipientListHdr", @"Select Recipient Recent Contacts");
         }
     }
     else
@@ -728,7 +729,7 @@
     }
     else
     {
-        return [self.recents count];
+        return [self.recipientList count];
     }
 }
 
@@ -790,7 +791,8 @@
 
     else if (isRecentList)
     {
-        NSDictionary * info = [self.recents objectAtIndex:indexPath.row];
+        NSDictionary * info = [self.recipientList objectAtIndex:indexPath.row];
+
         [pic sd_setImageWithURL:[NSURL URLWithString:info[@"Photo"]]
             placeholderImage:[UIImage imageNamed:@"profile_picture.png"]];
         [pic setFrame:CGRectMake(16, 6, 50, 50)];
@@ -865,7 +867,7 @@
         isFromHome = NO;
         isFromArtisanDonationAlert = NO;
 
-        receiver = [self.recents objectAtIndex:indexPath.row];
+        receiver = [self.recipientList objectAtIndex:indexPath.row];
     }
 
     HowMuch * how_much = [[HowMuch alloc] initWithReceiver:receiver];

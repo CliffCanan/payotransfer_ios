@@ -1135,8 +1135,6 @@ void addressBookChanged(ABAddressBookRef addressBook, CFDictionaryRef info, void
 
 -(void)goToReferFriend
 {
-    sentFromStatsScrn = false;
-
     SendInvite *inv = [SendInvite new];
     [self.navigationController pushViewController:inv animated:YES];
 }

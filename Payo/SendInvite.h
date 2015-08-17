@@ -1,6 +1,6 @@
 //
 //  SendInvite.h
-// Payo
+//  Payo
 //
 //  Created by Cliff Canan on 7/30/15.
 //  Copyright (c) 2015 Nooch. All rights reserved.
@@ -10,15 +10,16 @@
 #import <MessageUI/MessageUI.h>
 #import "serve.h"
 #import "MBProgressHUD.h"
-BOOL sentFromStatsScrn;
+
 @interface SendInvite : GAITrackedViewController<UITableViewDataSource,UITableViewDelegate,serveD,MFMailComposeViewControllerDelegate,UITextFieldDelegate,MBProgressHUDDelegate>
 {
-    NSMutableDictionary*dictResponse;
-    NSMutableDictionary*dictInviteUserList;
-    UILabel *code;
+    NSMutableDictionary * dictResponse;
+    NSMutableDictionary * dictInviteUserList;
+    UILabel * code;
     NSRange start;
     NSRange end;
-    NSString *betweenBraces;
-    NSString *newString;
+    NSString * betweenBraces;
+    NSString * newString;
 }
+
 @end

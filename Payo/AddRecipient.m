@@ -78,15 +78,15 @@
     [newRecipPic setStyleClass:@"animate_bubble"];
 
     NSShadow * shadow_edit = [[NSShadow alloc] init];
-    shadow_edit.shadowColor = Rgb2UIColor(33, 34, 35, .4);
+    shadow_edit.shadowColor = Rgb2UIColor(33, 34, 35, .44);
     shadow_edit.shadowOffset = CGSizeMake(0, 1);
     NSDictionary * textAttributes = @{NSShadowAttributeName: shadow_edit };
 
-    UILabel * edit_label = [UILabel new];
+    edit_label = [UILabel new];
     [edit_label setBackgroundColor:[UIColor clearColor]];
     edit_label.attributedText = [[NSAttributedString alloc] initWithString:@"Add" attributes:textAttributes];
     [edit_label setFont:[UIFont fontWithName:@"Roboto-medium" size:12]];
-    [edit_label setFrame:CGRectMake(0, newRecipPic.frame.size.height - 18, newRecipPic.frame.size.width, 12)];
+    [edit_label setFrame:CGRectMake(0, newRecipPic.frame.size.height - 20, newRecipPic.frame.size.width, 12)];
     [edit_label setTextAlignment:NSTextAlignmentCenter];
     [edit_label setTextColor:[UIColor whiteColor]];
 
@@ -463,7 +463,7 @@
     UIGraphicsBeginImageContext(rect.size);
     [image drawInRect:rect];
 
-    UIImage *img = UIGraphicsGetImageFromCurrentImageContext();
+    UIImage * img = UIGraphicsGetImageFromCurrentImageContext();
     UIGraphicsEndImageContext();
     return img;
 }
@@ -472,7 +472,10 @@
 {
     UIImage * image = [info objectForKey:UIImagePickerControllerEditedImage];
     image = [image resizedImageWithContentMode:UIViewContentModeScaleAspectFill bounds:CGSizeMake(120,120) interpolationQuality:kCGInterpolationMedium];
+
     [newRecipPic setImage:image];
+
+    edit_label.text = @"Change";
 
     [[assist shared] setTranferImage:image];
 
@@ -492,7 +495,7 @@
 #pragma mark - Alert & Action View Handlers
 -(void)change_pic
 {
-    UIActionSheet * actionSheetObject = [[UIActionSheet alloc] initWithTitle:@"Add A Profile Picture"
+    UIActionSheet * actionSheetObject = [[UIActionSheet alloc] initWithTitle:@"Add A Picture For This Person"
                                                                     delegate:self
                                                            cancelButtonTitle:NSLocalizedString(@"Profile_CancelTxt", @"Profile 'Cancel' Text")
                                                       destructiveButtonTitle:nil
