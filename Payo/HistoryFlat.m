@@ -384,11 +384,11 @@
             
             if ([[dictRecord valueForKey:@"TransactionStatus"]isEqualToString:@"Rejected"]) {
                 [statusIndicator setText:[NSString fontAwesomeIconStringForIconIdentifier:@"fa-minus-circle"]];
-                [statusIndicator setTextColor:kNoochRed];
+                [statusIndicator setTextColor:kPayoRed];
             }
             else if ([[dictRecord valueForKey:@"TransactionStatus"]isEqualToString:@"Cancelled"]) {
                 [statusIndicator setText:[NSString fontAwesomeIconStringForIconIdentifier:@"fa-times"]];
-                [statusIndicator setTextColor:kNoochRed];
+                [statusIndicator setTextColor:kPayoRed];
             }
             else if ( [[dictRecord valueForKey:@"TransactionStatus"]isEqualToString:@"Success"] ||
                      ![[dictRecord valueForKey:@"TransactionStatus"]isEqualToString:@"Reward"]) {
@@ -410,7 +410,7 @@
                     // Sent Transfer
                     [amount setStyleClass:@"history_transferamount_neg"];
                     [transferTypeLabel setText:NSLocalizedString(@"History_TransferToTxt", @"History screen 'Transfer To' Text")];
-                    [transferTypeLabel setBackgroundColor:kNoochRed];
+                    [transferTypeLabel setBackgroundColor:kPayoRed];
                     [name setText:[NSString stringWithFormat:@"%@",[[dictRecord valueForKey:@"Name"] capitalizedString]]];
                     [pic sd_setImageWithURL:[NSURL URLWithString:[dictRecord objectForKey:@"Photo"]]
                         placeholderImage:[UIImage imageNamed:@"profile_picture.png"]];

@@ -65,7 +65,7 @@
     [search setImage:[UIImage imageNamed:@"search_blue"] forSearchBarIcon:UISearchBarIconSearch state:UIControlStateNormal];
     [search setImage:[UIImage imageNamed:@"clear_white"] forSearchBarIcon:UISearchBarIconClear state:UIControlStateNormal];
 
-    for (UIView *subView1 in search.subviews)
+    for (UIView * subView1 in search.subviews)
     {
         for (id subview2 in subView1.subviews)
         {
@@ -190,7 +190,7 @@
         RTSpinKitView * spinner1 = [[RTSpinKitView alloc] initWithStyle:RTSpinKitViewStyleArcAlt];
         spinner1.color = [UIColor whiteColor];
         self.hud.customView = spinner1;
-        self.hud.labelText = NSLocalizedString(@"SelectRecip_RecentLoading", @"Select Recipient Recent List Loading Text");
+        self.hud.labelText = NSLocalizedString(@"SelectRecip_Loading", @"Select Recipient Loading Text");
         self.hud.detailsLabelText = nil;
         [self.hud show:YES];
 
@@ -244,7 +244,6 @@
                            initWithRootViewController:addRecipient];
 
     [self presentViewController:navigationController animated:YES completion: nil];
-    //[self.navigationController pushViewController:addRecipient animated:YES];
 }
 
 -(void)lowerNavBar
@@ -278,11 +277,6 @@
     }
 }
 
-- (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex
-{
-
-}
-
 
 #pragma mark - Searching
 -(void)searchBarCancelButtonClicked:(UISearchBar *)searchBar
@@ -302,6 +296,7 @@
     [searchBar resignFirstResponder];
     [searchBar setText:@""];
     [searchBar setShowsCancelButton:NO animated:YES];
+
     [self.contacts setStyleId:@"select_recipient"];
     [self.contacts reloadData];
 }
@@ -326,7 +321,7 @@
                                  options:0 << 16
                               animations:^{
                                   [UIView addKeyframeWithRelativeStartTime:0 relativeDuration:.8 animations:^{
-                                      [self.contacts setFrame:CGRectMake(0, 70, 320, [[UIScreen mainScreen] bounds].size.height - 56)];
+                                      [self.contacts setFrame:CGRectMake(0, 72, 320, [[UIScreen mainScreen] bounds].size.height - 72)];
                                   }];
                                   [UIView addKeyframeWithRelativeStartTime:0 relativeDuration:.9 animations:^{
                                       if ([self.view.subviews containsObject:self.noContact_img])
@@ -475,11 +470,6 @@
     [self.navigationController popViewControllerAnimated:YES];
 }
 
--(void)Error:(NSError *)Error
-{
-    [self.hud hide:YES];
-}
-
 #pragma mark - server Delegation
 - (void) listen:(NSString *)result tagName:(NSString *)tagName
 {
@@ -500,49 +490,9 @@
         [self performSelector:@selector(loadDelay) withObject:Nil afterDelay:1.0];
     }
 
-    else if ([tagName isEqualToString:@"getMemberIds"])
-    {
-        NSError *error;
-        NSMutableDictionary * getMemberIdsResult = [NSJSONSerialization
-                               JSONObjectWithData:[result dataUsingEncoding:NSUTF8StringEncoding]
-                               options:kNilOptions
-                               error:&error];
-        NSMutableArray * phoneEmailListFromServer = [[getMemberIdsResult objectForKey:@"GetMemberIdsResult"] objectForKey:@"phoneEmailList"];
-        NSMutableArray * additions = [NSMutableArray new];
-
-        for (NSDictionary * dict in phoneEmailListFromServer)
-        {
-            NSMutableDictionary * new = [NSMutableDictionary new];
-
-            for (NSString * key in dict.allKeys)
-            {
-                if ([key isEqualToString:@"memberId"] && [dict[key] length] > 0)
-                {
-                    [new setObject:dict[key] forKey:@"MemberId"];
-                }
-                else if ([key isEqualToString:@"emailAddy"])
-                {
-                    [new setObject:dict[key] forKey:@"UserName"];
-                }
-                else
-                {
-                    [new setObject:dict[key] forKey:key];
-                }
-            }
-            if (new[@"MemberId"])
-            {
-                [additions addObject:new];
-            }
-        }
-        [[assist shared] addAssos:additions];
-    }
-
     else if ([tagName isEqualToString:@"recents"])
     {
-        if ([self.view.subviews containsObject:self.hud])
-        {
-            [self.hud hide:YES];
-        }
+        [self.hud hide:YES];
 
         NSError * error;
         self.recipientList = [NSJSONSerialization
@@ -551,15 +501,36 @@
                               error:&error];
         
         NSMutableArray * temp = [NSMutableArray new];
- 
-        for (NSDictionary * dict in self.recipientList)
+
+        NSMutableDictionary * mikeMarenick = [NSMutableDictionary new];
+        if (![@"web@marenick.com" isEqualToString:[[user objectForKey:@"UserName"] lowercaseString]])
         {
-            NSMutableDictionary * prep = dict.mutableCopy;
-            [prep setObject:@"YES" forKey:@"recent"];
-            [temp addObject:prep];
+            [mikeMarenick setObject:@"Mike" forKey:@"FirstName"];
+            [mikeMarenick setObject:@"Marenick" forKey:@"LastName"];
+            [mikeMarenick setObject:@"0FD764C6-7013-49AF-A8E2-E1B62FAB66E0" forKey:@"MemberId"];
+            [mikeMarenick setObject:@"TXmspNVR" forKey:@"NoochId"];
+            [mikeMarenick setObject:@"https://www.noochme.com/noochservice/UploadedPhotos/Photos/gv_no_photo.png" forKey:@"Photo"];
+            [mikeMarenick setObject:@"Active" forKey:@"Status"];
+            [mikeMarenick setObject:@"web@marenick.com" forKey:@"UserName"];
+
+            [temp addObject:mikeMarenick];
         }
 
+        NSMutableDictionary * cliffCanan = [NSMutableDictionary new];
+        [cliffCanan setObject:@"Cliff" forKey:@"FirstName"];
+        [cliffCanan setObject:@"Canan" forKey:@"LastName"];
+        [cliffCanan setObject:@"b3a6cf7b-561f-4105-99e4-406a215ccf60" forKey:@"MemberId"];
+        [cliffCanan setObject:@"69pgj3Rx" forKey:@"NoochId"];
+        [cliffCanan setObject:@"https://www.noochme.com/noochservice/UploadedPhotos/Photos/b3a6cf7b-561f-4105-99e4-406a215ccf60.png" forKey:@"Photo"];
+        [cliffCanan setObject:@"Active" forKey:@"Status"];
+        [cliffCanan setObject:@"cliff@nooch.com" forKey:@"UserName"];
+
+        [temp addObject:cliffCanan];
+
         self.recipientList = temp.mutableCopy;
+
+        //NSLog(@"RECIPIENT LIST IS: %@", self.recipientList);
+
         [[assist shared] addAssos:[self.recipientList mutableCopy]];
 
         if ([self.recipientList count] > 0)
@@ -645,11 +616,16 @@
     }
 }
 
+-(void)Error:(NSError *)Error
+{
+    [self.hud hide:YES];
+}
+
 -(void)displayFirstTimeUserImg
 {
     if (IS_IPHONE_5)
     {
-        self.noContact_img.frame = CGRectMake(0, 82, 320, 405);
+        self.noContact_img.frame = CGRectMake(0, 52, 320, 405);
         self.noContact_img.image = [UIImage imageNamed:@"SelectRecipIntro"];
     }
     else
@@ -828,13 +804,21 @@
 {
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
 
+    if (navIsUp == YES)
+    {
+        navIsUp = NO;
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self lowerNavBar];
+        });
+    }
+
     NSDictionary * receiver = nil;
 
     if (searching)
     {
         receiver =  [arrSearchedRecords objectAtIndex:indexPath.row];
 
-        //NSLog(@"Receiver is: %@",receiver);
+        NSLog(@"Receiver is: %@",receiver);
 
         searching = NO;
         isRecentList = YES;
@@ -843,27 +827,12 @@
         [search setShowsCancelButton:NO];
         [tableView deselectRowAtIndexPath:indexPath animated:YES];
 
-        if (navIsUp == YES)
-        {
-            navIsUp = NO;
-            dispatch_async(dispatch_get_main_queue(), ^{
-                [self lowerNavBar];
-            });
-        }
-
         isFromHome = NO;
         isFromArtisanDonationAlert = NO;
     }
     else
     {
-        if (navIsUp == YES)
-        {
-            navIsUp = NO;
-            dispatch_async(dispatch_get_main_queue(), ^{
-                [self lowerNavBar];
-            });
-        }
-        [self.navigationItem setLeftBarButtonItem:nil];
+        //[self.navigationItem setLeftBarButtonItem:nil];
         isFromHome = NO;
         isFromArtisanDonationAlert = NO;
 

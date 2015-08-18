@@ -9,18 +9,6 @@
 view { 
     font-family		: "Roboto";
 }
-
-#prelogin_logo {
-    background-image : url(payo-logo-140.png);
-    height: 70px;
-    width: 70px;
-    position: 125 19;
-}
-#prelogin_logo_loginScreen_4 {
-    height : 44px;
-    width : 122px;
-    position : 99 8;
-}
 .termsCheckText {
     font-family: "Roboto";
     font-weight: light;
@@ -426,7 +414,7 @@ navigation-bar title {
     border				: 1px solid #66AE3C;
 }
 .button_LtBoxSm_right {
-    left                : 154px;
+    left                : 157px;
     width				: 135px;
     height				: 44px;
     color 				: white;
@@ -1165,7 +1153,7 @@ table-view#select_recipientwithoutSeperator {
     color 				: #58595B;
 }
 
-/**  Send and Request buttons. **/ 
+/**  Send buttons **/
 .howmuch_buttons {
     width				: 150px;
     font-family			: "Roboto";
@@ -1217,41 +1205,16 @@ table-view#select_recipientwithoutSeperator {
     font-family	: "FontAwesome";
     font-size	: 23px;
 }
-#cancel_hidden {
-    left: 132px;
-    top: 194px;
-    width: 0px;
-    height: 56px;
-    opacity: 0;
-}
-#cancel_hidden_4 {
-    left: 132px;
-    top: 136px;
-    width: 0px;
-    height: 56px;
-    opacity: 0;
-}
-#cancel_request {
-    width: 40px;
-    left: 0px;
-}
 #cancel_send {
     left: 262px;
     width: 40px;
 }
 
-/**  Text entry field for inputting a memo. **/
-#howmuch_memo {
-    font-family 	: "Roboto";
-    font-weight 	: light;
-    font-size       : 16px;
-}
 #howmuch_memo_4 {
     left    		: 83px;
     top     		: 98px;
     width 			: 212px;
     height      	: 31px;
-    text-align      : center;
     font-family 	: "Roboto";
     font-weight 	: light;
     font-size       : 15px;
@@ -1260,39 +1223,6 @@ table-view#select_recipientwithoutSeperator {
 /********************/
 /**   PIN Screen   **/
 /********************/
-
-.pin_instructiontext {
-    width			: 300px;
-    left			: 10px;
-    top             : 10px;
-    height          : 20px;
-    font-family		: "Roboto";
-    font-weight		: medium;
-    font-size		: 16px;
-    text-align		: center;
-    color			: #14171a;
-}
-.pin_instructiontext_4 {
-    top             : 4px;
-}
-#Transferpin_instructiontext_send { 
-    text-align : center;
-    color 	: #55BA50;
-}
-/**  Making the word "request" blue.  **/    
-#pin_instructiontext_request { 
-    text-align : center;
-    color	: #1A5BAA;
-    font-family: "Roboto";
-    font-weight: medium;
-}
-
-/**  The Amount of the transfer displayed in the middle of the PIN screen.  **/  
-.pin_amountfield_4 {
-    top             : 83px;
-    height			: 46px;
-    font-size		: 40px;
-}
 
 /**  Background white box for the recipient info right above the number pad.  **/  
 .pin_recipientbox {

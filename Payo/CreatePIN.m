@@ -107,7 +107,7 @@
                         self.pin_check = @"";
                         [self.pin setText:@""];
                         [self.prompt setText:NSLocalizedString(@"CreatePIN_NoMatch", @"Create PIN screen PINs don't match feedback Text Instruction Text")];
-                        [self.prompt setTextColor:kNoochRed];
+                        [self.prompt setTextColor:kPayoRed];
                         [self.first_num setBackgroundColor:[UIColor clearColor]];
                         [self.second_num setBackgroundColor:[UIColor clearColor]];
                         [self.third_num setBackgroundColor:[UIColor clearColor]];
@@ -166,8 +166,8 @@
 
     [self.view addSubview:btnback];
 
-    UIImageView * logo = [UIImageView new];
-    [logo setStyleId:@"prelogin_logo"];
+    UIImageView * logo = [[UIImageView alloc] initWithFrame:CGRectMake(125, 19, 70, 70)];
+    [logo setImage:[UIImage imageNamed:@"payo-logo-140.png"]];
     [self.view addSubview:logo];
 
     self.pin_check = @"";

@@ -18,7 +18,7 @@
 
 # pragma mark - View lifecycle
 
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil value:(NSString *)sendValue
+-(id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil value:(NSString *)sendValue
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
@@ -72,7 +72,7 @@
     self.hud.labelText = NSLocalizedString(@"Privacy_HUDlbl", @"Privacy 'Loading Privacy Policy...' HUD Label");
     [self.hud show:YES];
 
-    NSURL * webURL = [NSURL URLWithString:@"https://www.nooch.com/privacy/"];
+    NSURL * webURL = [NSURL URLWithString:@"https://nooch.com/payoprivacy"];
     privacyView = [[UIWebView alloc]initWithFrame:CGRectMake(0, -2, 320, [[UIScreen mainScreen] bounds].size.height - 62)];
     privacyView.delegate = self;
     [privacyView loadRequest:[NSURLRequest requestWithURL:webURL]];

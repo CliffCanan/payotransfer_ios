@@ -45,11 +45,11 @@
 -(void)forgotPass:(NSString *)email;
 -(void)getSettings;
 -(void)getEncrypt:(NSString *)input;
+-(void)getExchangeRate;
 -(void)getDetails:(NSString*)username;
 -(void)getInvitedMemberList:(NSString*)memId;
 -(void)GetTransactionDetail:(NSString*)transactionId;
 -(void)getMemIdFromuUsername:(NSString*)username;
--(void)getMemIdFromPhoneNumber:(NSString*)phoneNumber;
 -(void)getMemberIds:(NSArray*)input;
 -(void)getRecents;
 -(void)GetReferralCode:(NSString*)memberid;
@@ -83,7 +83,6 @@
 -(void)setEmailSets:(NSDictionary*)notificationDictionary;
 -(void)setPushSets:(NSDictionary*)notificationDictionary;
 -(void)setSets:(NSDictionary*)settingsDictionary;
--(void)setSharing:(NSString*)sharingValue;
 -(void)submitIdDocument;
 -(void)TransferMoneyToNonNoochUser:(NSDictionary*)transactionInput email:(NSString*)email;
 -(void)UpDateLatLongOfUser:(NSString*)lat lng:(NSString*)lng;

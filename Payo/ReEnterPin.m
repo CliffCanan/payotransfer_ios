@@ -221,11 +221,11 @@
             if ([[dictResult objectForKey:@"Result"] isEqualToString:@"Invalid Pin"])
             {
                 AudioServicesPlaySystemSound(kSystemSoundID_Vibrate);
-                self.prompt.textColor = kNoochRed;
-                self.fourth_num.layer.borderColor = kNoochRed.CGColor;
-                self.third_num.layer.borderColor = kNoochRed.CGColor;
-                self.second_num.layer.borderColor = kNoochRed.CGColor;
-                self.first_num.layer.borderColor = kNoochRed.CGColor;
+                self.prompt.textColor = kPayoRed;
+                self.fourth_num.layer.borderColor = kPayoRed.CGColor;
+                self.third_num.layer.borderColor = kPayoRed.CGColor;
+                self.second_num.layer.borderColor = kPayoRed.CGColor;
+                self.first_num.layer.borderColor = kPayoRed.CGColor;
                 [self.fourth_num setStyleClass:@"shakePin4"];
                 [self.third_num setStyleClass:@"shakePin3"];
                 [self.second_num setStyleClass:@"shakePin2"];
@@ -235,10 +235,10 @@
             }
             else if ([[dictResult objectForKey:@"Result"]isEqual:@"PIN number you entered again is incorrect. Your account will be suspended for 24 hours if you enter wrong PIN number again."])
             {
-                self.fourth_num.layer.borderColor = kNoochRed.CGColor;
-                self.third_num.layer.borderColor = kNoochRed.CGColor;
-                self.second_num.layer.borderColor = kNoochRed.CGColor;
-                self.first_num.layer.borderColor = kNoochRed.CGColor;
+                self.fourth_num.layer.borderColor = kPayoRed.CGColor;
+                self.third_num.layer.borderColor = kPayoRed.CGColor;
+                self.second_num.layer.borderColor = kPayoRed.CGColor;
+                self.first_num.layer.borderColor = kPayoRed.CGColor;
                 [self.fourth_num setStyleClass:@"shakePin4"];
                 [self.third_num setStyleClass:@"shakePin3"];
                 [self.second_num setStyleClass:@"shakePin2"];

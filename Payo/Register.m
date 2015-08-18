@@ -142,8 +142,8 @@
     [boxOutline setStyleClass:@"welcomeBoxShadow"];
     [self.view addSubview:boxOutline];
 
-    UIImageView * logo = [UIImageView new];
-    [logo setStyleId:@"prelogin_logo"];
+    UIImageView * logo = [[UIImageView alloc] initWithFrame:CGRectMake(125, 19, 70, 70)];
+    [logo setImage:[UIImage imageNamed:@"payo-logo-140.png"]];
     [logo setStyleClass:@"animate_bubble_logo"];
     [self.view addSubview:logo];
 
@@ -209,7 +209,7 @@
     [self.nameValidator setFont:[UIFont fontWithName:@"FontAwesome" size:18]];
     [self.nameValidator setText:[NSString fontAwesomeIconStringForIconIdentifier:@"fa-times"]];
     [self.nameValidator setTextAlignment:NSTextAlignmentCenter];
-    [self.nameValidator setTextColor:kNoochRed];
+    [self.nameValidator setTextColor:kPayoRed];
     [self.nameValidator setHidden:YES];
     [self.name_field addSubview:self.nameValidator];
 
@@ -217,7 +217,7 @@
     [self.fullNameInstruc setBackgroundColor:[UIColor clearColor]];
     [self.fullNameInstruc setText:[NSString stringWithFormat:@"\xF0\x9F\x98\xB3  %@", NSLocalizedString(@"Register_NameInstruct", @"Register Screen Full Name Instructions Text")]];
     [self.fullNameInstruc setFont:[UIFont fontWithName:@"Roboto-regular" size:12]];
-    [self.fullNameInstruc setTextColor:kNoochRed];
+    [self.fullNameInstruc setTextColor:kPayoRed];
     [self.fullNameInstruc setTextAlignment:NSTextAlignmentRight];
     [self.fullNameInstruc setHidden:YES];
     [self.view addSubview:self.fullNameInstruc];
@@ -246,7 +246,7 @@
     [self.emailValidator setFont:[UIFont fontWithName:@"FontAwesome" size:18]];
     [self.emailValidator setText:[NSString fontAwesomeIconStringForIconIdentifier:@"fa-times"]];
     [self.emailValidator setTextAlignment:NSTextAlignmentCenter];
-    [self.emailValidator setTextColor:kNoochRed];
+    [self.emailValidator setTextColor:kPayoRed];
     [self.emailValidator setHidden:YES];
     [self.view addSubview:self.emailValidator];
 
@@ -294,7 +294,7 @@
     [self.pwValidator setFont:[UIFont fontWithName:@"Roboto-regular" size:11]];
     [self.pwValidator setText:NSLocalizedString(@"Register_VryWk", @"Register Screen 'Very Weak' PW Validator Text")];
     [self.pwValidator setTextAlignment:NSTextAlignmentRight];
-    [self.pwValidator setTextColor:kNoochRed];
+    [self.pwValidator setTextColor:kPayoRed];
     [self.pwValidator setHidden:YES];
     [self.view addSubview:self.pwValidator];
 
@@ -349,17 +349,19 @@
 
     if ([[UIScreen mainScreen] bounds].size.height < 500)
     {
+        [logo setFrame:CGRectMake(130, 16, 60, 60)];
+
         [signup setFrame:CGRectMake(0, 66, 320, 16)];
         [self.facebookLogin setFrame:CGRectMake(0, 126, 0, 0)];
         [self.or setFrame:CGRectMake(0, 182, 320, 16)];
 
         [boxOutline setFrame:CGRectMake(9, 219, 302, 153)];
 
-        [name setFrame:CGRectMake(0, 219, 0, 0)];
+        [name setFrame:CGRectMake(94, 219, 214, 40)];
         [self.name_field setFrame:CGRectMake(0, 219, 0, 0)];
         [self.fullNameInstruc setFrame:CGRectMake(40, 251, 263, 16)];
 
-        [email setFrame:CGRectMake(0, 259, 0, 0)];
+        [email setFrame:CGRectMake(94, 259, 0, 0)];
         [self.email_field setFrame:CGRectMake(0, 259, 0, 0)];
         [self.emailValidator setFrame:CGRectMake(72, 259, 21, 39)];
 
@@ -1075,7 +1077,7 @@
         {
             [self.emailValidator setHidden:NO];
             [self.emailValidator setText:[NSString fontAwesomeIconStringForIconIdentifier:@"fa-times"]];
-            [self.emailValidator setTextColor:kNoochRed];
+            [self.emailValidator setTextColor:kPayoRed];
         }
     }
 
@@ -1167,8 +1169,8 @@
             [self.pwValidator4 setBackgroundColor:Rgb2UIColor(188, 190, 192, .5)];
             [self.pwValidator3 setBackgroundColor:Rgb2UIColor(188, 190, 192, .5)];
             [self.pwValidator2 setBackgroundColor:Rgb2UIColor(188, 190, 192, .5)];
-            [self.pwValidator1 setBackgroundColor:kNoochRed];
-            [self.pwValidator setTextColor:kNoochRed];
+            [self.pwValidator1 setBackgroundColor:kPayoRed];
+            [self.pwValidator setTextColor:kPayoRed];
             [self.pwValidator setText:NSLocalizedString(@"Rgstr_WeakTxt", @"Register screen 'Weak' PW Validator Text")];
         }
         else
@@ -1184,7 +1186,7 @@
             [self.pwValidator3 setBackgroundColor:Rgb2UIColor(188, 190, 192, .5)];
             [self.pwValidator2 setBackgroundColor:Rgb2UIColor(188, 190, 192, .5)];
             [self.pwValidator1 setBackgroundColor:Rgb2UIColor(188, 190, 192, .5)];
-            [self.pwValidator setTextColor:kNoochRed];
+            [self.pwValidator setTextColor:kPayoRed];
         }
 
         return YES;
@@ -1194,7 +1196,8 @@
         [self.pwValidator setHidden:YES];
     }
 
-    if (textField == self.email_field)
+    if (  textField == self.email_field &&
+        [[UIScreen mainScreen] bounds].size.height > 500)
     {
         if (newLength < 22)
         {
@@ -1266,7 +1269,7 @@
             {
                 [self.emailValidator setHidden:NO];
                 [self.emailValidator setText:[NSString fontAwesomeIconStringForIconIdentifier:@"fa-times"]];
-                [self.emailValidator setTextColor:kNoochRed];
+                [self.emailValidator setTextColor:kPayoRed];
 
                 [self.email_field becomeFirstResponder];
             }
@@ -1363,7 +1366,7 @@
     {
         [self.emailValidator setHidden:NO];
         [self.emailValidator setText:[NSString fontAwesomeIconStringForIconIdentifier:@"fa-times"]];
-        [self.emailValidator setTextColor:kNoochRed];
+        [self.emailValidator setTextColor:kPayoRed];
         
         [self.email_field becomeFirstResponder];
 

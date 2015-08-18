@@ -347,7 +347,7 @@
                                       reuseIdentifier:CellIdentifier];
     }
 
-    [cell.textLabel setFont:[UIFont fontWithName:@"Roboto-regular" size:15]];
+    [cell.textLabel setFont:[UIFont fontWithName:@"Roboto-regular" size:16]];
 
     if (indexPath.row == 0)
     {

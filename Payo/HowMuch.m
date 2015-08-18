@@ -112,67 +112,31 @@
     [self.back addSubview:to];
 
     UILabel * to_label = [[UILabel alloc] initWithFrame:CGRectMake(43, 0, 300, 38)];
-    if ([self.receiver valueForKey:@"nonuser"] || isFromArtisanDonationAlert)
+    [to_label setStyleId:@"label_howmuch_recipientname"];
+
+    if ([self.receiver objectForKey:@"FirstName"])
     {
-        [to_label setStyleId:@"label_howmuch_recipientnamenonuser"];
-
-        UILabel * glyph_nonuserType = [UILabel new];
-        [glyph_nonuserType setTextColor:[UIColor whiteColor]];
-
-        if ([self.receiver objectForKey:@"email"] && !isFromArtisanDonationAlert)
-        {
-            [glyph_nonuserType setFont:[UIFont fontWithName:@"FontAwesome" size:17]];
-            glyph_nonuserType.attributedText = [[NSAttributedString alloc]initWithString:[NSString fontAwesomeIconStringForIconIdentifier:@"fa-envelope-o"] attributes:textAttributes];
-        }
-        else if ([self.receiver objectForKey:@"phone"])
-        {
-            [glyph_nonuserType setFont:[UIFont fontWithName:@"FontAwesome" size:20]];
-            glyph_nonuserType.attributedText = [[NSAttributedString alloc]initWithString:[NSString fontAwesomeIconStringForIconIdentifier:@"fa-mobile"] attributes:textAttributes];
-        }
-
-        if ([self.receiver objectForKey:@"firstName"] && [self.receiver objectForKey:@"lastName"])
-        {
-            float numOfChars = [[self.receiver objectForKey:@"firstName"] length] + [[self.receiver objectForKey:@"lastName"] length];
-
-            to_label.attributedText = [[NSAttributedString alloc] initWithString:[NSString stringWithFormat:@"%@ %@", [self.receiver objectForKey:@"firstName"], [self.receiver objectForKey:@"lastName"]] attributes:textAttributes];
-
-            [glyph_nonuserType setFrame:CGRectMake(52 + numOfChars * 10, 1, 20, 37)];
-            [self.back addSubview:glyph_nonuserType];
-        }
-        else if (isFromArtisanDonationAlert && [self.receiver objectForKey:@"FirstName"] && [self.receiver objectForKey:@"LastName"])
-        {
-            to_label.attributedText = [[NSAttributedString alloc] initWithString:[NSString stringWithFormat:@"%@ %@", [self.receiver objectForKey:@"FirstName"], [self.receiver objectForKey:@"LastName"]] attributes:textAttributes];
-        }
-            
-        else if ([self.receiver objectForKey:@"firstName"])
-        {
-            float numOfChars = [[self.receiver objectForKey:@"firstName"] length];
-
-            to_label.attributedText = [[NSAttributedString alloc] initWithString:[NSString stringWithFormat:@"%@", [self.receiver objectForKey:@"firstName"]] attributes:textAttributes];
-
-            [glyph_nonuserType setFrame:CGRectMake(52 + numOfChars * 10, 1, 20, 37)];
-            [self.back addSubview:glyph_nonuserType];
-        }
-        else if ([self.receiver objectForKey:@"email"])
-        {
-            to_label.attributedText = [[NSAttributedString alloc] initWithString:[NSString stringWithFormat:@"%@", [self.receiver objectForKey:@"email"]] attributes:textAttributes];
-        }
-        else if ([self.receiver objectForKey:@"phone"])
-        {
-            to_label.attributedText = [[NSAttributedString alloc] initWithString:[NSString stringWithFormat:@"%@", [self.receiver objectForKey:@"phone"]] attributes:textAttributes];
-        }
+        to_label.attributedText = [[NSAttributedString alloc] initWithString:[NSString stringWithFormat:@"%@ %@", [[self.receiver objectForKey:@"FirstName"] capitalizedString],[[self.receiver objectForKey:@"LastName"] capitalizedString]]
+                                                                  attributes:textAttributes];
     }
-    else
+    else if ([self.receiver objectForKey:@"firstName"] && [self.receiver objectForKey:@"lastName"])
     {
-        [to_label setStyleId:@"label_howmuch_recipientname"];
-
-        if ([self.receiver objectForKey:@"FirstName"])
-        {
-            to_label.attributedText = [[NSAttributedString alloc] initWithString:[NSString stringWithFormat:@"%@ %@", [[self.receiver objectForKey:@"FirstName"] capitalizedString],[[self.receiver objectForKey:@"LastName"] capitalizedString]]
-                                                                      attributes:textAttributes];
-        }
+        to_label.attributedText = [[NSAttributedString alloc] initWithString:[NSString stringWithFormat:@"%@ %@", [self.receiver objectForKey:@"firstName"], [self.receiver objectForKey:@"lastName"]] attributes:textAttributes];
     }
-    [self.back addSubview:to_label];
+    else if (isFromArtisanDonationAlert && [self.receiver objectForKey:@"FirstName"] && [self.receiver objectForKey:@"LastName"])
+    {
+        to_label.attributedText = [[NSAttributedString alloc] initWithString:[NSString stringWithFormat:@"%@ %@", [self.receiver objectForKey:@"FirstName"], [self.receiver objectForKey:@"LastName"]] attributes:textAttributes];
+    }
+    else if ([self.receiver objectForKey:@"firstName"])
+    {
+        to_label.attributedText = [[NSAttributedString alloc] initWithString:[NSString stringWithFormat:@"%@", [self.receiver objectForKey:@"firstName"]] attributes:textAttributes];
+    }
+
+    UILabel * glyph_nonuserType = [[UILabel alloc] initWithFrame:CGRectMake(275, 0, 20, 38)];
+    [glyph_nonuserType setTextColor:[UIColor whiteColor]];
+    [glyph_nonuserType setFont:[UIFont fontWithName:@"FontAwesome" size:17]];
+    glyph_nonuserType.attributedText = [[NSAttributedString alloc]initWithString:[NSString fontAwesomeIconStringForIconIdentifier:@"fa-user"] attributes:textAttributes];
+
 
     self.user_pic = [UIImageView new];
     [self.user_pic setFrame:CGRectMake(12, 48, 84, 84)];
@@ -199,6 +163,9 @@
 
         }
     }
+
+    [self.back addSubview:glyph_nonuserType];
+    [self.back addSubview:to_label];
     [self.back addSubview:self.user_pic];
 
     self.amount = [[UITextField alloc] initWithFrame:CGRectMake(104, 58, 190, 68)];
@@ -216,19 +183,18 @@
     memoShell.layer.cornerRadius = 3;
     memoShell.layer.borderWidth = 1;
     memoShell.layer.borderColor = kNoochGrayLight.CGColor;
-    [self.back addSubview:memoShell];
+
 
     self.memo = [[UITextField alloc] initWithFrame:CGRectMake(2, 0, 255, 38)];
+    [self.memo setFont:[UIFont fontWithName:@"Roboto-light" size:16]];
     [self.memo setPlaceholder:NSLocalizedString(@"HowMuch_MemoPlaceholder", @"How Much memo placeholder text")];
     [self.memo setText:[self.receiver objectForKey:@"Memo"]];
     [self.memo setTextAlignment:NSTextAlignmentCenter];
     [self.memo setTextColor:kNoochGrayDark];
     [self.memo setDelegate:self];
-    [self.memo setStyleId:@"howmuch_memo"];
     [self.memo setTag:2];
     [self.memo setKeyboardType:UIKeyboardTypeDefault];
     self.memo.inputAccessoryView = [[UIView alloc] init]; // To override the IQ Keyboard Mgr
-    [memoShell addSubview:self.memo];
 
     self.send = [UIButton buttonWithType:UIButtonTypeRoundedRect];
     [self.send setFrame:CGRectMake(160, 194, 150, 50)];
@@ -239,21 +205,14 @@
     [self.send addTarget:self action:@selector(initialize_send) forControlEvents:UIControlEventTouchUpInside];
 
     self.reset_type = [UIButton buttonWithType:UIButtonTypeRoundedRect];
-    [self.reset_type setFrame:CGRectMake(0, 160, 30, 56)];
+    [self.reset_type setFrame:CGRectMake(132, 194, 0, 56)];
     [self.reset_type setBackgroundColor:[UIColor clearColor]];
     [self.reset_type setStyleId:@"reset_glyph"];
     [self.reset_type setTitle:[NSString fontAwesomeIconStringForIconIdentifier:@"fa-times"] forState:UIControlStateNormal];
     [self.reset_type setTitleShadowColor:Rgb2UIColor(19, 32, 38, 0.22) forState:UIControlStateNormal];
     self.reset_type.titleLabel.shadowOffset = CGSizeMake(0.0, -1.0);
-
-    if ([UIScreen mainScreen].bounds.size.height > 500) {
-        [self.reset_type setStyleId:@"cancel_hidden"];
-    }
-    else {
-        [self.reset_type setStyleId:@"cancel_hidden_4"];
-    }
-
     [self.reset_type addTarget:self action:@selector(reset_send_request) forControlEvents:UIControlEventTouchUpInside];
+    [self.reset_type setAlpha:0];
 
 
     if (isFromArtisanDonationAlert)
@@ -283,14 +242,21 @@
     
     if ([[UIScreen mainScreen] bounds].size.height == 480)
     {
+        [self.reset_type setFrame:CGRectMake(132, 136, 0, 56)];
         [self.send setStyleId:@"howmuch_send_4"];
 
         [self.user_pic setFrame:CGRectMake(6, 45, 72, 72)];
         self.user_pic.layer.cornerRadius = 36;
 
         [self.amount setStyleId:@"howmuch_amountfield_4"];
-        [self.memo setStyleId:@"howmuch_memo_4"];
+
+        [memoShell setFrame:CGRectMake(83, 98, 212, 31)];
+        [self.memo setFrame:CGRectMake(1, 0, 211, 31)];
+        [self.memo setFont:[UIFont fontWithName:@"Roboto-light" size:15]];
     }
+
+    [self.back addSubview:memoShell];
+    [memoShell addSubview:self.memo];
 
     transLimitFromArtisanString = [ARPowerHookManager getValueForHookById:@"transLimit"];
     transLimitFromArtisanInt = [transLimitFromArtisanString floatValue];
@@ -326,7 +292,7 @@
     [super viewDidDisappear:animated];
 }
 
-- (void)viewWillAppear:(BOOL)animated
+-(void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
     self.screenName = @"How Much Screen";
@@ -338,7 +304,7 @@
 }
 
 #pragma mark - type of transaction
-- (void) initialize_send
+-(void)initialize_send
 {
     [self.recip_back setStyleClass:@"barbackground_green"];
 
@@ -362,7 +328,7 @@
     [UIView commitAnimations];
 }
 
-- (void) reset_send_request
+-(void)reset_send_request
 {
     [self.recip_back setStyleClass:@"barbackground_gray"];
 
@@ -389,7 +355,7 @@
     [UIView commitAnimations];
 }
 
-- (void) confirm_send
+-(void)confirm_send
 {
     if ([self.amnt floatValue] == 0)
     {
@@ -445,7 +411,7 @@
 }
 
 #pragma mark - UITextField delegation
-- (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string
+-(BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string
 {
     if (textField.tag == 1)
     {
@@ -498,13 +464,13 @@
     return YES;
 }
 
-- (BOOL)textFieldShouldReturn:(UITextField *)textField
+-(BOOL)textFieldShouldReturn:(UITextField *)textField
 {
     [textField resignFirstResponder];
     return YES;
 }
 
-- (void)didReceiveMemoryWarning
+-(void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
     SDImageCache *imageCache = [SDImageCache sharedImageCache];

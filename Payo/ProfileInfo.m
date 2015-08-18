@@ -242,7 +242,7 @@ UIImageView *picture;
         UILabel * glyph_bankX = [[UILabel alloc] initWithFrame:CGRectMake(18, 5, 8, 22)];
         [glyph_bankX setFont:[UIFont fontWithName:@"FontAwesome" size:11]];
         [glyph_bankX setText:[NSString fontAwesomeIconStringForIconIdentifier:@"fa-exclamation"]];
-        [glyph_bankX setTextColor:kNoochRed];
+        [glyph_bankX setTextColor:kPayoRed];
         [goToSettings addSubview:glyph_bankX];
     }
     [self.member_since_back addSubview:goToSettings];
@@ -1271,7 +1271,7 @@ UIImageView *picture;
                 [self.ssnGlyphIndicator setText:[NSString fontAwesomeIconStringForIconIdentifier:@"fa-exclamation-circle"]];
                 [self.ssnGlyphIndicator setStyleClass:@"animate_bubble_slow"];
                 [self.ssnGlyphIndicator setFrame:CGRectMake(48, 0, 20, rowHeight - 2)];
-                [self.ssnGlyphIndicator setTextColor:kNoochRed];
+                [self.ssnGlyphIndicator setTextColor:kPayoRed];
                 [cell.contentView addSubview:self.ssnGlyphIndicator];
             }
 
@@ -2208,7 +2208,7 @@ UIImageView *picture;
             [self.emailGlyphIndicator setText:[NSString fontAwesomeIconStringForIconIdentifier:@"fa-exclamation-circle"]];
             [self.emailGlyphIndicator setStyleClass:@"animate_bubble_slow"];
             [self.emailGlyphIndicator setFrame:CGRectMake(34, 0, 20, rowHeight - 2)];
-            [self.emailGlyphIndicator setTextColor:kNoochRed];
+            [self.emailGlyphIndicator setTextColor:kPayoRed];
         }
         else
         {
@@ -2240,7 +2240,7 @@ UIImageView *picture;
             [self.phoneGlyphIndicator setText:[NSString fontAwesomeIconStringForIconIdentifier:@"fa-exclamation-circle"]];
             [self.phoneGlyphIndicator setStyleClass:@"animate_bubble_slow"];
             [self.phoneGlyphIndicator setFrame:CGRectMake(31, 0, 20, rowHeight - 2)];
-            [self.phoneGlyphIndicator setTextColor:kNoochRed];
+            [self.phoneGlyphIndicator setTextColor:kPayoRed];
         }
         else
         {

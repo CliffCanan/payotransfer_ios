@@ -11,8 +11,8 @@
 #import "SpinKit/RTSpinKitView.h"
 #import <MessageUI/MessageUI.h>
 
-@interface addBank : GAITrackedViewController<MBProgressHUDDelegate,UIActionSheetDelegate,MFMailComposeViewControllerDelegate>
+@interface addBank : GAITrackedViewController<MBProgressHUDDelegate,MFMailComposeViewControllerDelegate>
 {
-    UIView *overlay, *mainView;
+    UIView * overlay, * mainView;
 }
 @end

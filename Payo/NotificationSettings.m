@@ -112,13 +112,13 @@
     [self.btn_glyphPush_2 addTarget:self action:@selector(toggle_section:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:self.btn_glyphPush_2];*/
 
-    self.email_sent = [[UISwitch alloc] initWithFrame:CGRectMake(180, 43, 40, 30)];
+    self.email_sent = [[UISwitch alloc] initWithFrame:CGRectMake(180, 38, 40, 30)];
     self.email_sent.transform = CGAffineTransformMakeScale(0.9, 0.9);
     [self.email_sent setOnTintColor:kPayoBlue];
     [self.email_sent addTarget:self action:@selector(changeSwitch:) forControlEvents:UIControlEventValueChanged];
     self.email_sent.tag = 103;
 
-    self.email_unclaimed = [[UISwitch alloc] initWithFrame:CGRectMake(180, 93, 40, 30)];
+    self.email_unclaimed = [[UISwitch alloc] initWithFrame:CGRectMake(180, 88, 40, 30)];
     self.email_unclaimed.transform = CGAffineTransformMakeScale(0.9, 0.9);
     [self.email_unclaimed setOnTintColor:kPayoBlue];
     [self.email_unclaimed addTarget:self action:@selector(changeSwitch:) forControlEvents:UIControlEventValueChanged];
@@ -240,9 +240,9 @@
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     static NSString *CellIdentifier = @"Cell";
-    
+
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
-    
+
     if (cell == nil)
     {
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle
@@ -264,7 +264,7 @@
             cell.textLabel.text = NSLocalizedString(@"NotifSettings_Row3", @"Notification Settings row lbl - 'Transfer Unclaimed'");
         }
     }
-    
+
     return cell;
 }
 

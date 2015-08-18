@@ -161,7 +161,7 @@
     [self.pwValidator setFont:[UIFont fontWithName:@"Roboto-regular" size:11]];
     [self.pwValidator setText:@"Very Weak"];
     [self.pwValidator setTextAlignment:NSTextAlignmentRight];
-    [self.pwValidator setTextColor:kNoochRed];
+    [self.pwValidator setTextColor:kPayoRed];
     [self.pwValidator setHidden:YES];
     [self.view addSubview:self.pwValidator];
 }
@@ -556,8 +556,8 @@
             [self.pwValidator4 setBackgroundColor:Rgb2UIColor(188, 190, 192, .5)];
             [self.pwValidator3 setBackgroundColor:Rgb2UIColor(188, 190, 192, .5)];
             [self.pwValidator2 setBackgroundColor:Rgb2UIColor(188, 190, 192, .5)];
-            [self.pwValidator1 setBackgroundColor:kNoochRed];
-            [self.pwValidator setTextColor:kNoochRed];
+            [self.pwValidator1 setBackgroundColor:kPayoRed];
+            [self.pwValidator setTextColor:kPayoRed];
             [self.pwValidator setText:@"Weak"];
         }
         else
@@ -571,7 +571,7 @@
             [self.pwValidator3 setBackgroundColor:Rgb2UIColor(188, 190, 192, .5)];
             [self.pwValidator2 setBackgroundColor:Rgb2UIColor(188, 190, 192, .5)];
             [self.pwValidator1 setBackgroundColor:Rgb2UIColor(188, 190, 192, .5)];
-            [self.pwValidator setTextColor:kNoochRed];
+            [self.pwValidator setTextColor:kPayoRed];
         }
         
         return YES;

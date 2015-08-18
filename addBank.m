@@ -168,15 +168,15 @@
     imageShow.contentMode = UIViewContentModeScaleAspectFit;
 
     UIButton * btnHelp = [UIButton buttonWithType:UIButtonTypeCustom];
+    btnHelp.frame = CGRectMake(10, mainView.frame.size.height - 56, 135, 44);
     [btnHelp setStyleClass:@"button_LtBoxSm_left"];
     [btnHelp setTitleShadowColor:Rgb2UIColor(26, 38, 19, 0.2) forState:UIControlStateNormal];
     btnHelp.titleLabel.shadowOffset = CGSizeMake(0.0, -1.0);
-    btnHelp.frame = CGRectMake(10, mainView.frame.size.height - 56, 280, 50);
     [btnHelp setTitle:@"Get Help!" forState:UIControlStateNormal];
     [btnHelp addTarget:self action:@selector(getHelpPressed) forControlEvents:UIControlEventTouchUpInside];
 
     UIButton * btnLink = [UIButton buttonWithType:UIButtonTypeCustom];
-    btnLink.frame = CGRectMake(10, mainView.frame.size.height - 56, 280, 50);
+    btnLink.frame = CGRectMake(157, mainView.frame.size.height - 56, 135, 44);
     [btnLink setStyleClass:@"button_LtBoxSm_right"];
     [btnLink setTitleShadowColor:Rgb2UIColor(26, 38, 19, 0.2) forState:UIControlStateNormal];
     btnLink.titleLabel.shadowOffset = CGSizeMake(0.0, -1.0);
@@ -190,7 +190,8 @@
         glyph_lock.frame = CGRectMake(28, 5, 22, 29);
         title.frame = CGRectMake(0, 5, 302, 28);
         imageShow.frame = CGRectMake(1, 43, 300, 340);
-        btnLink.frame = CGRectMake(10,mainView.frame.size.height - 51, 280, 44);
+        btnHelp.frame = CGRectMake(10, mainView.frame.size.height - 51, 135, 44);
+        btnLink.frame = CGRectMake(157, mainView.frame.size.height - 51, 135, 44);
     }
 
     UIImageView * btnClose = [[UIImageView alloc] initWithFrame:self.view.frame];
@@ -358,20 +359,6 @@
     }
 }
 
--(void)cantSendMail
-{
-    if (![MFMailComposeViewController canSendMail])
-    {
-        UIAlertView * av = [[UIAlertView alloc] initWithTitle:@"No Email Detected"
-                                                      message:@"You don't have an email account configured for this device."
-                                                     delegate:nil
-                                            cancelButtonTitle:@"OK"
-                                            otherButtonTitles: nil];
-        [av show];
-        return;
-    }
-}
-
 -(void)backToSettings
 {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
@@ -420,52 +407,7 @@
     [alert show];
 }
 
-#pragma mark - server delegation
-- (void) listen:(NSString *)result tagName:(NSString *)tagName
-{
-    NSError *error;
-    
-    if ([tagName isEqualToString:@"saveMemberTransId"])
-    {
-        [self.hud hide:YES];
-        
-        NSDictionary * dictResponse = [NSJSONSerialization JSONObjectWithData:[result dataUsingEncoding:NSUTF8StringEncoding] options:0 error:&error];
-
-        NSLog(@"Knox dictResponse is: %@",[dictResponse valueForKey:@"SaveMemberTransIdResult"]);
-        //NSLog(@"Knox dictResponse -> valueForKey@'Result' is: %@",[[dictResponse valueForKey:@"SaveMemberTransIdResult"]valueForKey:@"Result"]);
-
-        if ([[[dictResponse valueForKey:@"SaveMemberTransIdResult"]valueForKey:@"Result"]isEqualToString:@"Success"])
-        {
-            [user setBool:YES forKey:@"IsKnoxBankAvailable"];
-
-            UIAlertView * alert = [[UIAlertView alloc]initWithTitle:@"Great Success"
-                                                            message:@"\xF0\x9F\x98\x80\nYour bank was linked successfully."
-                                                           delegate:Nil
-                                                  cancelButtonTitle:@"OK"
-                                                  otherButtonTitles:Nil, nil];
-            [alert show];
-
-            Home * home = [Home new];
-            [nav_ctrl pushViewController:home animated:YES];
-        }
-        else
-        {
-            [user setBool:NO forKey:@"IsKnoxBankAvailable"];
-
-            UIAlertView * alert = [[UIAlertView alloc]initWithTitle:@"Please Try Again"
-                                                            message:@"\xF0\x9F\x98\xAE\nBank linking failed, unfortunately your info was not saved. We hate it when this happens too."
-                                                           delegate:Nil
-                                                  cancelButtonTitle:@"OK"
-                                                  otherButtonTitles:Nil, nil];
-            [alert show];
-
-            [self.navigationController popViewControllerAnimated:YES];
-        }
-        [user synchronize];
-    }
-}
-
-- (void) mailComposeController:(MFMailComposeViewController *)controller didFinishWithResult:(MFMailComposeResult)result error:(NSError *)error
+-(void)mailComposeController:(MFMailComposeViewController *)controller didFinishWithResult:(MFMailComposeResult)result error:(NSError *)error
 {
     UIAlertView *alert = [[UIAlertView alloc] init];
     [alert addButtonWithTitle:@"OK"];
@@ -495,6 +437,21 @@
     }
     // Close the Mail Interface
     [self dismissViewControllerAnimated:YES completion:NULL];
+}
+
+
+-(void)cantSendMail
+{
+    if (![MFMailComposeViewController canSendMail])
+    {
+        UIAlertView * av = [[UIAlertView alloc] initWithTitle:@"No Email Detected"
+                                                      message:@"You don't have an email account configured for this device."
+                                                     delegate:nil
+                                            cancelButtonTitle:@"OK"
+                                            otherButtonTitles: nil];
+        [av show];
+        return;
+    }
 }
 
 #pragma mark - webview delegation

@@ -67,8 +67,8 @@
 
     [self.view addSubview:btnback];
 
-    UIImageView * logo = [UIImageView new];
-    [logo setStyleId:@"prelogin_logo"];
+    UIImageView * logo = [[UIImageView alloc] initWithFrame:CGRectMake(125, 19, 70, 70)];
+    [logo setImage:[UIImage imageNamed:@"payo-logo-140.png"]];
     [self.view addSubview:logo];
 
     UILabel * welcome = [[UILabel alloc] initWithFrame:CGRectMake(0, 115, 320, 35)];

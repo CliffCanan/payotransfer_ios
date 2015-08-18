@@ -205,7 +205,7 @@
             newPinString = @"";
 
             self.prompt.text = NSLocalizedString(@"ResetPIN_noMatchTxt", @"Reset PIN pins don't match text");
-            self.prompt.textColor = kNoochRed;
+            self.prompt.textColor = kPayoRed;
             pinchangeProgress = 2;
             title.text = NSLocalizedString(@"ResetPIN_enterNewPin", @"Reset PIN 'Enter new PIN' text");
             return NO;
@@ -304,32 +304,32 @@
         if([[dictResult objectForKey:@"Result"] isEqualToString:@"PIN number you have entered is incorrect."])
         {
             AudioServicesPlaySystemSound(kSystemSoundID_Vibrate);
-            self.prompt.textColor = kNoochRed;
-            self.fourth_num.layer.borderColor = kNoochRed.CGColor;
-            self.third_num.layer.borderColor = kNoochRed.CGColor;
-            self.second_num.layer.borderColor = kNoochRed.CGColor;
-            self.first_num.layer.borderColor = kNoochRed.CGColor;
+            self.prompt.textColor = kPayoRed;
+            self.fourth_num.layer.borderColor = kPayoRed.CGColor;
+            self.third_num.layer.borderColor = kPayoRed.CGColor;
+            self.second_num.layer.borderColor = kPayoRed.CGColor;
+            self.first_num.layer.borderColor = kPayoRed.CGColor;
             [self.fourth_num setStyleClass:@"shakePin4"];
             [self.third_num setStyleClass:@"shakePin3"];
             [self.second_num setStyleClass:@"shakePin2"];
             [self.first_num setStyleClass:@"shakePin1"];
 
             self.prompt.text = NSLocalizedString(@"ResetPIN_1stFailed", @"Reset PIN '1st Failed Attempt' text");
-            self.prompt.textColor = kNoochRed;
+            self.prompt.textColor = kPayoRed;
         }
         else if ([[dictResult objectForKey:@"Result"]isEqual:@"PIN number you entered again is incorrect. Your account will be suspended for 24 hours if you enter wrong PIN number again."])
         {
-            self.fourth_num.layer.borderColor = kNoochRed.CGColor;
-            self.third_num.layer.borderColor = kNoochRed.CGColor;
-            self.second_num.layer.borderColor = kNoochRed.CGColor;
-            self.first_num.layer.borderColor = kNoochRed.CGColor;
+            self.fourth_num.layer.borderColor = kPayoRed.CGColor;
+            self.third_num.layer.borderColor = kPayoRed.CGColor;
+            self.second_num.layer.borderColor = kPayoRed.CGColor;
+            self.first_num.layer.borderColor = kPayoRed.CGColor;
             [self.fourth_num setStyleClass:@"shakePin4"];
             [self.third_num setStyleClass:@"shakePin3"];
             [self.second_num setStyleClass:@"shakePin2"];
             [self.first_num setStyleClass:@"shakePin1"];
 
             self.prompt.text = NSLocalizedString(@"ResetPIN_2ndFailed", @"Reset PIN '2nd Failed Attempt' text");
-            self.prompt.textColor = kNoochRed;
+            self.prompt.textColor = kPayoRed;
             
             UIAlertView *suspendedAlert=[[UIAlertView alloc]initWithTitle:NSLocalizedString(@"ResetPIN_TryAgainAlrtTitle", @"Reset PIN Failed Alert Title")
                                                                   message:NSLocalizedString(@"ResetPIN_TryAgainAlrtBody", @"Reset PIN Failed Alert Body Text")
@@ -351,10 +351,10 @@
 
     self.prompt.text = NSLocalizedString(@"ResetPIN_AcntSuspLbl", @"Reset PIN account suspended text");
 
-    self.fourth_num.layer.borderColor = kNoochRed.CGColor;
-    self.third_num.layer.borderColor = kNoochRed.CGColor;
-    self.second_num.layer.borderColor = kNoochRed.CGColor;
-    self.first_num.layer.borderColor = kNoochRed.CGColor;
+    self.fourth_num.layer.borderColor = kPayoRed.CGColor;
+    self.third_num.layer.borderColor = kPayoRed.CGColor;
+    self.second_num.layer.borderColor = kPayoRed.CGColor;
+    self.first_num.layer.borderColor = kPayoRed.CGColor;
     [self.fourth_num setStyleClass:@"shakePin4"];
     [self.third_num setStyleClass:@"shakePin3"];
     [self.second_num setStyleClass:@"shakePin2"];

@@ -29,8 +29,8 @@
 
     [self.view setBackgroundColor:[UIColor whiteColor]];
 
-    UIImageView * logo = [UIImageView new];
-    [logo setStyleId:@"prelogin_logo"];
+    UIImageView * logo = [[UIImageView alloc] initWithFrame:CGRectMake(125, 19, 70, 70)];
+    [logo setImage:[UIImage imageNamed:@"payo-logo-140.png"]];
     [self.view addSubview:logo];
 
     UILabel * title = [[UILabel alloc] initWithFrame:CGRectMake(10, 110, 300, 40)];
@@ -103,7 +103,7 @@
     [glyphInfo setFont:[UIFont fontWithName:@"FontAwesome" size:15]];
     [glyphInfo setFrame:CGRectMake(5, 0, 15, 23)];
     [glyphInfo setText:[NSString fontAwesomeIconStringForIconIdentifier:@"fa-question-circle"]];
-    [glyphInfo setTextColor:kNoochPurple];
+    [glyphInfo setTextColor:kPayoPurple];
     [moreInfo addSubview:glyphInfo];
     [self.view addSubview:moreInfo];
 

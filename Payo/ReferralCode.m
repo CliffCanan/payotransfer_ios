@@ -45,8 +45,8 @@
 {
     [super viewDidLoad];
 
-    UIImageView * logo = [UIImageView new];
-    [logo setStyleId:@"prelogin_logo"];
+    UIImageView * logo = [[UIImageView alloc] initWithFrame:CGRectMake(125, 19, 70, 70)];
+    [logo setImage:[UIImage imageNamed:@"payo-logo-140.png"]];
     [self.view addSubview:logo];
 
     [self.view setBackgroundColor:[UIColor whiteColor]];

@@ -15,7 +15,6 @@
 #import "ProfileInfo.h"
 #import "HistoryFlat.h"
 #import "SendInvite.h"
-#import "iCarousel.h"
 #import "SIAlertView.h"
 #import "UIImageView+WebCache.h"
 #import "HowMuch.h"

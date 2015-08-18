@@ -282,7 +282,7 @@
             [self.txtStatus setTextColor:kPayoGreen];
         }
         else {
-              [self.txtStatus setTextColor:kNoochRed];
+              [self.txtStatus setTextColor:kPayoRed];
         }
         
         [cell setUserInteractionEnabled:NO];

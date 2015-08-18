@@ -15,15 +15,15 @@
 
 @interface TransferPIN : GAITrackedViewController<UITextFieldDelegate,serveD,NSURLConnectionDelegate,MFMailComposeViewControllerDelegate,MBProgressHUDDelegate>
 {
+    UILabel * totalRupees, * exchangeRate, * glyphArrow;
+
     NSData *postTransfer;
     NSData *postDataTransfer;
     NSString *addressLine1;
-    NSString *city;
+    NSString * city,* state;
     NSString *country;
     NSString *encryptedPINNonUser;
-    NSString *longitude;
-    NSString *latitude;
-    NSString *state;
+    NSString *longitude, *latitude;
     NSString *postLengthTransfer;
     NSString *receiverFirst;
     NSString *receiverId;
@@ -32,13 +32,12 @@
     NSString *urlStrTranfer;
     NSMutableURLRequest *requestTransfer;
     NSURL *urlTransfer;
-    float lon;
-    float lat;
+    float exchangeRateFloat;
+    float lon, lat;
     NSMutableDictionary * transactionInputTransfer;
     NSMutableDictionary * transactionTransfer;
-    NSDictionary * dictResult;         // in 'listen' for handling PIN result from server
     NSDictionary * dictResultTransfer; // in 'connectionDidFinishLoading' Response from server
-    NSDictionary *googleLocationResults;
+    NSDictionary * googleLocationResults;
 }
 - (id)initWithReceiver:(NSMutableDictionary *)receiver type:(NSString *)type amount:(float)amount;
 

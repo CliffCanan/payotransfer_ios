@@ -16,14 +16,13 @@
 #import "NSString+FontAwesome.h"
 #import "FAImageView.h"
 #import "iCarousel.h"
-#import "SIAlertView/SIAlertView.h"
 #import <ArtisanSDK/ArtisanSDK.h>
 
 core *me;
-#define kPayoBlue      [Helpers hexColor:@"1A5BAA"]// Updated to Payo Blue
-#define kPayoGreen     [Helpers hexColor:@"55BA50"]// Updated to Payo Green
-#define kNoochRed       [Helpers hexColor:@"D2232A"]
-#define kNoochPurple    [Helpers hexColor:@"5A538D"]
+#define kPayoBlue      [Helpers hexColor:@"1A5BAA"]
+#define kPayoGreen     [Helpers hexColor:@"55BA50"]
+#define kPayoRed       [Helpers hexColor:@"D2232A"]
+#define kPayoPurple    [Helpers hexColor:@"5A538D"]
 #define kNoochGrayLight [Helpers hexColor:@"939598"]
 #define kNoochGrayDark  [Helpers hexColor:@"414042"]
 #define kNoochLight     [Helpers hexColor:@"EBEBEB"]

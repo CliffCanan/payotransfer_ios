@@ -142,7 +142,7 @@
          ([[user valueForKey:@"firstName"]length] < 1 || [[user valueForKey:@"lastName"] length] < 1) )
     {
         user_pic.layer.borderWidth = 3;
-        user_pic.layer.borderColor = kNoochRed.CGColor;
+        user_pic.layer.borderColor = kPayoRed.CGColor;
     }
 
     if ([[user valueForKey:@"firstName"] length] < 1 && [[user valueForKey:@"lastName"] length] < 1)

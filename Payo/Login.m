@@ -53,8 +53,8 @@
     [self.navigationController setNavigationBarHidden:YES];
     [self.view setBackgroundColor:[UIColor whiteColor]];
 
-    UIImageView * logo = [UIImageView new];
-    [logo setStyleId:@"prelogin_logo"];
+    UIImageView * logo = [[UIImageView alloc] initWithFrame:CGRectMake(125, 19, 70, 70)];
+    [logo setImage:[UIImage imageNamed:@"payo-logo-140.png"]];
     [self.view addSubview:logo];
 
     NSShadow * shadowFB = [[NSShadow alloc] init];
@@ -158,15 +158,10 @@
     [forgot addTarget:self action:@selector(forgot_pass_Login) forControlEvents:UIControlEventTouchUpInside];
     [forgot setStyleId:@"label_forgotpw"];
 
-    UILabel *encryption; [encryption setStyleId:@"label_encryption"];
-
-    UIImageView *encrypt_icon;
-    [encrypt_icon setStyleId:@"icon_encryption"];
-
     // Height adjustments for 3.5" screens
     if ([[UIScreen mainScreen] bounds].size.height < 500)
     {
-        [logo setStyleId:@"prelogin_logo_loginScreen_4"];
+        [logo setFrame:CGRectMake(137, 10, 46, 46)];
 
         [self.facebookLogin setStyleClass:@"button_blue_login_4"];
         [glyphFB setFrame:CGRectMake(19, 6, 30, 28)];
@@ -194,9 +189,7 @@
     [self.view addSubview:self.stay_logged_in];
     [self.view addSubview:remember_me];
     [self.view addSubview:forgot];
-    [self.view addSubview:encryption];
-    [self.view addSubview:encrypt_icon];
-    
+
     user = [NSUserDefaults standardUserDefaults];
 }
 
